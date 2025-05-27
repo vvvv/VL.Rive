@@ -5,11 +5,8 @@ generate-helper-types
 latest-codegen
 --language
 c++
---file-directory
-C:\Users\elias\source\repos\rive-sharp\submodules\rive-cpp\include\rive
 --file
-factory.hpp
-renderer.hpp
+RiveSharpInterop.cpp
 --namespace
 RiveSharpInterop
 --output

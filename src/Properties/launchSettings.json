@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "VL.Rive": {
+      "commandName": "Project",
+      "nativeDebugging": true
+    }
+  }
+}

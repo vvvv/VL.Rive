@@ -9,3 +9,5 @@ bin/
 
 .vl/
 /lib/
+/native/dependencies/
+/native/out/
