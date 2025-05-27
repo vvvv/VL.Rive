@@ -19,6 +19,7 @@ do
   kind("SharedLib")
   language("C++")
   cppdialect("C++17")
+  exceptionhandling("CThrow")
   targetdir(REPO_ROOT_DIR .. "/runtimes/win-x64/native")
 
   links({
@@ -42,7 +43,7 @@ do
 
   includedirs({ RIVE_RUNTIME_DIR .. "/include", RIVE_RUNTIME_DIR .. "/renderer/include" })
 
-  files({ VL_RIVE_SRC_DIR .. "/*.cpp" })
+  files({ VL_RIVE_SRC_DIR .. "/*.cpp", VL_RIVE_SRC_DIR .. "/*.hpp" })
 
   filter("platforms:x64")
     architecture("x64")

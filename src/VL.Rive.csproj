@@ -5,7 +5,12 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <OutputType>Exe</OutputType>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="..\build\generated\*.cs" LinkBase="generated" />
+  </ItemGroup>
 
   <ItemGroup>
     <None Include="..\runtimes\win-x64\native\rive_interop.dll" Link="rive_interop.dll">

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using static RiveSharpInterop.Methods;
 
 namespace VL.Rive
 {
@@ -11,7 +12,7 @@ namespace VL.Rive
     {
         public static void Main(string[] args)
         {
-            var x = CreateRenderContextD3D11(IntPtr.Zero, IntPtr.Zero, IntPtr.Zero);
+            var x = CreateRenderContextD3D11(IntPtr.Zero, IntPtr.Zero);
 
 
             // This is a placeholder for the main entry point of the application.
@@ -20,8 +21,5 @@ namespace VL.Rive
             Console.ReadLine(); // Wait for user input before closing
 
         }
-
-        [DllImport("rive_interop.dll")]
-        static extern IntPtr CreateRenderContextD3D11(IntPtr a, IntPtr b, IntPtr c);
     }
 }
