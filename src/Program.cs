@@ -21,7 +21,7 @@ namespace VL.Rive
 
         }
 
-        [DllImport("vl-rive-interop.dll")]
+        [DllImport("rive_interop.dll")]
         static extern IntPtr CreateRenderContextD3D11(IntPtr a, IntPtr b, IntPtr c);
     }
 }

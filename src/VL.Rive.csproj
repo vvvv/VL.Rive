@@ -8,10 +8,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-	<None Include="..\native\out\debug\vl-rive-interop.dll" Link="vl-rive-interop.dll">
-	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	</None>
-    <None Include="..\native\out\debug\vl-rive-interop.pdb" Link="vl-rive-interop.pdb">
+    <None Include="..\runtimes\win-x64\native\rive_interop.dll" Link="rive_interop.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\runtimes\win-x64\native\rive_interop.lib" Link="rive_interop.lib">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\runtimes\win-x64\native\rive_interop.pdb" Link="rive_interop.pdb">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
