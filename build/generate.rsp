@@ -24,4 +24,11 @@ _CRT_USE_BUILTIN_OFFSETOF
 -r
 ID3D11Device*=nint
 ID3D11DeviceContext*=nint
+ID3D11Texture2D*=nint
+Factory*=nint
+File*=nint
 RenderContext*=nint
+RenderTarget*=nint
+Renderer*=nint
+ArtboardInstance*=nint
+Scene*=nint

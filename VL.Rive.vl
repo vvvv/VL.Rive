@@ -1,0 +1,72 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Document xmlns:p="property" xmlns:r="reflection" Id="EWHWcwf3oBvPnhn254YyBa" LanguageVersion="2024.6.7" Version="0.128">
+  <Patch Id="Rgz0iK0cdl5O6XLZAnSI2k">
+    <Canvas Id="EtMz6eWyJpjMOVOROl6714" DefaultCategory="VL.NewLibrary.Template" CanvasType="FullCategory" />
+    <!--
+
+    ************************ Application ************************
+
+-->
+    <Node Name="Application" Bounds="100,100" Id="GzS10oTkIGnMGZknNaV2y2">
+      <p:NodeReference>
+        <Choice Kind="ContainerDefinition" Name="Process" />
+        <FullNameCategoryReference ID="Primitive" />
+      </p:NodeReference>
+      <Patch Id="PbUNtDBhKLVPbHQvb8Ta2L">
+        <Canvas Id="QOaMfDZHJrCLJ8x5mM6Dq2" CanvasType="Group">
+          <Node Bounds="449,419,62,19" Id="ErDxUE7BCCUMzcmd831TCz">
+            <p:NodeReference LastCategoryFullName="Rive" LastDependency="VL.Rive.dll">
+              <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
+              <CategoryReference Kind="Category" Name="Rive" />
+              <Choice Kind="ProcessAppFlag" Name="RivePlayer" />
+            </p:NodeReference>
+            <Pin Id="EkwnqTjVYHIPuJqi1fAA7O" Name="Output" Kind="StateOutputPin" />
+            <Pin Id="BQtamjnPByOOMaedzgaPXo" Name="File" Kind="InputPin" DefaultValue="..\..\..\Downloads\gradient.riv" />
+          </Node>
+          <Node Bounds="444,604,165,19" Id="OlZqrmbD94lNhsFcGv32MW">
+            <p:NodeReference LastCategoryFullName="Stride" LastDependency="VL.Stride.vl">
+              <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
+              <Choice Kind="ProcessAppFlag" Name="RenderWindow" />
+            </p:NodeReference>
+            <Pin Id="NIueKD9GrYSNrHvhNrd1jB" Name="Node Context" Kind="InputPin" IsHidden="true" />
+            <Pin Id="BFidU9Km1IxPQ6DYNAurAU" Name="Bounds" Kind="InputPin" DefaultValue="1372, 102.666664, 786, 432" IsHidden="true" />
+            <Pin Id="T7PQ47SCx5EPNSs335GX1p" Name="Bound to Document" Kind="InputPin" IsHidden="true" />
+            <Pin Id="FD8wmflocI3Mh9Ck0u5Xgg" Name="Dialog If Document Changed" Kind="InputPin" IsHidden="true" />
+            <Pin Id="J9YZWOwPyLOOwUwGF2N6Dv" Name="Save Bounds" Kind="InputPin" IsHidden="true" />
+            <Pin Id="NPkAh0CpGbKOFM04Kz5IBe" Name="Back Buffer Format" Kind="InputPin" IsHidden="true" />
+            <Pin Id="KebTIVqNPMGNYVQz54jglC" Name="Depth Buffer Format" Kind="InputPin" IsHidden="true" />
+            <Pin Id="IelUMw8dc9yOq2EYxQhWq9" Name="Multisample Count" Kind="InputPin" IsHidden="true" />
+            <Pin Id="EKTdEXaMpoTO3nTwAJegoV" Name="Input" Kind="InputPin" />
+            <Pin Id="QTvPk5YsbN0OKh9ybwasXQ" Name="Render View" Kind="InputPin" />
+            <Pin Id="J3GiNnijAovMt2VEZajH3j" Name="Title" Kind="InputPin" />
+            <Pin Id="Ilh0QvpWHI5N1YNjSeOF5p" Name="Clear Flags" Kind="InputPin" IsHidden="true" />
+            <Pin Id="ERy6FlIbhCDLUP7IhICzjd" Name="Clear Color" Kind="InputPin" DefaultValue="0.39, 0.39, 0.39, 1" />
+            <Pin Id="STNG88lfnHcLeRn8Powd96" Name="Clear Depth" Kind="InputPin" IsHidden="true" />
+            <Pin Id="DqPuyHAiJ8KNLGGhbDa7BD" Name="Clear Stencil" Kind="InputPin" IsHidden="true" />
+            <Pin Id="UuymdxAknTXMN1qcxWcJ1K" Name="Clear" Kind="InputPin" />
+            <Pin Id="UkuY0Y95wWoPNGv4fJPekk" Name="Edit Mode" Kind="InputPin" />
+            <Pin Id="T5nT9EAzrxbQXTIMm7sAZa" Name="Commands" Kind="InputPin" IsHidden="true" />
+            <Pin Id="Rp1OEvmBYzXNwKsryzBQUC" Name="Enable Keyboard Shortcuts" Kind="InputPin" />
+            <Pin Id="PaiR5vZY1X3N2G5EfsSLxE" Name="Enabled" Kind="InputPin" />
+            <Pin Id="IBBVxu5YNFRNvVljIydCIz" Name="Present Interval" Kind="InputPin" />
+            <Pin Id="EKIAv5EzRPZNe4csYxzP8s" Name="Output" Kind="OutputPin" />
+            <Pin Id="RlFZuL24Rb2OEJ9hMM57t9" Name="Client Bounds" Kind="OutputPin" />
+            <Pin Id="GmQh5wcWGR7NERRo4ZiQCy" Name="Input Source" Kind="OutputPin" />
+            <Pin Id="Ng2iXYm4tyYPqSO2XY2VxP" Name="Back Buffer" Kind="OutputPin" />
+            <Pin Id="F5T7zc8R7myOINvRWpxLBN" Name="Depth Buffer" Kind="OutputPin" />
+          </Node>
+        </Canvas>
+        <Patch Id="DBYmxfeIOlcLboDdIT5h0Z" Name="Create" />
+        <Patch Id="DogxJckKCZBOH8kuk619TC" Name="Update" />
+        <ProcessDefinition Id="Tj3xex7K12gLJd6jX9L1AG">
+          <Fragment Id="EyvBKHDCCxfLfKfYFfCAen" Patch="DBYmxfeIOlcLboDdIT5h0Z" Enabled="true" />
+          <Fragment Id="D3Clk786tbBPenDaPo3VHE" Patch="DogxJckKCZBOH8kuk619TC" Enabled="true" />
+        </ProcessDefinition>
+        <Link Id="NM7uXQLUxf0PYU2fCo0S89" Ids="EkwnqTjVYHIPuJqi1fAA7O,EKTdEXaMpoTO3nTwAJegoV" />
+      </Patch>
+    </Node>
+  </Patch>
+  <NugetDependency Id="Ko9OqCOVyY7Pz8mbJrOqb0" Location="VL.CoreLib" Version="2024.6.7" />
+  <PlatformDependency Id="QNHAi9ws7YQOqw9dF0YnhW" Location="./lib/net8.0/VL.Rive.dll" />
+  <NugetDependency Id="VzhBgfuS1WsNJlIved5kb3" Location="VL.Stride" Version="2024.6.7" />
+</Document>
