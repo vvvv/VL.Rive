@@ -64,7 +64,7 @@ namespace RiveSharpInterop
         public static extern void rive_Scene_AdvanceAndApply([NativeTypeName("rive::Scene *")] nint self, float seconds);
 
         [DllImport("rive_interop", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void rive_Scene_Draw([NativeTypeName("rive::Scene *")] nint scene, [NativeTypeName("rive::Renderer *")] nint renderer);
+        public static extern void rive_Scene_Draw([NativeTypeName("rive::Scene *")] nint scene, [NativeTypeName("rive::Renderer *")] nint renderer, int width, int height);
 
         [DllImport("rive_interop", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern void rive_Scene_Destroy([NativeTypeName("rive::Scene *")] nint self);

@@ -1,4 +1,6 @@
-﻿using SharpDX.Direct3D11;
+﻿using Microsoft.Extensions.DependencyInjection;
+using SharpDX.Direct3D11;
+using Stride.Core.Mathematics;
 using Stride.Graphics;
 using Stride.Rendering;
 using System;
@@ -7,7 +9,9 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using VL.Core;
 using VL.Core.Import;
+using VL.Lib.Animation;
 using VL.Lib.IO;
 using static RiveSharpInterop.Methods;
 using Path = VL.Lib.IO.Path;
@@ -27,6 +31,13 @@ namespace VL.Rive
         nint riveArtboard;
         nint riveScene;
         bool needsReload;
+        private IFrameClock? frameClock;
+        Int2 lastSize;
+
+        public RivePlayer(NodeContext nodeContext)
+        {
+            frameClock = nodeContext.AppHost.Services.GetService<IFrameClock>();
+        }
 
         public void Update(Path? file)
         {
@@ -47,10 +58,12 @@ namespace VL.Rive
 
             var renderTarget = context.CommandList.RenderTarget;
 
-            if (riveRenderer == 0)
+            var size = new Int2(renderTarget.Width, renderTarget.Height);
+            if (riveRenderer == 0 || lastSize != size)
             {
+                lastSize = size;
                 riveRenderer = rive_Renderer_Create(riveRenderContext);
-                riveRenderTarget = MakeRenderTarget(renderTarget);
+                riveRenderTarget = MakeRenderTarget(size.X, size.Y);
             }
 
             if (needsReload)
@@ -77,15 +90,25 @@ namespace VL.Rive
                 if (riveFile != 0)
                 {
                     riveArtboard = rive_File_GetArtboardDefault(riveFile);
-                    riveScene = rive_ArtboardInstance_StaticScene(riveArtboard);
-                    rive_Scene_AdvanceAndApply(riveScene, 0f);
+                    riveScene = rive_ArtboardInstance_AnimationAt(riveArtboard, 0);
                 }
                 needsReload = false;
             }
 
+            rive_Scene_AdvanceAndApply(riveScene, (float)frameClock.TimeDifference);
+
             rive_RenderContext_BeginFrame(riveRenderContext, renderTarget.Width, renderTarget.Height, renderTarget.MultisampleCount != MultisampleCount.None ? (int)renderTarget.MultisampleCount: 0);
-            rive_Scene_Draw(riveScene, riveRenderer);
+            rive_Scene_Draw(riveScene, riveRenderer, size.X, size.Y);
+
+
+            var nativeRenderTarget = SharpDXInterop.GetNativeResource(renderTarget) as Texture2D;
+            if (nativeRenderTarget is null)
+                return;
+            rive_RenderTarget_D3D11_SetTargetTexture(riveRenderTarget, nativeRenderTarget.NativePointer);
             rive_RenderContext_Flush(riveRenderContext, riveRenderTarget);
+
+            // Release render target texture
+            rive_RenderTarget_D3D11_SetTargetTexture(riveRenderTarget, default);
         }
 
         protected override void Destroy()
@@ -109,15 +132,9 @@ namespace VL.Rive
             return rive_RenderContext_Create_D3D11(nativeDevice.NativePointer, nativeContext.NativePointer);
         }
 
-        private nint MakeRenderTarget(Texture renderTarget)
+        private nint MakeRenderTarget(int width, int height)
         {
-            var nativeRenderTarget = SharpDXInterop.GetNativeResource(renderTarget) as Texture2D;
-            if (nativeRenderTarget is null)
-                return default;
-
-            var riveRenderTarget = rive_RenderContext_MakeRenderTarget_D3D11(riveRenderContext, renderTarget.Width, renderTarget.Height);
-            rive_RenderTarget_D3D11_SetTargetTexture(riveRenderTarget, nativeRenderTarget.NativePointer);
-            return riveRenderTarget;
+            return rive_RenderContext_MakeRenderTarget_D3D11(riveRenderContext, width, height);
         }
 
         private unsafe nint LoadRiveFile(string file)

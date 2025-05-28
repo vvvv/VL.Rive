@@ -21,7 +21,8 @@
               <Choice Kind="ProcessAppFlag" Name="RivePlayer" />
             </p:NodeReference>
             <Pin Id="EkwnqTjVYHIPuJqi1fAA7O" Name="Output" Kind="StateOutputPin" />
-            <Pin Id="BQtamjnPByOOMaedzgaPXo" Name="File" Kind="InputPin" DefaultValue="..\..\..\Downloads\gradient.riv" />
+            <Pin Id="J6oMJ6mirBHLtnOaoyGMxa" Name="Node Context" Kind="InputPin" />
+            <Pin Id="BQtamjnPByOOMaedzgaPXo" Name="File" Kind="InputPin" DefaultValue="..\..\..\Downloads\test.riv" />
           </Node>
           <Node Bounds="444,604,165,19" Id="OlZqrmbD94lNhsFcGv32MW">
             <p:NodeReference LastCategoryFullName="Stride" LastDependency="VL.Stride.vl">

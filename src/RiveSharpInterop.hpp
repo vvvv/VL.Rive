@@ -46,6 +46,6 @@ extern "C"
 
 	// Scene
 	__declspec(dllexport) void rive_Scene_AdvanceAndApply(Scene* self, float seconds);
-	__declspec(dllexport) void rive_Scene_Draw(Scene* scene, Renderer* renderer);
+	__declspec(dllexport) void rive_Scene_Draw(Scene* scene, Renderer* renderer, int width, int height);
 	__declspec(dllexport) void rive_Scene_Destroy(Scene* self);
 }

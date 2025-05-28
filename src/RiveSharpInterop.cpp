@@ -108,9 +108,16 @@ extern "C"
 		self->advanceAndApply(seconds);
     }
 
-    __declspec(dllexport) void rive_Scene_Draw(Scene* scene, Renderer* renderer)
+    __declspec(dllexport) void rive_Scene_Draw(Scene* scene, Renderer* renderer, int width, int height)
     {
+        Mat2D m = computeAlignment(rive::Fit::contain,
+            rive::Alignment::center,
+            rive::AABB(0, 0, width, height),
+            scene->bounds());
+        renderer->save();
+		renderer->transform(m);
         scene->draw(renderer);
+		renderer->restore();
     }
 
     __declspec(dllexport) void rive_Scene_Destroy(Scene* self)
