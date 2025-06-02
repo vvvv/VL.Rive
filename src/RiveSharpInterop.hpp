@@ -42,10 +42,14 @@ extern "C"
 	__declspec(dllexport) Scene* rive_ArtboardInstance_StaticScene(ArtboardInstance* artboard);
 	__declspec(dllexport) Scene* rive_ArtboardInstance_StateMachineAt(ArtboardInstance* artboard, int index);
 	__declspec(dllexport) Scene* rive_ArtboardInstance_AnimationAt(ArtboardInstance* artboard, int index);
+	__declspec(dllexport) Scene* rive_ArtboardInstance_DefaultScene(ArtboardInstance* artboard);
 	__declspec(dllexport) void rive_ArtboardInstance_Destroy(ArtboardInstance* artboard);
+
+    __declspec(dllexport) void rive_Artboard_BindViewModelInstance(Artboard* artboard, ViewModelInstance* viewModelInstance);
 
 	// Scene
 	__declspec(dllexport) void rive_Scene_AdvanceAndApply(Scene* self, float seconds);
 	__declspec(dllexport) void rive_Scene_Draw(Scene* scene, Renderer* renderer, int width, int height);
 	__declspec(dllexport) void rive_Scene_Destroy(Scene* self);
+	__declspec(dllexport) void rive_Scene_BindViewModelInstance(Scene* scene, ViewModelInstance* viewModelInstance);
 }
