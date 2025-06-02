@@ -81,6 +81,11 @@ extern "C"
         return file->artboardDefault().release();
     }
 
+    ViewModelRuntime* rive_File_DefaultArtboardViewModel(File* file, Artboard* artboard)
+    {
+        return file->defaultArtboardViewModel(artboard);
+    }
+
     // Artboard
     Scene* rive_ArtboardInstance_StaticScene(ArtboardInstance* artboard)
     {
@@ -142,5 +147,169 @@ extern "C"
     void rive_Scene_Destroy(Scene* self)
     {
 		delete self;
+    }
+
+    const char* rive_ViewModelRuntime_Name(ViewModelRuntime* runtime)
+    {
+        // Return a pointer to the internal string data (lifetime: as long as runtime is alive)
+        return runtime->name().c_str();
+    }
+
+    ViewModelInstanceRuntime* rive_ViewModelRuntime_CreateInstance(ViewModelRuntime* runtime)
+    {
+        return runtime->createInstance();
+    }
+
+    const char* rive_ViewModelInstanceRuntime_Name(ViewModelInstanceRuntime* runtime)
+    {
+        return runtime->name().c_str();
+    }
+
+    size_t rive_ViewModelInstanceRuntime_PropertyCount(ViewModelInstanceRuntime* runtime)
+    {
+        return runtime->propertyCount();
+    }
+
+    ViewModelInstanceNumberRuntime* rive_ViewModelInstanceRuntime_PropertyNumber(ViewModelInstanceRuntime* runtime, const char* path)
+    {
+        return runtime->propertyNumber(std::string(path));
+    }
+
+    ViewModelInstanceStringRuntime* rive_ViewModelInstanceRuntime_PropertyString(ViewModelInstanceRuntime* runtime, const char* path)
+    {
+        return runtime->propertyString(std::string(path));
+    }
+
+    ViewModelInstanceBooleanRuntime* rive_ViewModelInstanceRuntime_PropertyBoolean(ViewModelInstanceRuntime* runtime, const char* path)
+    {
+        return runtime->propertyBoolean(std::string(path));
+    }
+
+    ViewModelInstanceColorRuntime* rive_ViewModelInstanceRuntime_PropertyColor(ViewModelInstanceRuntime* runtime, const char* path)
+    {
+        return runtime->propertyColor(std::string(path));
+    }
+
+    ViewModelInstanceEnumRuntime* rive_ViewModelInstanceRuntime_PropertyEnum(ViewModelInstanceRuntime* runtime, const char* path)
+    {
+        return runtime->propertyEnum(std::string(path));
+    }
+
+    ViewModelInstanceTriggerRuntime* rive_ViewModelInstanceRuntime_PropertyTrigger(ViewModelInstanceRuntime* runtime, const char* path)
+    {
+        return runtime->propertyTrigger(std::string(path));
+    }
+
+    ViewModelInstanceListRuntime* rive_ViewModelInstanceRuntime_PropertyList(ViewModelInstanceRuntime* runtime, const char* path)
+    {
+        return runtime->propertyList(std::string(path));
+    }
+
+    ViewModelInstanceRuntime* rive_ViewModelInstanceRuntime_PropertyViewModel(ViewModelInstanceRuntime* runtime, const char* path)
+    {
+        return runtime->propertyViewModel(std::string(path));
+    }
+
+    ViewModelInstanceAssetImageRuntime* rive_ViewModelInstanceRuntime_PropertyImage(ViewModelInstanceRuntime* runtime, const char* path)
+    {
+        return runtime->propertyImage(std::string(path));
+    }
+
+    ViewModelInstanceValueRuntime* rive_ViewModelInstanceRuntime_Property(ViewModelInstanceRuntime* runtime, const char* path)
+    {
+        return runtime->property(std::string(path));
+    }
+
+    void rive_ViewModelInstanceRuntime_Properties(ViewModelInstanceRuntime* runtime, RivePropertyData* properties_out)
+    {
+        std::vector<rive::PropertyData> props = runtime->properties();
+        size_t count = props.size();
+        for (size_t i = 0; i < count; ++i)
+        {
+            properties_out[i].type = static_cast<int>(props[i].type);
+            properties_out[i].name = props[i].name.c_str();
+        }
+    }
+
+    bool rive_ViewModelInstanceValueRuntime_HasChanged(ViewModelInstanceValueRuntime* value)
+    {
+        return value->hasChanged();
+    }
+
+    void rive_ViewModelInstanceValueRuntime_ClearChanges(ViewModelInstanceValueRuntime* value)
+    {
+        value->clearChanges();
+    }
+
+    // Number
+    double rive_ViewModelInstanceNumberRuntime_Value(ViewModelInstanceNumberRuntime* value)
+    {
+        return value->value();
+    }
+
+    void rive_ViewModelInstanceNumberRuntime_SetValue(ViewModelInstanceNumberRuntime* value, double v)
+    {
+        value->value(v);
+    }
+
+    // String
+    const char* rive_ViewModelInstanceStringRuntime_Value(ViewModelInstanceStringRuntime* value)
+    {
+        return value->value().c_str();
+    }
+
+    void rive_ViewModelInstanceStringRuntime_SetValue(ViewModelInstanceStringRuntime* value, const char* v)
+    {
+        value->value(std::string(v));
+    }
+
+    // Boolean
+    bool rive_ViewModelInstanceBooleanRuntime_Value(ViewModelInstanceBooleanRuntime* value)
+    {
+        return value->value();
+    }
+
+    void rive_ViewModelInstanceBooleanRuntime_SetValue(ViewModelInstanceBooleanRuntime* value, bool v)
+    {
+        value->value(v);
+    }
+
+    // Color
+    uint32_t rive_ViewModelInstanceColorRuntime_Value(ViewModelInstanceColorRuntime* value)
+    {
+        return value->value();
+    }
+
+    void rive_ViewModelInstanceColorRuntime_SetValue(ViewModelInstanceColorRuntime* value, uint32_t v)
+    {
+        value->value(v);
+    }
+
+    // Enum
+    uint32_t rive_ViewModelInstanceEnumRuntime_ValueIndex(ViewModelInstanceEnumRuntime* value)
+    {
+        return value->valueIndex();
+    }
+
+    void rive_ViewModelInstanceEnumRuntime_SetValueIndex(ViewModelInstanceEnumRuntime* value, uint32_t v)
+    {
+        value->valueIndex(v);
+    }
+
+    // Trigger
+    void rive_ViewModelInstanceTriggerRuntime_Trigger(ViewModelInstanceTriggerRuntime* value)
+    {
+        value->trigger();
+    }
+
+    // List
+    size_t rive_ViewModelInstanceListRuntime_Size(ViewModelInstanceListRuntime* value)
+    {
+        return value->size();
+    }
+
+    ViewModelInstanceRuntime* rive_ViewModelInstanceListRuntime_At(ViewModelInstanceListRuntime* value, int index)
+    {
+        return value->instanceAt(index);
     }
 }
