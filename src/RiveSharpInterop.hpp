@@ -74,7 +74,7 @@ extern "C"
 	__declspec(dllexport) const char* rive_ViewModelInstanceRuntime_Name(ViewModelInstanceRuntime* runtime);
 
 	// Returns the number of properties in the ViewModelInstanceRuntime
-	__declspec(dllexport) size_t rive_ViewModelInstanceRuntime_PropertyCount(ViewModelInstanceRuntime* runtime);
+	__declspec(dllexport) int rive_ViewModelInstanceRuntime_PropertyCount(ViewModelInstanceRuntime* runtime);
 
 	// Returns a property as a number runtime by path (returns nullptr if not found or not a number)
 	__declspec(dllexport) ViewModelInstanceNumberRuntime* rive_ViewModelInstanceRuntime_PropertyNumber(ViewModelInstanceRuntime* runtime, const char* path);
@@ -109,13 +109,20 @@ extern "C"
 	// Returns the array of property metadata (see RivePropertyData, same as ViewModelRuntime)
 	__declspec(dllexport) void rive_ViewModelInstanceRuntime_Properties(ViewModelInstanceRuntime* runtime, RivePropertyData* properties_out);
 
+	// Returns the underlying ViewModelInstance pointer from a ViewModelInstanceRuntime.
+	// The returned pointer is valid as long as the ViewModelInstanceRuntime is alive.
+	__declspec(dllexport) ViewModelInstance* rive_ViewModelInstanceRuntime_Instance(ViewModelInstanceRuntime* runtime);
+
+	__declspec(dllexport) void rive_ViewModelInstanceRuntime_Destroy(ViewModelInstanceRuntime* runtime);
+
 	// ViewModelInstanceValueRuntime
 	__declspec(dllexport) bool rive_ViewModelInstanceValueRuntime_HasChanged(ViewModelInstanceValueRuntime* value);
 	__declspec(dllexport) void rive_ViewModelInstanceValueRuntime_ClearChanges(ViewModelInstanceValueRuntime* value);
+	__declspec(dllexport) void rive_ViewModelInstanceValueRuntime_Destroy(ViewModelInstanceValueRuntime* value);
 
 	// ViewModelInstanceNumberRuntime
-	__declspec(dllexport) double rive_ViewModelInstanceNumberRuntime_Value(ViewModelInstanceNumberRuntime* value);
-	__declspec(dllexport) void rive_ViewModelInstanceNumberRuntime_SetValue(ViewModelInstanceNumberRuntime* value, double v);
+	__declspec(dllexport) float rive_ViewModelInstanceNumberRuntime_Value(ViewModelInstanceNumberRuntime* value);
+	__declspec(dllexport) void rive_ViewModelInstanceNumberRuntime_SetValue(ViewModelInstanceNumberRuntime* value, float v);
 
 	// ViewModelInstanceStringRuntime
 	__declspec(dllexport) const char* rive_ViewModelInstanceStringRuntime_Value(ViewModelInstanceStringRuntime* value);

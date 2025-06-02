@@ -165,7 +165,7 @@ extern "C"
         return runtime->name().c_str();
     }
 
-    size_t rive_ViewModelInstanceRuntime_PropertyCount(ViewModelInstanceRuntime* runtime)
+    int rive_ViewModelInstanceRuntime_PropertyCount(ViewModelInstanceRuntime* runtime)
     {
         return runtime->propertyCount();
     }
@@ -227,8 +227,18 @@ extern "C"
         for (size_t i = 0; i < count; ++i)
         {
             properties_out[i].type = static_cast<int>(props[i].type);
-            properties_out[i].name = props[i].name.c_str();
+            properties_out[i].name = _strdup(props[i].name.c_str());
         }
+    }
+
+    ViewModelInstance* rive_ViewModelInstanceRuntime_Instance(ViewModelInstanceRuntime* runtime)
+    {
+        return runtime->instance().release();
+    }
+
+    void rive_ViewModelInstanceRuntime_Destroy(ViewModelInstanceRuntime* runtime)
+    {
+		delete runtime;
     }
 
     bool rive_ViewModelInstanceValueRuntime_HasChanged(ViewModelInstanceValueRuntime* value)
@@ -241,13 +251,18 @@ extern "C"
         value->clearChanges();
     }
 
+    void rive_ViewModelInstanceValueRuntime_Destroy(ViewModelInstanceValueRuntime* value)
+    {
+		delete value;
+    }
+
     // Number
-    double rive_ViewModelInstanceNumberRuntime_Value(ViewModelInstanceNumberRuntime* value)
+    float rive_ViewModelInstanceNumberRuntime_Value(ViewModelInstanceNumberRuntime* value)
     {
         return value->value();
     }
 
-    void rive_ViewModelInstanceNumberRuntime_SetValue(ViewModelInstanceNumberRuntime* value, double v)
+    void rive_ViewModelInstanceNumberRuntime_SetValue(ViewModelInstanceNumberRuntime* value, float v)
     {
         value->value(v);
     }

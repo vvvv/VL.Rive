@@ -30,6 +30,8 @@ namespace VL.Rive
         nint riveFile;
         nint riveArtboard;
         nint riveScene;
+        private nint riveViewModel;
+        private ViewModelInstance riveViewModelInstance;
         bool needsReload;
         private IFrameClock? frameClock;
         Int2 lastSize;
@@ -68,6 +70,8 @@ namespace VL.Rive
 
             if (needsReload)
             {
+                needsReload = false;
+
                 if (riveArtboard != 0)
                 {
                     rive_ArtboardInstance_Destroy(riveArtboard);
@@ -91,8 +95,13 @@ namespace VL.Rive
                 {
                     riveArtboard = rive_File_GetArtboardDefault(riveFile);
                     riveScene = rive_ArtboardInstance_AnimationAt(riveArtboard, 0);
+                    riveViewModel = rive_File_DefaultArtboardViewModel(riveFile, riveArtboard);
+                    if (riveViewModel != default)
+                    {
+                        riveViewModelInstance = new ViewModelInstance(rive_ViewModelRuntime_CreateInstance(riveViewModel));
+                        var proprs = riveViewModelInstance.Properties;
+                    }
                 }
-                needsReload = false;
             }
 
             rive_Scene_AdvanceAndApply(riveScene, (float)frameClock.TimeDifference);
