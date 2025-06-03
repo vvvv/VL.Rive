@@ -5,6 +5,12 @@ namespace RiveSharpInterop
     internal static unsafe partial class Methods
     {
         [DllImport("rive_interop", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern RiveMat2D rive_ComputeAlignment(RiveFit fit, RiveAlignment alignment, RiveAABB frame, RiveAABB content, float scaleFactor);
+
+        [DllImport("rive_interop", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern RiveMat2D rive_Mat2D_InvertOrIdentity([NativeTypeName("const RiveMat2D *")] RiveMat2D* inMat);
+
+        [DllImport("rive_interop", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         [return: NativeTypeName("rive::gpu::RenderContext *")]
         public static extern nint rive_RenderContext_Create_D3D11([NativeTypeName("ID3D11Device*")] nint device, [NativeTypeName("ID3D11DeviceContext*")] nint deviceContext);
 
@@ -33,6 +39,15 @@ namespace RiveSharpInterop
 
         [DllImport("rive_interop", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern void rive_Renderer_Destroy([NativeTypeName("rive::Renderer *")] nint renderer);
+
+        [DllImport("rive_interop", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern void rive_Renderer_Save([NativeTypeName("rive::Renderer *")] nint renderer);
+
+        [DllImport("rive_interop", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern void rive_Renderer_Restore([NativeTypeName("rive::Renderer *")] nint renderer);
+
+        [DllImport("rive_interop", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern void rive_Renderer_Transform([NativeTypeName("rive::Renderer *")] nint renderer, [NativeTypeName("const RiveMat2D *")] RiveMat2D* mat);
 
         [DllImport("rive_interop", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         [return: NativeTypeName("rive::File *")]
@@ -72,16 +87,72 @@ namespace RiveSharpInterop
         public static extern void rive_Artboard_BindViewModelInstance([NativeTypeName("rive::Artboard *")] nint artboard, [NativeTypeName("rive::ViewModelInstance *")] nint viewModelInstance);
 
         [DllImport("rive_interop", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void rive_Scene_AdvanceAndApply([NativeTypeName("rive::Scene *")] nint self, float seconds);
-
-        [DllImport("rive_interop", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void rive_Scene_Draw([NativeTypeName("rive::Scene *")] nint scene, [NativeTypeName("rive::Renderer *")] nint renderer, int width, int height);
+        public static extern void rive_Scene_Draw([NativeTypeName("rive::Scene *")] nint scene, [NativeTypeName("rive::Renderer *")] nint renderer);
 
         [DllImport("rive_interop", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern void rive_Scene_Destroy([NativeTypeName("rive::Scene *")] nint self);
 
         [DllImport("rive_interop", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern float rive_Scene_Width([NativeTypeName("rive::Scene *")] nint scene);
+
+        [DllImport("rive_interop", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern float rive_Scene_Height([NativeTypeName("rive::Scene *")] nint scene);
+
+        [DllImport("rive_interop", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern RiveAABB rive_Scene_Bounds([NativeTypeName("rive::Scene *")] nint scene);
+
+        [DllImport("rive_interop", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        [return: NativeTypeName("const char *")]
+        public static extern sbyte* rive_Scene_Name([NativeTypeName("rive::Scene *")] nint scene);
+
+        [DllImport("rive_interop", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern int rive_Scene_Loop([NativeTypeName("rive::Scene *")] nint scene);
+
+        [DllImport("rive_interop", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        [return: NativeTypeName("bool")]
+        public static extern byte rive_Scene_IsTranslucent([NativeTypeName("rive::Scene *")] nint scene);
+
+        [DllImport("rive_interop", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern float rive_Scene_DurationSeconds([NativeTypeName("rive::Scene *")] nint scene);
+
+        [DllImport("rive_interop", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        [return: NativeTypeName("bool")]
+        public static extern byte rive_Scene_AdvanceAndApply([NativeTypeName("rive::Scene *")] nint scene, float elapsedSeconds);
+
+        [DllImport("rive_interop", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern void rive_Scene_BindViewModelInstance([NativeTypeName("rive::Scene *")] nint scene, [NativeTypeName("rive::ViewModelInstance *")] nint viewModelInstance);
+
+        [DllImport("rive_interop", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern RiveHitResult rive_Scene_PointerDown([NativeTypeName("rive::Scene *")] nint scene, float x, float y);
+
+        [DllImport("rive_interop", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern RiveHitResult rive_Scene_PointerMove([NativeTypeName("rive::Scene *")] nint scene, float x, float y);
+
+        [DllImport("rive_interop", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern RiveHitResult rive_Scene_PointerUp([NativeTypeName("rive::Scene *")] nint scene, float x, float y);
+
+        [DllImport("rive_interop", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern RiveHitResult rive_Scene_PointerExit([NativeTypeName("rive::Scene *")] nint scene, float x, float y);
+
+        [DllImport("rive_interop", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        [return: NativeTypeName("size_t")]
+        public static extern nuint rive_Scene_InputCount([NativeTypeName("rive::Scene *")] nint scene);
+
+        [DllImport("rive_interop", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        [return: NativeTypeName("rive::SMIInput *")]
+        public static extern nint rive_Scene_Input([NativeTypeName("rive::Scene *")] nint scene, [NativeTypeName("size_t")] nuint index);
+
+        [DllImport("rive_interop", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        [return: NativeTypeName("rive::SMIBool *")]
+        public static extern nint rive_Scene_GetBool([NativeTypeName("rive::Scene *")] nint scene, [NativeTypeName("const char *")] sbyte* name);
+
+        [DllImport("rive_interop", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        [return: NativeTypeName("rive::SMINumber *")]
+        public static extern nint rive_Scene_GetNumber([NativeTypeName("rive::Scene *")] nint scene, [NativeTypeName("const char *")] sbyte* name);
+
+        [DllImport("rive_interop", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        [return: NativeTypeName("rive::SMITrigger *")]
+        public static extern nint rive_Scene_GetTrigger([NativeTypeName("rive::Scene *")] nint scene, [NativeTypeName("const char *")] sbyte* name);
 
         [DllImport("rive_interop", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         [return: NativeTypeName("const char *")]

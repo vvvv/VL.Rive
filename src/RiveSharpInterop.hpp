@@ -19,6 +19,42 @@ using namespace rive::gpu;
 
 extern "C"
 {
+	// Math
+	// C-compatible enums for Fit and Alignment (assuming Fit is an enum, Alignment is a struct)
+	typedef enum RiveFit
+	{
+		RiveFit_Fill = 0,
+		RiveFit_Contain = 1,
+		RiveFit_Cover = 2,
+		RiveFit_FitWidth = 3,
+		RiveFit_FitHeight = 4,
+		RiveFit_None = 5,
+		RiveFit_ScaleDown = 6
+	} RiveFit;
+
+	// C-compatible struct for Alignment
+	typedef struct RiveAlignment
+	{
+		float x;
+		float y;
+	} RiveAlignment;
+
+	// C-compatible struct for AABB
+	typedef struct RiveAABB
+	{
+		float minX, minY, maxX, maxY;
+	} RiveAABB;
+
+	// C-compatible struct for Mat2D (6 floats)
+	typedef struct RiveMat2D
+	{
+		float values[6];
+	} RiveMat2D;
+
+	// C-API for computeAlignment
+    __declspec(dllexport) RiveMat2D rive_ComputeAlignment(RiveFit fit, RiveAlignment alignment, RiveAABB frame, RiveAABB content, float scaleFactor);
+	__declspec(dllexport) RiveMat2D rive_Mat2D_InvertOrIdentity(const RiveMat2D* inMat);
+
 	// RenderContext
     __declspec(dllexport) RenderContext* rive_RenderContext_Create_D3D11(ID3D11Device* device, ID3D11DeviceContext* deviceContext);
 	__declspec(dllexport) RenderTarget* rive_RenderContext_MakeRenderTarget_D3D11(RenderContext* self, int width, int height);
@@ -33,6 +69,9 @@ extern "C"
 	// Renderer
 	__declspec(dllexport) Renderer* rive_Renderer_Create(RenderContext* renderContext);
 	__declspec(dllexport) void rive_Renderer_Destroy(Renderer* renderer);
+	__declspec(dllexport) void rive_Renderer_Save(Renderer* renderer);
+	__declspec(dllexport) void rive_Renderer_Restore(Renderer* renderer);
+	__declspec(dllexport) void rive_Renderer_Transform(Renderer* renderer, const RiveMat2D* mat);
 
 	// File
 	__declspec(dllexport) File* rive_File_Import(uint8_t* data, int dataLength, Factory* factory);
@@ -50,10 +89,51 @@ extern "C"
     __declspec(dllexport) void rive_Artboard_BindViewModelInstance(Artboard* artboard, ViewModelInstance* viewModelInstance);
 
 	// Scene
-	__declspec(dllexport) void rive_Scene_AdvanceAndApply(Scene* self, float seconds);
-	__declspec(dllexport) void rive_Scene_Draw(Scene* scene, Renderer* renderer, int width, int height);
+    // Draws the scene using the given renderer
+	__declspec(dllexport) void rive_Scene_Draw(Scene* scene, Renderer* renderer);
 	__declspec(dllexport) void rive_Scene_Destroy(Scene* self);
-	__declspec(dllexport) void rive_Scene_BindViewModelInstance(Scene* scene, ViewModelInstance* viewModelInstance);
+
+    // C-API for rive::Scene
+    __declspec(dllexport) float rive_Scene_Width(Scene* scene);
+    __declspec(dllexport) float rive_Scene_Height(Scene* scene);
+
+    // Returns the bounds
+    __declspec(dllexport) RiveAABB rive_Scene_Bounds(Scene* scene);
+
+    // Returns a pointer to the internal name string (valid as long as Scene is alive)
+    __declspec(dllexport) const char* rive_Scene_Name(Scene* scene);
+
+    // Returns the Loop enum value (as int)
+    __declspec(dllexport) int rive_Scene_Loop(Scene* scene);
+
+    // Returns true if the scene is translucent
+    __declspec(dllexport) bool rive_Scene_IsTranslucent(Scene* scene);
+
+    // Returns the duration in seconds (-1 for continuous)
+    __declspec(dllexport) float rive_Scene_DurationSeconds(Scene* scene);
+
+    // Advances and applies the scene, returns true if draw() should be called
+    __declspec(dllexport) bool rive_Scene_AdvanceAndApply(Scene* scene, float elapsedSeconds);
+
+    // Binds a ViewModelInstance to the scene
+    __declspec(dllexport) void rive_Scene_BindViewModelInstance(Scene* scene, ViewModelInstance* viewModelInstance);
+
+	typedef enum RiveHitResult
+	{
+		RiveHitResult_None = 0,
+		RiveHitResult_Hit = 1,
+		RiveHitResult_HitOpaque = 2
+	} RiveHitResult;
+
+	__declspec(dllexport) RiveHitResult rive_Scene_PointerDown(Scene* scene, float x, float y);
+	__declspec(dllexport) RiveHitResult rive_Scene_PointerMove(Scene* scene, float x, float y);
+	__declspec(dllexport) RiveHitResult rive_Scene_PointerUp(Scene* scene, float x, float y);
+	__declspec(dllexport) RiveHitResult rive_Scene_PointerExit(Scene* scene, float x, float y);
+	__declspec(dllexport) size_t rive_Scene_InputCount(Scene* scene);
+	__declspec(dllexport) SMIInput* rive_Scene_Input(Scene* scene, size_t index);
+	__declspec(dllexport) SMIBool* rive_Scene_GetBool(Scene* scene, const char* name);
+	__declspec(dllexport) SMINumber* rive_Scene_GetNumber(Scene* scene, const char* name);
+	__declspec(dllexport) SMITrigger* rive_Scene_GetTrigger(Scene* scene, const char* name);
 
 	// ViewModelRuntime
 	// Returns the name of the ViewModelRuntime (pointer valid as long as runtime is alive)

@@ -1,11 +1,14 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using RiveSharpInterop;
 using SharpDX.Direct3D11;
 using Stride.Core.Mathematics;
 using Stride.Graphics;
+using Stride.Input;
 using Stride.Rendering;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reactive.Disposables;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,12 +16,13 @@ using VL.Core;
 using VL.Core.Import;
 using VL.Lib.Animation;
 using VL.Lib.IO;
+using VL.Stride.Input;
 using Path = VL.Lib.IO.Path;
 
 namespace VL.Rive;
 
 [ProcessNode(HasStateOutput = true)]
-public sealed class RivePlayer : RendererBase
+public sealed partial class RivePlayer : RendererBase
 {
     Path? file;
     RiveRenderContextD3D11? riveRenderContext;
@@ -28,11 +32,15 @@ public sealed class RivePlayer : RendererBase
     RiveFile? riveFile;
     RiveArtboard? riveArtboard;
     RiveScene? riveScene;
-    private nint riveViewModel;
-    private ViewModelInstance? riveViewModelInstance;
+    nint riveViewModel;
+    ViewModelInstance? riveViewModelInstance;
     bool needsReload;
-    private IFrameClock frameClock;
+    IFrameClock frameClock;
     Int2 lastSize;
+    RiveMat2D alignmentMat;
+
+    readonly SerialDisposable inputSubscription = new SerialDisposable();
+    IInputSource lastInputSource;
 
     public RivePlayer(NodeContext nodeContext)
     {
@@ -55,6 +63,14 @@ public sealed class RivePlayer : RendererBase
             riveRenderContext = CreateRiveRenderContext(graphicsDevice);
         if (riveRenderContext is null)
             return;
+
+        // Subscribe to input events - in case we have many sinks we assume that there's only one input source active
+        var inputSource = context.RenderContext.Tags.Get(InputExtensions.WindowInputSource);
+        if (inputSource != lastInputSource)
+        {
+            lastInputSource = inputSource;
+            inputSubscription.Disposable = SubscribeToInputSource(inputSource, context);
+        }
 
         var renderTarget = context.CommandList.RenderTarget;
 
@@ -108,7 +124,13 @@ public sealed class RivePlayer : RendererBase
             MsaaSampleCount = renderTarget.MultisampleCount != MultisampleCount.None ? (int)renderTarget.MultisampleCount : 0,
         };
         riveRenderContext.BeginFrame(in frameDescriptor);
-        riveScene.Draw(riveRenderer, size.X, size.Y);
+
+        alignmentMat = Methods.rive_ComputeAlignment(RiveFit.Contain, RiveAlignment.center, new RiveAABB(0, 0, renderTarget.Width, renderTarget.Height), riveScene.Bounds, 1f);
+
+        riveRenderer.Save();
+        riveRenderer.Transform(in alignmentMat);
+        riveScene.Draw(riveRenderer);
+        riveRenderer.Restore();
 
         var nativeRenderTarget = SharpDXInterop.GetNativeResource(renderTarget) as Texture2D;
         if (nativeRenderTarget is null)
@@ -122,6 +144,8 @@ public sealed class RivePlayer : RendererBase
 
     protected override void Destroy()
     {
+        inputSubscription.Dispose();
+
         riveScene?.Dispose();
         riveArtboard?.Dispose();
         riveFile?.Dispose();

@@ -6,6 +6,40 @@ using namespace rive::gpu;
 
 extern "C"
 {
+    // Math
+    RiveMat2D rive_ComputeAlignment(
+        RiveFit fit,
+        RiveAlignment alignment,
+        RiveAABB frame,
+        RiveAABB content,
+        float scaleFactor)
+    {
+        // Convert C types to C++ types
+        rive::Fit cppFit = static_cast<rive::Fit>(fit);
+        rive::Alignment cppAlignment(alignment.x, alignment.y);
+        rive::AABB cppFrame(frame.minX, frame.minY, frame.maxX, frame.maxY);
+        rive::AABB cppContent(content.minX, content.minY, content.maxX, content.maxY);
+
+        rive::Mat2D mat = rive::computeAlignment(cppFit, cppAlignment, cppFrame, cppContent, scaleFactor);
+
+        // Copy result to result
+        RiveMat2D result;
+        memcpy(result.values, mat.values(), sizeof(float) * 6);
+        return result;
+    }
+
+    RiveMat2D rive_Mat2D_InvertOrIdentity(const RiveMat2D* inMat)
+    {
+        rive::Mat2D cppMat(
+            inMat->values[0], inMat->values[1],
+            inMat->values[2], inMat->values[3],
+            inMat->values[4], inMat->values[5]);
+
+        RiveMat2D result;
+        memcpy(result.values, cppMat.invertOrIdentity().values(), sizeof(float) * 6);
+        return result;
+    }
+
     // RenderContext
     RenderContext* rive_RenderContext_Create_D3D11(ID3D11Device* device, ID3D11DeviceContext* deviceContext)
     {
@@ -57,6 +91,25 @@ extern "C"
     void rive_Renderer_Destroy(Renderer* renderer)
     {
         delete renderer;
+    }
+
+    void rive_Renderer_Save(Renderer* renderer)
+    {
+        renderer->save();
+    }
+
+    void rive_Renderer_Restore(Renderer* renderer)
+    {
+        renderer->restore();
+    }
+
+    void rive_Renderer_Transform(Renderer* renderer, const RiveMat2D* mat)
+    {
+        rive::Mat2D cppMat(
+            mat->values[0], mat->values[1],
+            mat->values[2], mat->values[3],
+            mat->values[4], mat->values[5]);
+        renderer->transform(cppMat);
     }
 
     // File
@@ -115,33 +168,112 @@ extern "C"
     }
 
     // Scene
-    void rive_Scene_AdvanceAndApply(Scene* self, float seconds)
+    void rive_Scene_Draw(Scene* scene, Renderer* renderer)
     {
-		self->advanceAndApply(seconds);
-    }
-
-    void rive_Scene_Draw(Scene* scene, Renderer* renderer, int width, int height)
-    {
-        Mat2D m = computeAlignment(rive::Fit::contain,
-            rive::Alignment::center,
-            rive::AABB(0, 0, width, height),
-            scene->bounds());
-        renderer->save();
-		renderer->transform(m);
         scene->draw(renderer);
-		renderer->restore();
-    }
-
-    void rive_Scene_BindViewModelInstance(Scene* scene, ViewModelInstance* viewModelInstance)
-    {
-        // TODO: Needed?
-        viewModelInstance->ref();
-        scene->bindViewModelInstance(rcp<ViewModelInstance>(viewModelInstance));
     }
 
     void rive_Scene_Destroy(Scene* self)
     {
 		delete self;
+    }
+
+    float rive_Scene_Width(Scene* scene)
+    {
+        return scene->width();
+    }
+
+    float rive_Scene_Height(Scene* scene)
+    {
+        return scene->height();
+    }
+
+    RiveAABB rive_Scene_Bounds(Scene* scene)
+    {
+        AABB bounds = scene->bounds();
+        RiveAABB result;
+        result.minX = bounds.minX;
+        result.minY = bounds.minY;
+        result.maxX = bounds.maxX;
+        result.maxY = bounds.maxY;
+        return result;
+    }
+
+    const char* rive_Scene_Name(Scene* scene)
+    {
+        return _strdup(scene->name().c_str());
+    }
+
+    int rive_Scene_Loop(Scene* scene)
+    {
+        return static_cast<int>(scene->loop());
+    }
+
+    bool rive_Scene_IsTranslucent(Scene* scene)
+    {
+        return scene->isTranslucent();
+    }
+
+    float rive_Scene_DurationSeconds(Scene* scene)
+    {
+        return scene->durationSeconds();
+    }
+
+    bool rive_Scene_AdvanceAndApply(Scene* scene, float elapsedSeconds)
+    {
+        return scene->advanceAndApply(elapsedSeconds);
+    }
+
+    void rive_Scene_BindViewModelInstance(Scene* scene, ViewModelInstance* viewModelInstance)
+    {
+		// TODO: Needed?
+        viewModelInstance->ref();
+        scene->bindViewModelInstance(rcp<ViewModelInstance>(viewModelInstance));
+    }
+
+    RiveHitResult rive_Scene_PointerDown(Scene* scene, float x, float y)
+    {
+		return static_cast<RiveHitResult>(scene->pointerDown(Vec2D(x, y)));
+    }
+
+    RiveHitResult rive_Scene_PointerMove(Scene* scene, float x, float y)
+    {
+        return static_cast<RiveHitResult>(scene->pointerMove(Vec2D(x, y)));
+    }
+
+    RiveHitResult rive_Scene_PointerUp(Scene* scene, float x, float y)
+    {
+        return static_cast<RiveHitResult>(scene->pointerUp(Vec2D(x, y)));
+    }
+
+    RiveHitResult rive_Scene_PointerExit(Scene* scene, float x, float y)
+    {
+        return static_cast<RiveHitResult>(scene->pointerExit(Vec2D(x, y)));
+    }
+
+    size_t rive_Scene_InputCount(Scene* scene)
+    {
+        return scene->inputCount();
+    }
+
+    SMIInput* rive_Scene_Input(Scene* scene, size_t index)
+    {
+        return scene->input(index);
+    }
+
+    SMIBool* rive_Scene_GetBool(Scene* scene, const char* name)
+    {
+        return scene->getBool(std::string(name));
+    }
+
+    SMINumber* rive_Scene_GetNumber(Scene* scene, const char* name)
+    {
+        return scene->getNumber(std::string(name));
+    }
+
+    SMITrigger* rive_Scene_GetTrigger(Scene* scene, const char* name)
+    {
+        return scene->getTrigger(std::string(name));
     }
 
     const char* rive_ViewModelRuntime_Name(ViewModelRuntime* runtime)
