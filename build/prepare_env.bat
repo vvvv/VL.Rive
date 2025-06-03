@@ -1,1 +1,0 @@
-set PATH=%PATH%;C:\Users\elias\source\repos\rive-runtime\build;C:\Users\elias\AppData\Local\Microsoft\WindowsApps;C:\Users\elias\Downloads\w64devkit\bin
