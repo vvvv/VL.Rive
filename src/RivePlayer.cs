@@ -32,7 +32,6 @@ public sealed partial class RivePlayer : RendererBase
     RiveFile? riveFile;
     RiveArtboard? riveArtboard;
     RiveScene? riveScene;
-    nint riveViewModel;
     ViewModelInstance? riveViewModelInstance;
     bool needsReload;
     IFrameClock frameClock;
@@ -40,9 +39,9 @@ public sealed partial class RivePlayer : RendererBase
     RiveMat2D alignmentMat;
 
     readonly SerialDisposable inputSubscription = new SerialDisposable();
-    IInputSource lastInputSource;
+    IInputSource? lastInputSource;
 
-    public RivePlayer(NodeContext nodeContext)
+    public RivePlayer([Pin(Visibility = Model.PinVisibility.Hidden)] NodeContext nodeContext)
     {
         frameClock = nodeContext.AppHost.Services.GetRequiredService<IFrameClock>();
     }
@@ -90,6 +89,7 @@ public sealed partial class RivePlayer : RendererBase
         {
             needsReload = false;
 
+            riveViewModelInstance?.Dispose();
             riveScene?.Dispose();
             riveArtboard?.Dispose();
             riveFile?.Dispose();
@@ -103,10 +103,10 @@ public sealed partial class RivePlayer : RendererBase
             {
                 riveArtboard = riveFile.GetArtboardDefault();
                 riveScene = riveArtboard.DefaultScene();
-                //riveViewModel = rive_File_DefaultArtboardViewModel(riveFile, riveArtboard);
-                //if (riveViewModel != default)
+                // Needs more careful memory management
+                //riveViewModelInstance = riveFile.DefaultArtboardViewModel(riveArtboard);
+                //if (riveViewModelInstance != default)
                 //{
-                //    riveViewModelInstance = new ViewModelInstance(rive_ViewModelRuntime_CreateInstance(riveViewModel));
                 //    var proprs = riveViewModelInstance.Properties;
                 //}
             }

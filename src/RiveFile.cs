@@ -26,6 +26,15 @@ internal class RiveFile : RiveObject
         return new RiveArtboard(artboardHandle);
     }
 
+    public ViewModelInstance? DefaultArtboardViewModel(RiveArtboard artboard)
+    {
+        var viewModelRuntime = rive_File_DefaultArtboardViewModel(handle, artboard.DangerousGetHandle());
+        if (viewModelRuntime == default)
+            return null;
+
+        return new ViewModelInstance(rive_ViewModelRuntime_CreateInstance(viewModelRuntime));
+    }
+
     protected override bool ReleaseHandle()
     {
         rive_File_Destroy(handle);
