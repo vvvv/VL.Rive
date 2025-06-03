@@ -13,7 +13,7 @@ namespace RiveSharpInterop
         public static extern nint rive_RenderContext_MakeRenderTarget_D3D11([NativeTypeName("rive::gpu::RenderContext *")] nint self, int width, int height);
 
         [DllImport("rive_interop", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void rive_RenderContext_BeginFrame([NativeTypeName("rive::gpu::RenderContext *")] nint self, int renderTargetWidth, int renderTargetHeight, int msaaSampleCount);
+        public static extern void rive_RenderContext_BeginFrame([NativeTypeName("rive::gpu::RenderContext *")] nint self, [NativeTypeName("const RenderContext::FrameDescriptor *")] FrameDescriptor* frameDesc);
 
         [DllImport("rive_interop", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern void rive_RenderContext_Flush([NativeTypeName("rive::gpu::RenderContext *")] nint self, [NativeTypeName("rive::gpu::RenderTarget *")] nint renderTarget);

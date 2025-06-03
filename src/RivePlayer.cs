@@ -13,7 +13,6 @@ using VL.Core;
 using VL.Core.Import;
 using VL.Lib.Animation;
 using VL.Lib.IO;
-using static RiveSharpInterop.Methods;
 using Path = VL.Lib.IO.Path;
 
 namespace VL.Rive
@@ -22,23 +21,22 @@ namespace VL.Rive
     public sealed class RivePlayer : RendererBase
     {
         Path? file;
-        nint riveRenderContext;
-        nint riveRenderer;
-        nint riveRenderTarget;
+        RiveRenderContextD3D11? riveRenderContext;
+        RiveRenderTargetD3D11? riveRenderTarget;
 
-
-        nint riveFile;
-        nint riveArtboard;
-        nint riveScene;
+        RiveRenderer? riveRenderer;
+        RiveFile? riveFile;
+        RiveArtboard? riveArtboard;
+        RiveScene? riveScene;
         private nint riveViewModel;
-        private ViewModelInstance riveViewModelInstance;
+        private ViewModelInstance? riveViewModelInstance;
         bool needsReload;
-        private IFrameClock? frameClock;
+        private IFrameClock frameClock;
         Int2 lastSize;
 
         public RivePlayer(NodeContext nodeContext)
         {
-            frameClock = nodeContext.AppHost.Services.GetService<IFrameClock>();
+            frameClock = nodeContext.AppHost.Services.GetRequiredService<IFrameClock>();
         }
 
         public void Update(Path? file)
@@ -50,109 +48,98 @@ namespace VL.Rive
             }
         }
 
-        protected override void DrawCore(RenderDrawContext context)
+        protected override unsafe void DrawCore(RenderDrawContext context)
         {
             var graphicsDevice = context.GraphicsDevice;
-            if (riveRenderContext == 0)
+            if (riveRenderContext is null)
                 riveRenderContext = CreateRiveRenderContext(graphicsDevice);
-            if (riveRenderContext == 0)
+            if (riveRenderContext is null)
                 return;
 
             var renderTarget = context.CommandList.RenderTarget;
 
             var size = new Int2(renderTarget.Width, renderTarget.Height);
-            if (riveRenderer == 0 || lastSize != size)
+            if (riveRenderer is null || lastSize != size)
             {
                 lastSize = size;
-                riveRenderer = rive_Renderer_Create(riveRenderContext);
-                riveRenderTarget = MakeRenderTarget(size.X, size.Y);
+
+                riveRenderer?.Dispose();
+                riveRenderTarget?.Dispose();
+
+                riveRenderer = riveRenderContext.CreateRenderer();
+                riveRenderTarget = riveRenderContext.MakeRenderTarget(size.X, size.Y);
             }
 
             if (needsReload)
             {
                 needsReload = false;
 
-                if (riveArtboard != 0)
-                {
-                    rive_ArtboardInstance_Destroy(riveArtboard);
-                    riveArtboard = 0;
-                }
-                if (riveFile != 0)
-                {
-                    rive_File_Destroy(riveFile);
-                    riveFile = 0;
-                }
-                if (riveScene != 0)
-                {
-                    rive_Scene_Destroy(riveScene);
-                    riveScene = 0;
-                }
+                riveScene?.Dispose();
+                riveArtboard?.Dispose();
+                riveFile?.Dispose();
 
                 if (file != null)
-                    riveFile = LoadRiveFile(file);
+                    riveFile = riveRenderContext.LoadFile(file);
+                else
+                    riveFile = null;
 
-                if (riveFile != 0)
+                if (riveFile != null)
                 {
-                    riveArtboard = rive_File_GetArtboardDefault(riveFile);
-                    riveScene = rive_ArtboardInstance_AnimationAt(riveArtboard, 0);
-                    riveViewModel = rive_File_DefaultArtboardViewModel(riveFile, riveArtboard);
-                    if (riveViewModel != default)
-                    {
-                        riveViewModelInstance = new ViewModelInstance(rive_ViewModelRuntime_CreateInstance(riveViewModel));
-                        var proprs = riveViewModelInstance.Properties;
-                    }
+                    riveArtboard = riveFile.GetArtboardDefault();
+                    riveScene = riveArtboard.DefaultScene();
+                    //riveViewModel = rive_File_DefaultArtboardViewModel(riveFile, riveArtboard);
+                    //if (riveViewModel != default)
+                    //{
+                    //    riveViewModelInstance = new ViewModelInstance(rive_ViewModelRuntime_CreateInstance(riveViewModel));
+                    //    var proprs = riveViewModelInstance.Properties;
+                    //}
                 }
             }
 
-            rive_Scene_AdvanceAndApply(riveScene, (float)frameClock.TimeDifference);
+            if (riveScene is null || riveRenderTarget is null)
+                return;
 
-            rive_RenderContext_BeginFrame(riveRenderContext, renderTarget.Width, renderTarget.Height, renderTarget.MultisampleCount != MultisampleCount.None ? (int)renderTarget.MultisampleCount: 0);
-            rive_Scene_Draw(riveScene, riveRenderer, size.X, size.Y);
+            riveScene.AdvanceAndApply((float)frameClock.TimeDifference);
 
+            var frameDescriptor = new RiveSharpInterop.FrameDescriptor
+            {
+                RenderTargetWidth = (uint)renderTarget.Width,
+                RenderTargetHeight = (uint)renderTarget.Height,
+                MsaaSampleCount = renderTarget.MultisampleCount != MultisampleCount.None ? (int)renderTarget.MultisampleCount : 0,
+            };
+            riveRenderContext.BeginFrame(in frameDescriptor);
+            riveScene.Draw(riveRenderer, size.X, size.Y);
 
             var nativeRenderTarget = SharpDXInterop.GetNativeResource(renderTarget) as Texture2D;
             if (nativeRenderTarget is null)
                 return;
-            rive_RenderTarget_D3D11_SetTargetTexture(riveRenderTarget, nativeRenderTarget.NativePointer);
-            rive_RenderContext_Flush(riveRenderContext, riveRenderTarget);
+            riveRenderTarget.SetTargetTexture(nativeRenderTarget.NativePointer);
+            riveRenderContext.Flush(riveRenderTarget);
 
             // Release render target texture
-            rive_RenderTarget_D3D11_SetTargetTexture(riveRenderTarget, default);
+            riveRenderTarget.SetTargetTexture(default);
         }
 
         protected override void Destroy()
         {
-            if (riveRenderContext != 0)
-            {
-                rive_RenderContext_Destroy(riveRenderContext);
-                riveRenderContext = 0;
-            }
+            riveScene?.Dispose();
+            riveArtboard?.Dispose();
+            riveFile?.Dispose();
+            riveRenderer?.Dispose();
+            riveRenderTarget?.Dispose();
+            riveRenderContext?.Dispose();
 
             base.Destroy();
         }
 
-        private nint CreateRiveRenderContext(GraphicsDevice device)
+        private RiveRenderContextD3D11? CreateRiveRenderContext(GraphicsDevice device)
         {
             var nativeDevice = SharpDXInterop.GetNativeDevice(device) as Device;
             var nativeContext = SharpDXInterop.GetNativeDeviceContext(device) as DeviceContext;
             if (nativeDevice is null || nativeContext is null)
                 return default;
 
-            return rive_RenderContext_Create_D3D11(nativeDevice.NativePointer, nativeContext.NativePointer);
-        }
-
-        private nint MakeRenderTarget(int width, int height)
-        {
-            return rive_RenderContext_MakeRenderTarget_D3D11(riveRenderContext, width, height);
-        }
-
-        private unsafe nint LoadRiveFile(string file)
-        {
-            var bytes = File.ReadAllBytes(file);
-            fixed (byte* p = bytes)
-            {
-                return rive_File_Import(p, bytes.Length, riveRenderContext);
-            }
+            return RiveRenderContextD3D11.Create(nativeDevice.NativePointer, nativeContext.NativePointer);
         }
     }
 }

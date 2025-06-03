@@ -14,7 +14,7 @@
       </p:NodeReference>
       <Patch Id="PbUNtDBhKLVPbHQvb8Ta2L">
         <Canvas Id="QOaMfDZHJrCLJ8x5mM6Dq2" CanvasType="Group">
-          <Node Bounds="449,419,62,19" Id="ErDxUE7BCCUMzcmd831TCz">
+          <Node Bounds="443,444,62,19" Id="ErDxUE7BCCUMzcmd831TCz">
             <p:NodeReference LastCategoryFullName="Rive" LastDependency="VL.Rive.dll">
               <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
               <CategoryReference Kind="Category" Name="Rive" />
@@ -22,7 +22,7 @@
             </p:NodeReference>
             <Pin Id="EkwnqTjVYHIPuJqi1fAA7O" Name="Output" Kind="StateOutputPin" />
             <Pin Id="J6oMJ6mirBHLtnOaoyGMxa" Name="Node Context" Kind="InputPin" />
-            <Pin Id="BQtamjnPByOOMaedzgaPXo" Name="File" Kind="InputPin" DefaultValue="..\..\..\Downloads\test.riv" />
+            <Pin Id="BQtamjnPByOOMaedzgaPXo" Name="File" Kind="InputPin" DefaultValue="assets\zapper.riv" />
           </Node>
           <Node Bounds="444,604,165,19" Id="OlZqrmbD94lNhsFcGv32MW">
             <p:NodeReference LastCategoryFullName="Stride" LastDependency="VL.Stride.vl">
@@ -30,7 +30,7 @@
               <Choice Kind="ProcessAppFlag" Name="RenderWindow" />
             </p:NodeReference>
             <Pin Id="NIueKD9GrYSNrHvhNrd1jB" Name="Node Context" Kind="InputPin" IsHidden="true" />
-            <Pin Id="BFidU9Km1IxPQ6DYNAurAU" Name="Bounds" Kind="InputPin" DefaultValue="1372, 102.666664, 786, 432" IsHidden="true" />
+            <Pin Id="BFidU9Km1IxPQ6DYNAurAU" Name="Bounds" Kind="InputPin" DefaultValue="1421.3334, 102.666664, 736.6667, 571.3333" IsHidden="true" />
             <Pin Id="T7PQ47SCx5EPNSs335GX1p" Name="Bound to Document" Kind="InputPin" IsHidden="true" />
             <Pin Id="FD8wmflocI3Mh9Ck0u5Xgg" Name="Dialog If Document Changed" Kind="InputPin" IsHidden="true" />
             <Pin Id="J9YZWOwPyLOOwUwGF2N6Dv" Name="Save Bounds" Kind="InputPin" IsHidden="true" />
@@ -56,6 +56,11 @@
             <Pin Id="Ng2iXYm4tyYPqSO2XY2VxP" Name="Back Buffer" Kind="OutputPin" />
             <Pin Id="F5T7zc8R7myOINvRWpxLBN" Name="Depth Buffer" Kind="OutputPin" />
           </Node>
+          <Pad Id="GygZmBu5IyXMqoIJElpTf4" Comment="File" Bounds="504,356,140,15" ShowValueBox="true" isIOBox="true" Value="assets\zapper.riv">
+            <p:TypeAnnotation LastCategoryFullName="IO" LastDependency="VL.CoreLib.vl">
+              <Choice Kind="TypeFlag" Name="Path" />
+            </p:TypeAnnotation>
+          </Pad>
         </Canvas>
         <Patch Id="DBYmxfeIOlcLboDdIT5h0Z" Name="Create" />
         <Patch Id="DogxJckKCZBOH8kuk619TC" Name="Update" />
@@ -64,6 +69,7 @@
           <Fragment Id="D3Clk786tbBPenDaPo3VHE" Patch="DogxJckKCZBOH8kuk619TC" Enabled="true" />
         </ProcessDefinition>
         <Link Id="NM7uXQLUxf0PYU2fCo0S89" Ids="EkwnqTjVYHIPuJqi1fAA7O,EKTdEXaMpoTO3nTwAJegoV" />
+        <Link Id="FhGrD1S5dDaN7ymnymXsTK" Ids="GygZmBu5IyXMqoIJElpTf4,BQtamjnPByOOMaedzgaPXo" />
       </Patch>
     </Node>
   </Patch>

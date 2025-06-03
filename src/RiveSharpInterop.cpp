@@ -19,14 +19,9 @@ extern "C"
         return d3dImpl->makeRenderTarget(width, height).release();
     }
 
-    void rive_RenderContext_BeginFrame(RenderContext* self, int renderTargetWidth, int renderTargetHeight, int msaaSampleCount)
+    void rive_RenderContext_BeginFrame(RenderContext* self, const RenderContext::FrameDescriptor* frameDesc)
     {
-		self->beginFrame({
-            .renderTargetWidth = static_cast<uint32_t>(renderTargetWidth),
-            .renderTargetHeight = static_cast<uint32_t>(renderTargetHeight),
-            .loadAction = LoadAction::preserveRenderTarget,
-            .msaaSampleCount = msaaSampleCount,
-        });
+        self->beginFrame(*frameDesc);
     }
 
     void rive_RenderContext_Flush(RenderContext* self, RenderTarget* renderTarget)
