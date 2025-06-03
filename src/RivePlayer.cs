@@ -15,131 +15,130 @@ using VL.Lib.Animation;
 using VL.Lib.IO;
 using Path = VL.Lib.IO.Path;
 
-namespace VL.Rive
+namespace VL.Rive;
+
+[ProcessNode(HasStateOutput = true)]
+public sealed class RivePlayer : RendererBase
 {
-    [ProcessNode(HasStateOutput = true)]
-    public sealed class RivePlayer : RendererBase
+    Path? file;
+    RiveRenderContextD3D11? riveRenderContext;
+    RiveRenderTargetD3D11? riveRenderTarget;
+
+    RiveRenderer? riveRenderer;
+    RiveFile? riveFile;
+    RiveArtboard? riveArtboard;
+    RiveScene? riveScene;
+    private nint riveViewModel;
+    private ViewModelInstance? riveViewModelInstance;
+    bool needsReload;
+    private IFrameClock frameClock;
+    Int2 lastSize;
+
+    public RivePlayer(NodeContext nodeContext)
     {
-        Path? file;
-        RiveRenderContextD3D11? riveRenderContext;
-        RiveRenderTargetD3D11? riveRenderTarget;
+        frameClock = nodeContext.AppHost.Services.GetRequiredService<IFrameClock>();
+    }
 
-        RiveRenderer? riveRenderer;
-        RiveFile? riveFile;
-        RiveArtboard? riveArtboard;
-        RiveScene? riveScene;
-        private nint riveViewModel;
-        private ViewModelInstance? riveViewModelInstance;
-        bool needsReload;
-        private IFrameClock frameClock;
-        Int2 lastSize;
-
-        public RivePlayer(NodeContext nodeContext)
+    public void Update(Path? file)
+    {
+        if (file != this.file)
         {
-            frameClock = nodeContext.AppHost.Services.GetRequiredService<IFrameClock>();
+            this.file = file;
+            needsReload = true;
+        }
+    }
+
+    protected override unsafe void DrawCore(RenderDrawContext context)
+    {
+        var graphicsDevice = context.GraphicsDevice;
+        if (riveRenderContext is null)
+            riveRenderContext = CreateRiveRenderContext(graphicsDevice);
+        if (riveRenderContext is null)
+            return;
+
+        var renderTarget = context.CommandList.RenderTarget;
+
+        var size = new Int2(renderTarget.Width, renderTarget.Height);
+        if (riveRenderer is null || lastSize != size)
+        {
+            lastSize = size;
+
+            riveRenderer?.Dispose();
+            riveRenderTarget?.Dispose();
+
+            riveRenderer = riveRenderContext.CreateRenderer();
+            riveRenderTarget = riveRenderContext.MakeRenderTarget(size.X, size.Y);
         }
 
-        public void Update(Path? file)
+        if (needsReload)
         {
-            if (file != this.file)
-            {
-                this.file = file;
-                needsReload = true;
-            }
-        }
+            needsReload = false;
 
-        protected override unsafe void DrawCore(RenderDrawContext context)
-        {
-            var graphicsDevice = context.GraphicsDevice;
-            if (riveRenderContext is null)
-                riveRenderContext = CreateRiveRenderContext(graphicsDevice);
-            if (riveRenderContext is null)
-                return;
-
-            var renderTarget = context.CommandList.RenderTarget;
-
-            var size = new Int2(renderTarget.Width, renderTarget.Height);
-            if (riveRenderer is null || lastSize != size)
-            {
-                lastSize = size;
-
-                riveRenderer?.Dispose();
-                riveRenderTarget?.Dispose();
-
-                riveRenderer = riveRenderContext.CreateRenderer();
-                riveRenderTarget = riveRenderContext.MakeRenderTarget(size.X, size.Y);
-            }
-
-            if (needsReload)
-            {
-                needsReload = false;
-
-                riveScene?.Dispose();
-                riveArtboard?.Dispose();
-                riveFile?.Dispose();
-
-                if (file != null)
-                    riveFile = riveRenderContext.LoadFile(file);
-                else
-                    riveFile = null;
-
-                if (riveFile != null)
-                {
-                    riveArtboard = riveFile.GetArtboardDefault();
-                    riveScene = riveArtboard.DefaultScene();
-                    //riveViewModel = rive_File_DefaultArtboardViewModel(riveFile, riveArtboard);
-                    //if (riveViewModel != default)
-                    //{
-                    //    riveViewModelInstance = new ViewModelInstance(rive_ViewModelRuntime_CreateInstance(riveViewModel));
-                    //    var proprs = riveViewModelInstance.Properties;
-                    //}
-                }
-            }
-
-            if (riveScene is null || riveRenderTarget is null)
-                return;
-
-            riveScene.AdvanceAndApply((float)frameClock.TimeDifference);
-
-            var frameDescriptor = new RiveSharpInterop.FrameDescriptor
-            {
-                RenderTargetWidth = (uint)renderTarget.Width,
-                RenderTargetHeight = (uint)renderTarget.Height,
-                MsaaSampleCount = renderTarget.MultisampleCount != MultisampleCount.None ? (int)renderTarget.MultisampleCount : 0,
-            };
-            riveRenderContext.BeginFrame(in frameDescriptor);
-            riveScene.Draw(riveRenderer, size.X, size.Y);
-
-            var nativeRenderTarget = SharpDXInterop.GetNativeResource(renderTarget) as Texture2D;
-            if (nativeRenderTarget is null)
-                return;
-            riveRenderTarget.SetTargetTexture(nativeRenderTarget.NativePointer);
-            riveRenderContext.Flush(riveRenderTarget);
-
-            // Release render target texture
-            riveRenderTarget.SetTargetTexture(default);
-        }
-
-        protected override void Destroy()
-        {
             riveScene?.Dispose();
             riveArtboard?.Dispose();
             riveFile?.Dispose();
-            riveRenderer?.Dispose();
-            riveRenderTarget?.Dispose();
-            riveRenderContext?.Dispose();
 
-            base.Destroy();
+            if (file != null)
+                riveFile = riveRenderContext.LoadFile(file);
+            else
+                riveFile = null;
+
+            if (riveFile != null)
+            {
+                riveArtboard = riveFile.GetArtboardDefault();
+                riveScene = riveArtboard.DefaultScene();
+                //riveViewModel = rive_File_DefaultArtboardViewModel(riveFile, riveArtboard);
+                //if (riveViewModel != default)
+                //{
+                //    riveViewModelInstance = new ViewModelInstance(rive_ViewModelRuntime_CreateInstance(riveViewModel));
+                //    var proprs = riveViewModelInstance.Properties;
+                //}
+            }
         }
 
-        private RiveRenderContextD3D11? CreateRiveRenderContext(GraphicsDevice device)
+        if (riveScene is null || riveRenderTarget is null)
+            return;
+
+        riveScene.AdvanceAndApply((float)frameClock.TimeDifference);
+
+        var frameDescriptor = new RiveSharpInterop.FrameDescriptor
         {
-            var nativeDevice = SharpDXInterop.GetNativeDevice(device) as Device;
-            var nativeContext = SharpDXInterop.GetNativeDeviceContext(device) as DeviceContext;
-            if (nativeDevice is null || nativeContext is null)
-                return default;
+            RenderTargetWidth = (uint)renderTarget.Width,
+            RenderTargetHeight = (uint)renderTarget.Height,
+            MsaaSampleCount = renderTarget.MultisampleCount != MultisampleCount.None ? (int)renderTarget.MultisampleCount : 0,
+        };
+        riveRenderContext.BeginFrame(in frameDescriptor);
+        riveScene.Draw(riveRenderer, size.X, size.Y);
 
-            return RiveRenderContextD3D11.Create(nativeDevice.NativePointer, nativeContext.NativePointer);
-        }
+        var nativeRenderTarget = SharpDXInterop.GetNativeResource(renderTarget) as Texture2D;
+        if (nativeRenderTarget is null)
+            return;
+        riveRenderTarget.SetTargetTexture(nativeRenderTarget.NativePointer);
+        riveRenderContext.Flush(riveRenderTarget);
+
+        // Release render target texture
+        riveRenderTarget.SetTargetTexture(default);
+    }
+
+    protected override void Destroy()
+    {
+        riveScene?.Dispose();
+        riveArtboard?.Dispose();
+        riveFile?.Dispose();
+        riveRenderer?.Dispose();
+        riveRenderTarget?.Dispose();
+        riveRenderContext?.Dispose();
+
+        base.Destroy();
+    }
+
+    private RiveRenderContextD3D11? CreateRiveRenderContext(GraphicsDevice device)
+    {
+        var nativeDevice = SharpDXInterop.GetNativeDevice(device) as Device;
+        var nativeContext = SharpDXInterop.GetNativeDeviceContext(device) as DeviceContext;
+        if (nativeDevice is null || nativeContext is null)
+            return default;
+
+        return RiveRenderContextD3D11.Create(nativeDevice.NativePointer, nativeContext.NativePointer);
     }
 }

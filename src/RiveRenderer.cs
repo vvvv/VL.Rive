@@ -1,16 +1,15 @@
 ﻿using static RiveSharpInterop.Methods;
 
-namespace VL.Rive
+namespace VL.Rive;
+
+internal class RiveRenderer : RiveObject
 {
-    internal class RiveRenderer : RiveObject
+    public RiveRenderer(nint handle) : base(handle)
     {
-        public RiveRenderer(nint handle) : base(handle)
-        {
-        }
-        protected override bool ReleaseHandle()
-        {
-            rive_Renderer_Destroy(handle);
-            return true;
-        }
+    }
+    protected override bool ReleaseHandle()
+    {
+        rive_Renderer_Destroy(handle);
+        return true;
     }
 }

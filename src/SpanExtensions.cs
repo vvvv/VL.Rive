@@ -2,7 +2,7 @@
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace VL.OpenEXR;
+namespace VL.Rive;
 
 static unsafe class SpanExtensions
 {

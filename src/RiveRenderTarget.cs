@@ -1,29 +1,16 @@
 ﻿using static RiveSharpInterop.Methods;
 
-namespace VL.Rive
-{
-    internal abstract class RiveRenderTarget : RiveObject
-    {
-        public RiveRenderTarget(nint handle) : base(handle)
-        {
-        }
+namespace VL.Rive;
 
-        protected override bool ReleaseHandle()
-        {
-            rive_RenderTarget_Destroy(handle);
-            return true;
-        }
+internal abstract class RiveRenderTarget : RiveObject
+{
+    public RiveRenderTarget(nint handle) : base(handle)
+    {
     }
 
-    internal class RiveRenderTargetD3D11 : RiveRenderTarget
+    protected override bool ReleaseHandle()
     {
-        public RiveRenderTargetD3D11(nint handle) : base(handle)
-        {
-        }
-        
-        public void SetTargetTexture(nint textureHandle)
-        {
-            rive_RenderTarget_D3D11_SetTargetTexture(handle, textureHandle);
-        }
+        rive_RenderTarget_Destroy(handle);
+        return true;
     }
 }

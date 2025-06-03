@@ -3,7 +3,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace VL.OpenEXR;
+namespace VL.Rive;
 
 unsafe struct MarshaledString : IDisposable
 {
