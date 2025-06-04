@@ -49,6 +49,9 @@ internal unsafe class RiveViewModelInstance : SafeHandle
 
             RiveViewModelInstanceValue? FromPropertyData(nint viewModel, RivePropertyData propertyData)
             {
+                if (propertyData.Name.Contains('/'))
+                    return null; // Skip properties with slashes in their names - Rive treats these as paths and will not be able to resolve them correctly
+
                 using var path = new MarshaledString(propertyData.Name);
                 switch (propertyData.Type)
                 {

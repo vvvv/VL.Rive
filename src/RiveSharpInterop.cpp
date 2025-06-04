@@ -287,6 +287,11 @@ extern "C"
         return runtime->createInstance();
     }
 
+    ViewModelInstanceRuntime* rive_ViewModelRuntime_CreateDefaultInstance(ViewModelRuntime* runtime)
+    {
+        return runtime->createDefaultInstance();
+    }
+
     const char* rive_ViewModelInstanceRuntime_Name(ViewModelInstanceRuntime* runtime)
     {
         return runtime->name().c_str();

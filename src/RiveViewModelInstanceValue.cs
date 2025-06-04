@@ -15,6 +15,9 @@ internal unsafe class RiveViewModelInstanceValue : SafeHandle
     public RiveViewModelInstanceValue(RiveViewModelInstance parent, nint handle, RivePropertyData propertyData)
         : base(default, true)
     {
+        if (handle == nint.Zero)
+            throw new ArgumentNullException(nameof(handle), "Handle cannot be zero.");
+
         this.parent = parent;
         this.propertyData = propertyData;
         SetHandle(handle);
@@ -38,6 +41,21 @@ internal unsafe class RiveViewModelInstanceValue : SafeHandle
         RiveDataType.AssetImage => typeof(IImage),
         _ => throw new NotSupportedException($"Unsupported data type: {propertyData.Type}")
     };
+
+    public bool HasChanged
+    {
+        get
+        {
+            ObjectDisposedException.ThrowIf(IsInvalid, "RiveViewModelInstance is disposed.");
+            return rive_ViewModelInstanceValueRuntime_HasChanged(handle) != 0;
+        }
+    }
+
+    public void ClearChanges()
+    {
+        ObjectDisposedException.ThrowIf(IsInvalid, "RiveViewModelInstance is disposed.");
+        rive_ViewModelInstanceValueRuntime_ClearChanges(handle);
+    }
 
     public object Value
     {

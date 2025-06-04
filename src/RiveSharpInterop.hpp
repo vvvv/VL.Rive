@@ -141,6 +141,7 @@ extern "C"
 
 	// Creates a new ViewModelInstanceRuntime from the ViewModelRuntime
 	__declspec(dllexport) ViewModelInstanceRuntime* rive_ViewModelRuntime_CreateInstance(ViewModelRuntime* runtime);
+	__declspec(dllexport) ViewModelInstanceRuntime* rive_ViewModelRuntime_CreateDefaultInstance(ViewModelRuntime* runtime);
 
 	// Property data struct for C API
 	struct RivePropertyData

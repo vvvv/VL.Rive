@@ -163,6 +163,10 @@ namespace VL.Rive.Interop
         public static extern nint rive_ViewModelRuntime_CreateInstance([NativeTypeName("rive::ViewModelRuntime *")] nint runtime);
 
         [DllImport("rive_interop", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        [return: NativeTypeName("rive::ViewModelInstanceRuntime *")]
+        public static extern nint rive_ViewModelRuntime_CreateDefaultInstance([NativeTypeName("rive::ViewModelRuntime *")] nint runtime);
+
+        [DllImport("rive_interop", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         [return: NativeTypeName("const char *")]
         public static extern sbyte* rive_ViewModelInstanceRuntime_Name([NativeTypeName("rive::ViewModelInstanceRuntime *")] nint runtime);
 

@@ -12,6 +12,7 @@ using VL.Lib.Animation;
 using VL.Stride.Input;
 using Path = VL.Lib.IO.Path;
 using VL.Lib.Reactive;
+using System.Reactive.Linq;
 
 namespace VL.Rive;
 
@@ -121,6 +122,11 @@ public sealed partial class RivePlayer : RendererBase
 
         riveScene.AdvanceAndApply((float)frameClock.TimeDifference);
 
+        if (riveViewModelInstance is not null)
+        {
+            ReadValuesFromRive(riveViewModelInstance);
+        }
+
         var frameDescriptor = new FrameDescriptor
         {
             RenderTargetWidth = (uint)renderTarget.Width,
@@ -146,12 +152,41 @@ public sealed partial class RivePlayer : RendererBase
         riveRenderTarget.SetTargetTexture(default);
     }
 
+    private void ReadValuesFromRive(RiveViewModelInstance riveViewModelInstance)
+    {
+        if (lastViewModel is IChannel channel)
+        {
+            if (channel.Object is IVLObject o)
+            {
+                var ourDataChanged = false;
+                foreach (var riveProp in riveViewModelInstance.Properties)
+                {
+                    if (riveProp.HasChanged)
+                    {
+                        var type = o.GetVLTypeInfo();
+                        var prop = type.GetProperty(riveProp.Name);
+                        if (prop is not null)
+                        {
+                            ourDataChanged = true;
+                            // Set the value on the object
+                            o = prop.WithValue(o, riveProp.Value);
+                        }
+                        riveProp.ClearChanges();
+                    }
+                }
+
+                if (ourDataChanged)
+                    channel.Object = o;
+            }
+        }
+    }
+
     private IDisposable? BindTo(object? viewModel)
     {
         if (viewModel is IChannel channel)
         {
             // Immutable model
-            return channel.ChannelOfObject.Subscribe(v =>
+            return channel.ChannelOfObject.StartWith(channel.ChannelOfObject.Value).Subscribe(v =>
             {
                 if (riveViewModelInstance is null)
                     return;

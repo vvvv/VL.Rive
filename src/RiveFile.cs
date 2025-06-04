@@ -27,7 +27,7 @@ internal class RiveFile : RiveObject
         if (viewModelRuntime == default)
             return null;
 
-        return new RiveViewModelInstance(rive_ViewModelRuntime_CreateInstance(viewModelRuntime));
+        return new RiveViewModelInstance(rive_ViewModelRuntime_CreateDefaultInstance(viewModelRuntime));
     }
 
     protected override bool ReleaseHandle()
