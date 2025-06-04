@@ -1,9 +1,7 @@
-﻿#nullable enable
-using System;
-using System.Runtime.InteropServices;
+﻿using System.Runtime.InteropServices;
 using System.Text;
 
-namespace VL.Rive;
+namespace VL.Rive.Interop;
 
 unsafe struct MarshaledString : IDisposable
 {

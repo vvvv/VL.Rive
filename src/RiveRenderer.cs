@@ -1,6 +1,6 @@
-﻿using RiveSharpInterop;
+﻿using VL.Rive.Interop;
 using System.Runtime.CompilerServices;
-using static RiveSharpInterop.Methods;
+using static VL.Rive.Interop.Methods;
 
 namespace VL.Rive;
 

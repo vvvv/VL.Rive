@@ -12,7 +12,7 @@ c++17
 --file
 C:\Users\elias\source\repos\VL.Rive\src\RiveSharpInterop.hpp
 --namespace
-RiveSharpInterop
+VL.Rive.Interop
 --output
 generated
 --include-directory

@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
-using static RiveSharpInterop.Methods;
+﻿using System.Runtime.CompilerServices;
+using VL.Rive.Interop;
+using static VL.Rive.Interop.Methods;
 
 namespace VL.Rive;
 
@@ -33,9 +29,9 @@ internal abstract class RiveRenderContext : RiveObject
         return new RiveRenderer(renderer);
     }
 
-    public unsafe void BeginFrame(ref readonly RiveSharpInterop.FrameDescriptor frameDescriptor)
+    public unsafe void BeginFrame(ref readonly FrameDescriptor frameDescriptor)
     {
-        rive_RenderContext_BeginFrame(handle, (RiveSharpInterop.FrameDescriptor*)Unsafe.AsPointer(ref Unsafe.AsRef(in frameDescriptor)));
+        rive_RenderContext_BeginFrame(handle, (FrameDescriptor*)Unsafe.AsPointer(ref Unsafe.AsRef(in frameDescriptor)));
     }
 
     public void Flush(RiveRenderTarget renderTarget)

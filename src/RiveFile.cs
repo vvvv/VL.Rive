@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static RiveSharpInterop.Methods;
+﻿using static VL.Rive.Interop.Methods;
 
 namespace VL.Rive;
 
@@ -26,13 +21,13 @@ internal class RiveFile : RiveObject
         return new RiveArtboard(artboardHandle);
     }
 
-    public ViewModelInstance? DefaultArtboardViewModel(RiveArtboard artboard)
+    public RiveViewModelInstance? DefaultArtboardViewModel(RiveArtboard artboard)
     {
         var viewModelRuntime = rive_File_DefaultArtboardViewModel(handle, artboard.DangerousGetHandle());
         if (viewModelRuntime == default)
             return null;
 
-        return new ViewModelInstance(rive_ViewModelRuntime_CreateInstance(viewModelRuntime));
+        return new RiveViewModelInstance(rive_ViewModelRuntime_CreateInstance(viewModelRuntime));
     }
 
     protected override bool ReleaseHandle()

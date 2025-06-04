@@ -1,6 +1,6 @@
 using System.Runtime.InteropServices;
 
-namespace RiveSharpInterop
+namespace VL.Rive.Interop
 {
     internal static unsafe partial class Methods
     {

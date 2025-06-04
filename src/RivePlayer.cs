@@ -1,21 +1,14 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using RiveSharpInterop;
+using VL.Rive.Interop;
 using SharpDX.Direct3D11;
 using Stride.Core.Mathematics;
 using Stride.Graphics;
 using Stride.Input;
 using Stride.Rendering;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reactive.Disposables;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 using VL.Core;
 using VL.Core.Import;
 using VL.Lib.Animation;
-using VL.Lib.IO;
 using VL.Stride.Input;
 using Path = VL.Lib.IO.Path;
 
@@ -32,7 +25,7 @@ public sealed partial class RivePlayer : RendererBase
     RiveFile? riveFile;
     RiveArtboard? riveArtboard;
     RiveScene? riveScene;
-    ViewModelInstance? riveViewModelInstance;
+    RiveViewModelInstance? riveViewModelInstance;
     bool needsReload;
     IFrameClock frameClock;
     Int2 lastSize;
@@ -117,7 +110,7 @@ public sealed partial class RivePlayer : RendererBase
 
         riveScene.AdvanceAndApply((float)frameClock.TimeDifference);
 
-        var frameDescriptor = new RiveSharpInterop.FrameDescriptor
+        var frameDescriptor = new FrameDescriptor
         {
             RenderTargetWidth = (uint)renderTarget.Width,
             RenderTargetHeight = (uint)renderTarget.Height,

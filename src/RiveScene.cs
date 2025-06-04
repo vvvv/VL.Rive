@@ -1,5 +1,5 @@
-﻿using RiveSharpInterop;
-using static RiveSharpInterop.Methods;
+﻿using VL.Rive.Interop;
+using static VL.Rive.Interop.Methods;
 
 namespace VL.Rive;
 

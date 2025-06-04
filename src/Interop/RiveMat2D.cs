@@ -1,4 +1,4 @@
-﻿namespace RiveSharpInterop;
+﻿namespace VL.Rive.Interop;
 
 using System.Numerics;
 using static Methods;

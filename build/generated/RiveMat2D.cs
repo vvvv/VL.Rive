@@ -1,6 +1,6 @@
 using System.Runtime.CompilerServices;
 
-namespace RiveSharpInterop
+namespace VL.Rive.Interop
 {
     internal partial struct RiveMat2D
     {

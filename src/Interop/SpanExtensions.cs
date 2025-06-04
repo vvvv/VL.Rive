@@ -1,18 +1,17 @@
-﻿using System;
-using System.Runtime.InteropServices;
+﻿using System.Runtime.InteropServices;
 using System.Text;
 
-namespace VL.Rive;
+namespace VL.Rive.Interop;
 
 static unsafe class SpanExtensions
 {
     public static string AsString(sbyte* pStr)
     {
-        var span = MemoryMarshal.CreateReadOnlySpanFromNullTerminated((byte*)(pStr));
+        var span = MemoryMarshal.CreateReadOnlySpanFromNullTerminated((byte*)pStr);
         return span.AsString();
     }
 
-    public static string AsString(this Span<byte> self) => AsString((ReadOnlySpan<byte>)self);
+    public static string AsString(this Span<byte> self) => ((ReadOnlySpan<byte>)self).AsString();
 
     public static string AsString(this ReadOnlySpan<byte> self)
     {

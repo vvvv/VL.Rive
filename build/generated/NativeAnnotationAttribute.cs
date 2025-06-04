@@ -1,7 +1,7 @@
 using System;
 using System.Diagnostics;
 
-namespace RiveSharpInterop
+namespace VL.Rive.Interop
 {
     /// <summary>Defines the annotation found in a native declaration.</summary>
     [AttributeUsage(AttributeTargets.Struct | AttributeTargets.Enum | AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter | AttributeTargets.ReturnValue, AllowMultiple = true, Inherited = false)]

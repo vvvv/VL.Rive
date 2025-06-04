@@ -1,4 +1,4 @@
-﻿namespace RiveSharpInterop;
+﻿namespace VL.Rive.Interop;
 
 partial struct RiveAlignment
 {

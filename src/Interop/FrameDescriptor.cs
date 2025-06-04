@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace RiveSharpInterop;
+﻿namespace VL.Rive.Interop;
 
 // Specifies what to do with the render target at the beginning of a flush.
 enum LoadAction
