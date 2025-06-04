@@ -365,7 +365,7 @@ extern "C"
 
     void rive_ViewModelInstanceRuntime_Destroy(ViewModelInstanceRuntime* runtime)
     {
-		delete runtime;
+        runtime->unref();
     }
 
     bool rive_ViewModelInstanceValueRuntime_HasChanged(ViewModelInstanceValueRuntime* value)
@@ -376,11 +376,6 @@ extern "C"
     void rive_ViewModelInstanceValueRuntime_ClearChanges(ViewModelInstanceValueRuntime* value)
     {
         value->clearChanges();
-    }
-
-    void rive_ViewModelInstanceValueRuntime_Destroy(ViewModelInstanceValueRuntime* value)
-    {
-		delete value;
     }
 
     // Number

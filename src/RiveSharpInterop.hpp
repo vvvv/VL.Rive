@@ -198,7 +198,6 @@ extern "C"
 	// ViewModelInstanceValueRuntime
 	__declspec(dllexport) bool rive_ViewModelInstanceValueRuntime_HasChanged(ViewModelInstanceValueRuntime* value);
 	__declspec(dllexport) void rive_ViewModelInstanceValueRuntime_ClearChanges(ViewModelInstanceValueRuntime* value);
-	__declspec(dllexport) void rive_ViewModelInstanceValueRuntime_Destroy(ViewModelInstanceValueRuntime* value);
 
 	// ViewModelInstanceNumberRuntime
 	__declspec(dllexport) float rive_ViewModelInstanceNumberRuntime_Value(ViewModelInstanceNumberRuntime* value);

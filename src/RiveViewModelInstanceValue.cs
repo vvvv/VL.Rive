@@ -8,34 +8,18 @@ namespace VL.Rive;
 
 internal unsafe class RiveViewModelInstanceValue : SafeHandle
 {
-    public static RiveViewModelInstanceValue? FromPropertyData(nint viewModel, RivePropertyData propertyData)
-    {
-        using var path = new MarshaledString(propertyData.Name);
-        switch (propertyData.Type)
-        {
-            case RiveDataType.String:
-                return new RiveViewModelInstanceValue(rive_ViewModelInstanceRuntime_PropertyString(viewModel, path.Value), propertyData);
-            case RiveDataType.Number:
-                return new RiveViewModelInstanceValue(rive_ViewModelInstanceRuntime_PropertyNumber(viewModel, path.Value), propertyData);
-            case RiveDataType.Boolean:
-                return new RiveViewModelInstanceValue(rive_ViewModelInstanceRuntime_PropertyBoolean(viewModel, path.Value), propertyData);
-            case RiveDataType.Color:
-                return new RiveViewModelInstanceValue(rive_ViewModelInstanceRuntime_PropertyColor(viewModel, path.Value), propertyData);
-            default:
-                return null;
-        }
-    }
-
+    private readonly RiveViewModelInstance parent;
     private readonly RivePropertyData propertyData;
 
-    public RiveViewModelInstanceValue(nint handle, RivePropertyData propertyData)
+    public RiveViewModelInstanceValue(RiveViewModelInstance parent, nint handle, RivePropertyData propertyData)
         : base(default, true)
     {
-        SetHandle(handle);
+        this.parent = parent;
         this.propertyData = propertyData;
+        SetHandle(handle);
     }
 
-    public override bool IsInvalid => handle == default || IsClosed;
+    public override bool IsInvalid => parent.IsInvalid;
 
     public string Name => propertyData.Name;
 
@@ -58,6 +42,8 @@ internal unsafe class RiveViewModelInstanceValue : SafeHandle
     {
         get
         {
+            ObjectDisposedException.ThrowIf(IsInvalid, "RiveViewModelInstance is disposed.");
+
             switch (propertyData.Type)
             {
                 case RiveDataType.String:
@@ -75,6 +61,8 @@ internal unsafe class RiveViewModelInstanceValue : SafeHandle
         }
         set
         {
+            ObjectDisposedException.ThrowIf(IsInvalid, "RiveViewModelInstance is disposed.");
+
             switch (propertyData.Type)
             {
                 case RiveDataType.String:
@@ -109,7 +97,7 @@ internal unsafe class RiveViewModelInstanceValue : SafeHandle
 
     protected override bool ReleaseHandle()
     {
-        rive_ViewModelInstanceValueRuntime_Destroy(handle);
+        // Cleaned up by the parent instance
         return true;
     }
 }
