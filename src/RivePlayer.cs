@@ -11,6 +11,7 @@ using VL.Core.Import;
 using VL.Lib.Animation;
 using VL.Stride.Input;
 using Path = VL.Lib.IO.Path;
+using VL.Lib.Reactive;
 
 namespace VL.Rive;
 
@@ -34,17 +35,26 @@ public sealed partial class RivePlayer : RendererBase
     readonly SerialDisposable inputSubscription = new SerialDisposable();
     IInputSource? lastInputSource;
 
+    readonly SerialDisposable viewModelSubscription = new SerialDisposable();
+    object? lastViewModel;
+
     public RivePlayer([Pin(Visibility = Model.PinVisibility.Hidden)] NodeContext nodeContext)
     {
         frameClock = nodeContext.AppHost.Services.GetRequiredService<IFrameClock>();
     }
 
-    public void Update(Path? file)
+    public void Update(Path? file, object? viewModel)
     {
         if (file != this.file)
         {
             this.file = file;
             needsReload = true;
+        }
+
+        if (viewModel != lastViewModel)
+        {
+            lastViewModel = viewModel;
+            viewModelSubscription.Disposable = BindTo(viewModel);
         }
     }
 
@@ -97,11 +107,12 @@ public sealed partial class RivePlayer : RendererBase
                 riveArtboard = riveFile.GetArtboardDefault();
                 riveScene = riveArtboard.DefaultScene();
                 // Needs more careful memory management
-                //riveViewModelInstance = riveFile.DefaultArtboardViewModel(riveArtboard);
-                //if (riveViewModelInstance != default)
-                //{
-                //    var proprs = riveViewModelInstance.Properties;
-                //}
+                riveViewModelInstance = riveFile.DefaultArtboardViewModel(riveArtboard);
+                if (riveViewModelInstance != default)
+                {
+                    riveArtboard.BindViewModelInstance(riveViewModelInstance);
+                    riveScene?.BindViewModelInstance(riveViewModelInstance);
+                }
             }
         }
 
@@ -135,8 +146,39 @@ public sealed partial class RivePlayer : RendererBase
         riveRenderTarget.SetTargetTexture(default);
     }
 
+    private IDisposable? BindTo(object? viewModel)
+    {
+        if (viewModel is IChannel channel)
+        {
+            // Immutable model
+            return channel.ChannelOfObject.Subscribe(v =>
+            {
+                if (riveViewModelInstance is null)
+                    return;
+
+                // TODO: Remove this restriction once new binding branch is merged
+                if (v is not IVLObject o)
+                    return;
+
+                var type = v.GetVLTypeInfo();
+                foreach (var riveProp in riveViewModelInstance.Properties)
+                {
+                    var prop = type.GetProperty(riveProp.Name);
+                    if (prop is null)
+                        continue;
+
+                    var value = prop.GetValue(o);
+                    riveProp.Value = value;
+                }
+            });
+        }
+
+        return null;
+    }
+
     protected override void Destroy()
     {
+        viewModelSubscription.Dispose();
         inputSubscription.Dispose();
 
         riveScene?.Dispose();

@@ -29,4 +29,9 @@ internal class RiveScene : RiveObject
         rive_Scene_Destroy(handle);
         return true;
     }
+
+    internal void BindViewModelInstance(RiveViewModelInstance riveViewModelInstance)
+    {
+        rive_Scene_BindViewModelInstance(handle, riveViewModelInstance.InstanceHandle);
+    }
 }

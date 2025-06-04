@@ -5,6 +5,7 @@ using static VL.Rive.Interop.Methods;
 
 namespace VL.Rive;
 
+// Maps to the RiveViewModelInstanceRuntime class in the Rive C++ runtime
 internal unsafe class RiveViewModelInstance : SafeHandle
 {
     private ImmutableArray<RiveViewModelInstanceValue> properties;
@@ -14,6 +15,9 @@ internal unsafe class RiveViewModelInstance : SafeHandle
     {
         SetHandle(handle);
     }
+
+    // Pointer to RiveViewModelInstance
+    internal nint InstanceHandle => rive_ViewModelInstanceRuntime_Instance(handle);
 
     public override bool IsInvalid => handle == default || IsClosed;
 

@@ -19,4 +19,9 @@ internal class RiveArtboard : RiveObject
         rive_ArtboardInstance_Destroy(handle);
         return true;
     }
+
+    public void BindViewModelInstance(RiveViewModelInstance riveViewModelInstance)
+    {
+        rive_Artboard_BindViewModelInstance(handle, riveViewModelInstance.InstanceHandle);
+    }
 }

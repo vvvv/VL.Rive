@@ -6,6 +6,7 @@ using static VL.Rive.Interop.Methods;
 
 namespace VL.Rive;
 
+// Maps to RiveViewModelInstanceValueRuntime in the C++ code
 internal unsafe class RiveViewModelInstanceValue : SafeHandle
 {
     private readonly RiveViewModelInstance parent;
@@ -54,7 +55,8 @@ internal unsafe class RiveViewModelInstanceValue : SafeHandle
                     return rive_ViewModelInstanceBooleanRuntime_Value(handle) != 0;
                 case RiveDataType.Color:
                     var color = rive_ViewModelInstanceColorRuntime_Value(handle);
-                    return new Color4(color);
+                    var bgra = new Color4(color);
+                    return new Color4(bgra.ToRgba());
                 default:
                     throw new NotSupportedException($"Unsupported data type: {propertyData.Type}");
             }
@@ -86,7 +88,7 @@ internal unsafe class RiveViewModelInstanceValue : SafeHandle
                 case RiveDataType.Color:
                     if (value is Color4 colorValue)
                     {
-                        rive_ViewModelInstanceColorRuntime_SetValue(handle, (uint)colorValue.ToRgba());
+                        rive_ViewModelInstanceColorRuntime_SetValue(handle, (uint)colorValue.ToBgra());
                     }
                     break;
                 default:
