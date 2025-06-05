@@ -4,14 +4,9 @@ namespace VL.Rive;
 
 internal class RiveFile : RiveObject
 {
-    public static RiveFile FromHandle(nint handle)
+    public RiveFile(nint handle) : base(handle) 
     {
-        if (handle == nint.Zero)
-            throw new ArgumentNullException(nameof(handle), "Rive file handle cannot be null.");
-        return new RiveFile(handle);
     }
-
-    public RiveFile(nint handle) : base(handle) { }
 
     public RiveArtboard GetArtboardDefault()
     {

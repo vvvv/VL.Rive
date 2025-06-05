@@ -11,12 +11,15 @@ internal class RiveRenderContextD3D11 : RiveRenderContext
         {
             throw new InvalidOperationException("Failed to create RiveRenderContext for D3D11.");
         }
-        return new RiveRenderContextD3D11(handle);
+        return new RiveRenderContextD3D11(handle, device);
     }
 
-    public RiveRenderContextD3D11(nint handle) : base(handle)
+    public RiveRenderContextD3D11(nint handle, nint devicePointer) : base(handle)
     {
+        DevicePointer = devicePointer;
     }
+
+    public nint DevicePointer { get; }
 
     public RiveRenderTargetD3D11 MakeRenderTarget(int width, int height)
     {

@@ -301,6 +301,11 @@
           <Pad Id="FbvMBXaxyACMzN37PCskfv" Comment="BallPosX" Bounds="769,475,41,15" ShowValueBox="true" isIOBox="true" />
           <Pad Id="B1YqIZ3B6t2LQxG9tciUdl" Comment="Score A" Bounds="797,513,41,15" ShowValueBox="true" isIOBox="true" />
           <Pad Id="FRdTHAOiMdCNiD3PDJuVOi" Comment="Score B" Bounds="822,551,41,15" ShowValueBox="true" isIOBox="true" />
+          <Pad Id="TejQL3wxQLMN7QIQORbyZW" Comment="Present Interval" Bounds="607,579,71,15" ShowValueBox="true" isIOBox="true" Value="Default">
+            <p:TypeAnnotation LastCategoryFullName="Stride.Graphics" LastDependency="VL.Stride.vl">
+              <Choice Kind="TypeFlag" Name="PresentInterval" />
+            </p:TypeAnnotation>
+          </Pad>
         </Canvas>
         <Patch Id="DBYmxfeIOlcLboDdIT5h0Z" Name="Create" />
         <Patch Id="DogxJckKCZBOH8kuk619TC" Name="Update" />
@@ -321,6 +326,7 @@
         <Link Id="TpQKOlxe0OZLihyDuzHv5Y" Ids="OHqO9Csc3fFOgcHm1d473H,FbvMBXaxyACMzN37PCskfv" />
         <Link Id="LNG3GuIRtBeMv11GlPea2d" Ids="N9QVLZoaUZhLsCsUd3uyKw,B1YqIZ3B6t2LQxG9tciUdl" />
         <Link Id="Qg0JqlHQfCDMivcBIn6f6r" Ids="J00XmwiFHyTMJfPrsJdeuV,FRdTHAOiMdCNiD3PDJuVOi" />
+        <Link Id="KMlAGEiUHr8MIpvELOQctT" Ids="TejQL3wxQLMN7QIQORbyZW,IBBVxu5YNFRNvVljIydCIz" />
       </Patch>
     </Node>
   </Patch>

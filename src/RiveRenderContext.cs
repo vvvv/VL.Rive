@@ -10,12 +10,14 @@ internal abstract class RiveRenderContext : RiveObject
     {
     }
 
-    public unsafe RiveFile LoadFile(string file)
+    public unsafe RiveFile LoadFile(string path)
     {
-        var bytes = File.ReadAllBytes(file);
+        var bytes = File.ReadAllBytes(path);
         fixed (byte* p = bytes)
         {
-            return RiveFile.FromHandle(rive_File_Import(p, bytes.Length, handle));
+            // TODO: Check how it reacts if load fails
+            var riveFileHandle = rive_File_Import(p, bytes.Length, handle);
+            return new RiveFile(riveFileHandle);
         }
     }
 

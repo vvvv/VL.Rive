@@ -1,35 +1,36 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using VL.Rive.Interop;
 using SharpDX.Direct3D11;
 using Stride.Core.Mathematics;
+using Stride.Engine;
 using Stride.Graphics;
 using Stride.Input;
 using Stride.Rendering;
 using System.Reactive.Disposables;
+using System.Reactive.Linq;
 using VL.Core;
 using VL.Core.Import;
 using VL.Lib.Animation;
+using VL.Lib.Reactive;
+using VL.Rive.Interop;
 using VL.Stride.Input;
 using Path = VL.Lib.IO.Path;
-using VL.Lib.Reactive;
-using System.Reactive.Linq;
 
 namespace VL.Rive;
 
 [ProcessNode(HasStateOutput = true)]
 public sealed partial class RivePlayer : RendererBase
 {
-    Path? file;
     RiveRenderContextD3D11? riveRenderContext;
     RiveRenderTargetD3D11? riveRenderTarget;
 
     RiveRenderer? riveRenderer;
     RiveFile? riveFile;
+    Path? riveFilePath;
     RiveArtboard? riveArtboard;
     RiveScene? riveScene;
     RiveViewModelInstance? riveViewModelInstance;
-    bool needsReload;
     IFrameClock frameClock;
+    readonly IGraphicsDeviceService graphicsDeviceService;
     Int2 lastSize;
     RiveMat2D alignmentMat;
 
@@ -38,73 +39,48 @@ public sealed partial class RivePlayer : RendererBase
 
     readonly SerialDisposable viewModelSubscription = new SerialDisposable();
     object? lastViewModel;
+    int needToWrite;
 
     public RivePlayer([Pin(Visibility = Model.PinVisibility.Hidden)] NodeContext nodeContext)
     {
-        frameClock = nodeContext.AppHost.Services.GetRequiredService<IFrameClock>();
+        var appHost = nodeContext.AppHost;
+        frameClock = appHost.Services.GetRequiredService<IFrameClock>();
+        graphicsDeviceService = appHost.Services.GetRequiredService<Game>().Services.GetService<IGraphicsDeviceService>();
     }
 
     public void Update(Path? file, object? viewModel)
     {
-        if (file != this.file)
-        {
-            this.file = file;
-            needsReload = true;
-        }
-
         if (viewModel != lastViewModel)
         {
             lastViewModel = viewModel;
-            viewModelSubscription.Disposable = BindTo(viewModel);
-        }
-    }
-
-    protected override unsafe void DrawCore(RenderDrawContext context)
-    {
-        var graphicsDevice = context.GraphicsDevice;
-        if (riveRenderContext is null)
-            riveRenderContext = CreateRiveRenderContext(graphicsDevice);
-        if (riveRenderContext is null)
-            return;
-
-        // Subscribe to input events - in case we have many sinks we assume that there's only one input source active
-        var inputSource = context.RenderContext.Tags.Get(InputExtensions.WindowInputSource);
-        if (inputSource != lastInputSource)
-        {
-            lastInputSource = inputSource;
-            inputSubscription.Disposable = SubscribeToInputSource(inputSource, context);
+            Interlocked.Increment(ref needToWrite);
+            viewModelSubscription.Disposable = null;
+            if (viewModel is IChannel c)
+                viewModelSubscription.Disposable = c.ChannelOfObject.Subscribe(_ => Interlocked.Increment(ref needToWrite));
         }
 
-        var renderTarget = context.CommandList.RenderTarget;
-
-        var size = new Int2(renderTarget.Width, renderTarget.Height);
-        if (riveRenderer is null || lastSize != size)
+        // Native device can change - check on each update
+        var nativeDevice = SharpDXInterop.GetNativeDevice(graphicsDeviceService.GraphicsDevice) as Device;
+        if (riveRenderContext?.DevicePointer != nativeDevice?.NativePointer)
         {
-            lastSize = size;
+            DisposeRiveResources();
 
-            riveRenderer?.Dispose();
-            riveRenderTarget?.Dispose();
-
-            riveRenderer = riveRenderContext.CreateRenderer();
-            riveRenderTarget = riveRenderContext.MakeRenderTarget(size.X, size.Y);
-        }
-
-        if (needsReload)
-        {
-            needsReload = false;
-
-            riveViewModelInstance?.Dispose();
-            riveScene?.Dispose();
-            riveArtboard?.Dispose();
-            riveFile?.Dispose();
-
-            if (file != null)
-                riveFile = riveRenderContext.LoadFile(file);
-            else
-                riveFile = null;
-
-            if (riveFile != null)
+            if (nativeDevice != null)
             {
+                riveRenderContext = RiveRenderContextD3D11.Create(nativeDevice.NativePointer, nativeDevice.ImmediateContext.NativePointer);
+                riveRenderer = riveRenderContext.CreateRenderer();
+            }
+        }
+
+        if (file != riveFilePath)
+        {
+            riveFilePath = file;
+
+            DisposeRiveFileResources();
+
+            if (riveRenderContext != null)
+            {
+                riveFile = riveRenderContext.LoadFile(file);
                 riveArtboard = riveFile.GetArtboardDefault();
                 riveScene = riveArtboard.DefaultScene();
                 // Needs more careful memory management
@@ -117,15 +93,36 @@ public sealed partial class RivePlayer : RendererBase
             }
         }
 
-        if (riveScene is null || riveRenderTarget is null)
+        if (riveScene is null)
             return;
+
+        // Write values to rive
+        if (riveViewModelInstance != null && Interlocked.Exchange(ref needToWrite, 0) > 0)
+            WriteValuesToRive(riveViewModelInstance, viewModel);
 
         riveScene.AdvanceAndApply((float)frameClock.TimeDifference);
 
-        if (riveViewModelInstance is not null)
+        if (riveViewModelInstance != null)
+            ReadValuesFromRive(riveViewModelInstance, viewModel);
+    }
+
+    protected override unsafe void DrawCore(RenderDrawContext context)
+    {
+        if (riveRenderContext is null || riveScene is null)
+            return;
+
+        // Subscribe to input events - in case we have many sinks we assume that there's only one input source active
+        var inputSource = context.RenderContext.Tags.Get(InputExtensions.WindowInputSource);
+        if (inputSource != lastInputSource)
         {
-            ReadValuesFromRive(riveViewModelInstance);
+            lastInputSource = inputSource;
+            inputSubscription.Disposable = SubscribeToInputSource(inputSource, context);
         }
+
+        var renderTarget = context.CommandList.RenderTarget;
+        var nativeRenderTarget = SharpDXInterop.GetNativeResource(renderTarget) as Texture2D;
+        if (nativeRenderTarget is null)
+            return;
 
         var frameDescriptor = new FrameDescriptor
         {
@@ -137,24 +134,29 @@ public sealed partial class RivePlayer : RendererBase
 
         alignmentMat = Methods.rive_ComputeAlignment(RiveFit.Contain, RiveAlignment.center, new RiveAABB(0, 0, renderTarget.Width, renderTarget.Height), riveScene.Bounds, 1f);
 
-        riveRenderer.Save();
+        riveRenderer!.Save();
         riveRenderer.Transform(in alignmentMat);
         riveScene.Draw(riveRenderer);
         riveRenderer.Restore();
 
-        var nativeRenderTarget = SharpDXInterop.GetNativeResource(renderTarget) as Texture2D;
-        if (nativeRenderTarget is null)
-            return;
+        var size = new Int2(renderTarget.Width, renderTarget.Height);
+        if (riveRenderTarget is null || lastSize != size)
+        {
+            lastSize = size;
+            DisposeAndSetNull(ref riveRenderTarget);
+            riveRenderTarget = riveRenderContext.MakeRenderTarget(size.X, size.Y);
+        }
         riveRenderTarget.SetTargetTexture(nativeRenderTarget.NativePointer);
+
         riveRenderContext.Flush(riveRenderTarget);
 
         // Release render target texture
         riveRenderTarget.SetTargetTexture(default);
     }
 
-    private void ReadValuesFromRive(RiveViewModelInstance riveViewModelInstance)
+    private static void ReadValuesFromRive(RiveViewModelInstance riveViewModelInstance, object? viewModel)
     {
-        if (lastViewModel is IChannel channel)
+        if (viewModel is IChannel channel)
         {
             if (channel.Object is IVLObject o)
             {
@@ -181,34 +183,26 @@ public sealed partial class RivePlayer : RendererBase
         }
     }
 
-    private IDisposable? BindTo(object? viewModel)
+    private static void WriteValuesToRive(RiveViewModelInstance riveViewModel, object? viewModel)
     {
-        if (viewModel is IChannel channel)
+        if (viewModel is IChannel c)
         {
-            // Immutable model
-            return channel.ChannelOfObject.StartWith(channel.ChannelOfObject.Value).Subscribe(v =>
+            var v = c.Object;
+            // TODO: Remove this restriction once new binding branch is merged
+            if (v is not IVLObject o)
+                return;
+
+            var type = v.GetVLTypeInfo();
+            foreach (var riveProp in riveViewModel.Properties)
             {
-                if (riveViewModelInstance is null)
-                    return;
+                var prop = type.GetProperty(riveProp.Name);
+                if (prop is null)
+                    continue;
 
-                // TODO: Remove this restriction once new binding branch is merged
-                if (v is not IVLObject o)
-                    return;
-
-                var type = v.GetVLTypeInfo();
-                foreach (var riveProp in riveViewModelInstance.Properties)
-                {
-                    var prop = type.GetProperty(riveProp.Name);
-                    if (prop is null)
-                        continue;
-
-                    var value = prop.GetValue(o);
-                    riveProp.Value = value;
-                }
-            });
+                var value = prop.GetValue(o);
+                riveProp.Value = value;
+            }
         }
-
-        return null;
     }
 
     protected override void Destroy()
@@ -216,23 +210,30 @@ public sealed partial class RivePlayer : RendererBase
         viewModelSubscription.Dispose();
         inputSubscription.Dispose();
 
-        riveScene?.Dispose();
-        riveArtboard?.Dispose();
-        riveFile?.Dispose();
-        riveRenderer?.Dispose();
-        riveRenderTarget?.Dispose();
-        riveRenderContext?.Dispose();
+        DisposeRiveResources();
 
         base.Destroy();
     }
 
-    private RiveRenderContextD3D11? CreateRiveRenderContext(GraphicsDevice device)
+    private void DisposeRiveResources()
     {
-        var nativeDevice = SharpDXInterop.GetNativeDevice(device) as Device;
-        var nativeContext = SharpDXInterop.GetNativeDeviceContext(device) as DeviceContext;
-        if (nativeDevice is null || nativeContext is null)
-            return default;
-
-        return RiveRenderContextD3D11.Create(nativeDevice.NativePointer, nativeContext.NativePointer);
+        DisposeRiveFileResources();
+        DisposeRiveRenderResources();
     }
+
+    private void DisposeRiveFileResources()
+    {
+        DisposeAndSetNull(ref riveScene);
+        DisposeAndSetNull(ref riveArtboard);
+        DisposeAndSetNull(ref riveFile);
+    }
+
+    private void DisposeRiveRenderResources()
+    {
+        DisposeAndSetNull(ref riveRenderer);
+        DisposeAndSetNull(ref riveRenderTarget);
+        DisposeAndSetNull(ref riveRenderContext);
+    }
+
+    static void DisposeAndSetNull<T>(ref T? resource) where T : class, IDisposable => Interlocked.Exchange(ref resource, null)?.Dispose();
 }
