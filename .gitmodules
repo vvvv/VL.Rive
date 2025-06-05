@@ -1,4 +1,4 @@
 [submodule "submodules/rive-runtime"]
 	path = submodules/rive-runtime
-	url = https://github.com/rive-app/rive-runtime.git
+	url = https://github.com/vvvv/rive-runtime.git
 	branch = main

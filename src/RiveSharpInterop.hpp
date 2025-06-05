@@ -29,7 +29,8 @@ extern "C"
 		RiveFit_FitWidth = 3,
 		RiveFit_FitHeight = 4,
 		RiveFit_None = 5,
-		RiveFit_ScaleDown = 6
+		RiveFit_ScaleDown = 6,
+		RiveFit_Layout = 7
 	} RiveFit;
 
 	// C-compatible struct for Alignment

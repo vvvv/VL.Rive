@@ -9,5 +9,6 @@ namespace VL.Rive.Interop
         FitHeight = 4,
         None = 5,
         ScaleDown = 6,
+        Layout = 7,
     }
 }

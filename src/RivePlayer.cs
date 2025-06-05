@@ -5,6 +5,7 @@ using Stride.Engine;
 using Stride.Graphics;
 using Stride.Input;
 using Stride.Rendering;
+using System.ComponentModel;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using VL.Core;
@@ -41,6 +42,12 @@ public sealed partial class RivePlayer : RendererBase
     object? lastViewModel;
     int needToWrite;
 
+    RiveFit riveFit;
+    RiveAlignment riveAlignment;
+    Optional<RectangleF> riveFrame;
+    Optional<RectangleF> riveContent;
+    float riveScaleFactor;
+
     public RivePlayer([Pin(Visibility = Model.PinVisibility.Hidden)] NodeContext nodeContext)
     {
         var appHost = nodeContext.AppHost;
@@ -48,8 +55,14 @@ public sealed partial class RivePlayer : RendererBase
         graphicsDeviceService = appHost.Services.GetRequiredService<Game>().Services.GetService<IGraphicsDeviceService>();
     }
 
-    public void Update(Path? file, object? viewModel)
+    public void Update(Path? file, RiveFit fit, RiveAlignment alignment, Optional<RectangleF> frame, Optional<RectangleF> content, [DefaultValue(1f)] float scaleFactor, object? viewModel)
     {
+        riveFit = fit;
+        riveAlignment = alignment;
+        riveFrame = frame;
+        riveContent = content;
+        riveScaleFactor = scaleFactor;
+
         if (viewModel != lastViewModel)
         {
             lastViewModel = viewModel;
@@ -128,11 +141,16 @@ public sealed partial class RivePlayer : RendererBase
         {
             RenderTargetWidth = (uint)renderTarget.Width,
             RenderTargetHeight = (uint)renderTarget.Height,
-            MsaaSampleCount = renderTarget.MultisampleCount != MultisampleCount.None ? (int)renderTarget.MultisampleCount : 0,
+            LoadAction = LoadAction.PreserveRenderTarget,
         };
         riveRenderContext.BeginFrame(in frameDescriptor);
 
-        alignmentMat = Methods.rive_ComputeAlignment(RiveFit.Contain, RiveAlignment.center, new RiveAABB(0, 0, renderTarget.Width, renderTarget.Height), riveScene.Bounds, 1f);
+        alignmentMat = Methods.rive_ComputeAlignment(
+            riveFit.ToNative(),
+            riveAlignment.ToNative(),
+            frame: riveFrame.ToNative(new RiveAABB(0, 0, renderTarget.Width, renderTarget.Height)),
+            content: riveContent.ToNative(riveScene.Bounds), 
+            scaleFactor: riveScaleFactor);
 
         riveRenderer!.Save();
         riveRenderer.Transform(in alignmentMat);
