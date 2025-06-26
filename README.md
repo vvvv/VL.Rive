@@ -3,7 +3,7 @@
 - Download and copy premake5.exe to `w64devkit/bin` folder
 - Install python3, let it add itself to `PATH` (or do it manually), navigate to its installation folder and copy `python.exe` to `python3.exe`
 - Start VS developer command prompt
-- Expand path, for example: `set PATH=%PATH%;C:\path\to\w64devkit\bin;C:\path\to\python3;C:\path\to\repo\submodules\rive-runtime\build`
+- Expand path, for example: `set PATH=C:\path\to\w64devkit\bin;C:\path\to\python3;C:\path\to\repo\submodules\rive-runtime\build;%PATH%`
 - Make sure `w64devkit`, `python3` and `submodules/rive-runtime/build` are present in `PATH` (double check with `where` command, search for `premake5`, `make`, `sh`, `python3`, `fxc`, `build_rive`)
 - `cd build`
 - `premake5 vs2022 --with_rive_text --with_rive_layout`
