@@ -24,6 +24,8 @@
     "ExecutableTarget": {
       "type": "string",
       "enum": [
+        "BuildRiveManaged",
+        "BuildRiveNative",
         "Clean",
         "Compile",
         "Download7Zip",
@@ -33,7 +35,10 @@
         "ExtractPremake5",
         "ExtractPython3",
         "ExtractW64DevKit",
+        "GenerateInteropCode",
         "GenerateInteropSolution",
+        "InstallClangSharpPInvokeGenerator",
+        "Pack",
         "Restore"
       ]
     },

@@ -7,6 +7,15 @@
     <OutputType>Library</OutputType>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <OutputPath>..\lib</OutputPath>
+    <Version>0.0.1-pre</Version>
+
+    <!-- Package properties -->
+    <Year>$([System.DateTime]::Now.ToString('yyyy'))</Year>
+    <Authors>vvvv group</Authors>
+    <Owners>$(Authors)</Owners>
+    <Copyright>Copyright © $(Year) by $(Authors). All rights reserved.</Copyright>
+    <PackageProjectUrl>https://github.com/vvvv/VL.Rive</PackageProjectUrl>
+    <PackageIcon>nugeticon.png</PackageIcon>
   </PropertyGroup>
 
   <ItemGroup>
@@ -14,8 +23,23 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="VL.Core" Version="2024.6.7" />
-    <PackageReference Include="VL.Stride.Runtime" Version="2024.6.7" />
+    <PackageReference Include="VL.Core" Version="2024.6.7" PrivateAssets="all" />
+    <PackageReference Include="VL.Stride.Runtime" Version="2024.6.7" PrivateAssets="all" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\deployment\nugeticon.png" Pack="True" PackagePath="" />
+    <None Include="..\runtimes\**\*.dll">
+      <LinkBase>runtimes</LinkBase>
+      <Pack>true</Pack>
+      <PackagePath>runtimes\%(RecursiveDir)%(Filename)%(Extension)</PackagePath>
+      <!--<Visible>false</Visible>-->
+    </None>
+    <None Include="..\**\*.vl">
+      <Pack>true</Pack>
+      <PackagePath>%(RecursiveDir)%(Filename)%(Extension)</PackagePath>
+      <!--<Visible>false</Visible>-->
+    </None>
   </ItemGroup>
 
 </Project>

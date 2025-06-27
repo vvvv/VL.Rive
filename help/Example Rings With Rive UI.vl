@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Document xmlns:p="property" xmlns:r="reflection" Id="Nth8CFNZnXsMdw6DOponQ2" LanguageVersion="2025.7.0-0328-g5bed1bf840" Version="0.128">
-  <NugetDependency Id="P31TcB21GpsQMoE5avRDIK" Location="VL.CoreLib" Version="2025.7.0-0328-g5bed1bf840" />
+<Document xmlns:p="property" xmlns:r="reflection" Id="Nth8CFNZnXsMdw6DOponQ2" LanguageVersion="2025.7.0-0365-gf247d3dc27" Version="0.128">
+  <NugetDependency Id="P31TcB21GpsQMoE5avRDIK" Location="VL.CoreLib" Version="2025.7.0-0365-gf247d3dc27" />
   <Patch Id="KwF3lactQFAPXQKeExxGTJ">
     <Canvas Id="SY42jCjyWwzNXSZcNcrit7" DefaultCategory="Main" BordersChecked="false" CanvasType="FullCategory" />
     <!--
@@ -123,7 +123,7 @@
               <Choice Kind="ProcessAppFlag" Name="SceneWindow" />
             </p:NodeReference>
             <Pin Id="MqWzmaXAuWMMX9PvGyiwts" Name="Node Context" Kind="InputPin" IsHidden="true" />
-            <Pin Id="Gmc8id4QpgFPpykXoL4vJp" Name="Bounds" Kind="InputPin" DefaultValue="1369.3334, 53.333332, 878.6667, 772.6667">
+            <Pin Id="Gmc8id4QpgFPpykXoL4vJp" Name="Bounds" Kind="InputPin" DefaultValue="1369, 53, 878, 772">
               <p:TypeAnnotation LastCategoryFullName="2D" LastDependency="CoreLibBasics.vl">
                 <Choice Kind="TypeFlag" Name="Rectangle" />
               </p:TypeAnnotation>
@@ -784,8 +784,7 @@
       </Patch>
     </Node>
   </Patch>
-  <NugetDependency Id="SBQOevSkfVYPvjUXsK23Iy" Location="VL.Stride" Version="2025.7.0-0328-g5bed1bf840" />
-  <NugetDependency Id="SZuu8RT1ZKPO9a57dzypJ3" Location="VL.Stride.TextureFX" Version="2025.7.0-0328-g5bed1bf840" />
+  <NugetDependency Id="SBQOevSkfVYPvjUXsK23Iy" Location="VL.Stride" Version="2025.7.0-0365-gf247d3dc27" />
+  <NugetDependency Id="SZuu8RT1ZKPO9a57dzypJ3" Location="VL.Stride.TextureFX" Version="2025.7.0-0365-gf247d3dc27" />
   <NugetDependency Id="UoYPOyFhYUIMxPGgOOSocB" Location="VL.Rive" Version="0.0.0" />
-  <PlatformDependency Id="ThLCoKx8HZwP2JMIjI5a9E" Location="../lib/net8.0/VL.Rive.dll" />
 </Document>
