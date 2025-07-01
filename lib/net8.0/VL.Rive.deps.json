@@ -6,7 +6,7 @@
   "compilationOptions": {},
   "targets": {
     ".NETCoreApp,Version=v8.0": {
-      "VL.Rive/1.0.0": {
+      "VL.Rive/0.0.1-pre": {
         "dependencies": {
           "VL.Core": "2024.6.7",
           "VL.Stride.Runtime": "2024.6.7"
@@ -2744,7 +2744,7 @@
     }
   },
   "libraries": {
-    "VL.Rive/1.0.0": {
+    "VL.Rive/0.0.1-pre": {
       "type": "project",
       "serviceable": false,
       "sha512": ""
