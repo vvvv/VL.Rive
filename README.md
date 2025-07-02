@@ -1,9 +1,7 @@
-# VL.NewLibrary.Template
+# VL.Rive
 
-- [ ] A clear and concise description of what this package is and does, also what problem it solves.
-- [ ] In case this is a wrapper, links to original code and which version of it is used
-- [ ] In case this is for a device/protocol, links to the device/protocol-specs
-- [ ] Required dependencies/drivers to download and install in the getting started section below
+Support for [Rive] files in VL including bi-directional [Data Binding](https://rive.app/docs/editor/data-binding/overview). Does not support legacy features like [Inputs]() and [Events]()
+
 - [ ] If available, links to documentation (other than helppatches), tutorial videos, blog posts, ...
 - [ ] Note that you can also [include images](https://devblogs.microsoft.com/nuget/add-a-readme-to-your-nuget-package/#markdown-and-image-support)!
 - [ ] Mention any limitations
