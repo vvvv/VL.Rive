@@ -121,6 +121,23 @@ public sealed partial class RiveRenderer : RendererBase
             ReadValuesFromRive(riveViewModelInstance, viewModel);
     }
 
+    public string DumpViewModel()
+    {
+        var sb = new System.Text.StringBuilder();
+        if (riveFile is null)
+        {
+            sb.AppendLine("No Rive file or ViewModel instance available.");
+            return sb.ToString();
+        }
+
+        foreach (var vm in riveFile.ViewModels)
+        {
+            vm.DumpAsJson(riveFile.ViewModels, sb);
+        }
+
+        return sb.ToString();
+    }
+
     protected override unsafe void DrawCore(RenderDrawContext context)
     {
         if (riveRenderContext is null || riveScene is null)

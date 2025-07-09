@@ -1,5 +1,6 @@
 #include "RiveSharpInterop.hpp"
 #include "rive/static_scene.hpp"
+#include "rive/generated/viewmodel/viewmodel_property_viewmodel_base.hpp";
 
 using namespace rive;
 using namespace rive::gpu;
@@ -132,6 +133,38 @@ extern "C"
     ViewModelRuntime* rive_File_DefaultArtboardViewModel(File* file, Artboard* artboard)
     {
         return file->defaultArtboardViewModel(artboard);
+    }
+
+    int rive_File_ViewModelCount(File* file)
+    {
+        return file->viewModelCount();
+    }
+
+    void rive_File_GetViewModel(File* file, int index, char** name_out, int* propertiesCount_out)
+    {
+        auto viewModel = file->viewModelByIndex(index);
+        viewModel->properties();
+        *name_out = _strdup(viewModel->name().c_str());
+        *propertiesCount_out = viewModel->propertyCount();
+    }
+
+    void rive_File_GetViewModelProperties(File* file, int index, RivePropertyData* properties_out)
+    {
+        auto viewModel = file->viewModel(index);
+        auto viewModelRuntime = file->viewModelByIndex(index);
+        // Fill properties
+        auto rprops = viewModelRuntime->properties();
+        auto props = viewModel->properties();
+        for (int i = 0; i < props.size(); ++i)
+        {
+            properties_out[i].type = static_cast<int>(rprops[i].type);
+            properties_out[i].name = _strdup(rprops[i].name.c_str());
+            if (rprops[i].type == DataType::viewModel)
+            {
+                auto v = props[i]->as<ViewModelPropertyViewModelBase>();
+                properties_out[i].viewModelReferenceId = v->viewModelReferenceId();
+            }
+        }
     }
 
     // Artboard

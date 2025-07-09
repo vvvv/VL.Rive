@@ -65,6 +65,15 @@ namespace VL.Rive.Interop
         public static extern nint rive_File_DefaultArtboardViewModel([NativeTypeName("rive::File *")] nint file, [NativeTypeName("rive::Artboard *")] nint artboard);
 
         [DllImport("rive_interop", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern int rive_File_ViewModelCount([NativeTypeName("rive::File *")] nint file);
+
+        [DllImport("rive_interop", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern void rive_File_GetViewModel([NativeTypeName("rive::File *")] nint file, int index, [NativeTypeName("char **")] sbyte** name_out, int* propertiesCount_out);
+
+        [DllImport("rive_interop", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern void rive_File_GetViewModelProperties([NativeTypeName("rive::File *")] nint file, int index, RivePropertyData* properties_out);
+
+        [DllImport("rive_interop", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         [return: NativeTypeName("rive::Scene *")]
         public static extern nint rive_ArtboardInstance_StaticScene([NativeTypeName("rive::ArtboardInstance *")] nint artboard);
 

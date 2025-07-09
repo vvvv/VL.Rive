@@ -30,6 +30,7 @@
             <Pin Id="LQjcZ3hHVkDNIE9nfkKiqD" Name="Content" Kind="InputPin" />
             <Pin Id="A1p03jjaI3ZLNfQ1MuetWT" Name="Scale Factor" Kind="InputPin" />
             <Pin Id="MqXsduck1FcQSFbf7UHk1j" Name="View Model" Kind="InputPin" />
+            <Pin Id="UqF0hl56mZ7N0AiTJiN3r7" Name="Result" Kind="OutputPin" />
           </Node>
           <Node Bounds="491,668,165,19" Id="JFqDclHFYDBNDso7t4JCun">
             <p:NodeReference LastCategoryFullName="Stride" LastDependency="VL.Stride.vl">
@@ -37,7 +38,7 @@
               <Choice Kind="ProcessAppFlag" Name="RenderWindow" />
             </p:NodeReference>
             <Pin Id="TJaJNOjUTWYNapEKaYIO0p" Name="Node Context" Kind="InputPin" IsHidden="true" />
-            <Pin Id="S9P3zg26LFRLYzup6fp2fm" Name="Bounds" Kind="InputPin" DefaultValue="1481, 72, 786, 432" IsHidden="true" />
+            <Pin Id="S9P3zg26LFRLYzup6fp2fm" Name="Bounds" Kind="InputPin" DefaultValue="1480.6666, 72, 786, 432" IsHidden="true" />
             <Pin Id="PEMoE2lsoKMOCMGA0kGOc3" Name="Bound to Document" Kind="InputPin" IsHidden="true" />
             <Pin Id="BrQdHLJ5MzcN5BA9EQ9RtQ" Name="Dialog If Document Changed" Kind="InputPin" IsHidden="true" />
             <Pin Id="EhbFo9INk0jQOjgmk6vqdx" Name="Save Bounds" Kind="InputPin" IsHidden="true" />
@@ -65,7 +66,7 @@
             <Pin Id="N8A8GXwGGDMMIs2WQLxnBA" Name="Depth Buffer" Kind="OutputPin" />
             <Pin Id="CbjqcfQEyGLM3Rwxp6ZFuf" Name="Present Call Intercept" Kind="InputPin" IsHidden="true" />
           </Node>
-          <Pad Id="T8K5IdaKRcEM85wBWX5Hby" Comment="File" Bounds="362,424,140,15" ShowValueBox="true" isIOBox="true" Value="..\assets\control_center.riv">
+          <Pad Id="T8K5IdaKRcEM85wBWX5Hby" Comment="File" Bounds="362,424,140,15" ShowValueBox="true" isIOBox="true" Value="..\submodules\rive-runtime\tests\unit_tests\assets\data_viz_demo.riv">
             <p:TypeAnnotation LastCategoryFullName="IO" LastDependency="VL.CoreLib.vl">
               <Choice Kind="TypeFlag" Name="Path" />
             </p:TypeAnnotation>
@@ -222,6 +223,16 @@
               <Choice Kind="TypeFlag" Name="PresentInterval" />
             </p:TypeAnnotation>
           </Pad>
+          <Node Bounds="791,500,93,26" Id="TANq8pY6jl7N7jV7DduEd4">
+            <p:NodeReference LastCategoryFullName="Rive.RiveRenderer" LastDependency="VL.Rive.vl">
+              <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
+              <Choice Kind="OperationCallFlag" Name="DumpViewModel" />
+            </p:NodeReference>
+            <Pin Id="RFMTgIIVyAgNiYxGwM7JQL" Name="Input" Kind="StateInputPin" />
+            <Pin Id="EJjTk0N1tq6QKT2ENxf935" Name="Output" Kind="StateOutputPin" />
+            <Pin Id="T5kwW2RTfOyMUd9fzzrn7l" Name="Result" Kind="OutputPin" />
+          </Node>
+          <Pad Id="GFA0UXCxvohO85ZofGEoPS" Comment="" Bounds="881,600,517,816" ShowValueBox="true" isIOBox="true" />
         </Canvas>
         <Patch Id="GICtUBakYQsOX8Xvon2K3b" Name="Create" />
         <Patch Id="COl7NXW6wlcMWa8tA3Cl2V" Name="Update" />
@@ -239,6 +250,8 @@
         <Link Id="NmNmYJLnq2zQJyiVScDpWD" Ids="ECBO3vmCnSiLpmlhlufiGc,R3vBflKbQjsOx9xRO4a4KO" />
         <Link Id="I3CPrE58yZCMqeOhPqM3GP" Ids="HxDbWPMZaXvNHFJVBKOhc3,CD4Vgfjt0AQM57F1Wm0yNs" />
         <Link Id="EShShdkiy0XLGMeFeMyTTI" Ids="QnFgIj2XIxBOqYnu4J9UW4,JQijAfPK66RM9V13TZju0v" />
+        <Link Id="Rst1A8pKjzoO49lqo1am9n" Ids="NX5fPnQskweMEl2V0UGqJV,RFMTgIIVyAgNiYxGwM7JQL" />
+        <Link Id="OiW1xvQ1qFrMOGtAGUNPLg" Ids="T5kwW2RTfOyMUd9fzzrn7l,GFA0UXCxvohO85ZofGEoPS" />
       </Patch>
     </Node>
   </Patch>

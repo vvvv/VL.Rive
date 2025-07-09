@@ -6,5 +6,7 @@ namespace VL.Rive.Interop
 
         [NativeTypeName("const char *")]
         public sbyte* name;
+
+        public int viewModelReferenceId;
     }
 }

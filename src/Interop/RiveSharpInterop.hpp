@@ -52,6 +52,14 @@ extern "C"
 		float values[6];
 	} RiveMat2D;
 
+	// Property data struct for C API
+	struct RivePropertyData
+	{
+		int type;
+		const char* name;
+		int viewModelReferenceId; // Index into ViewModel array in case this is a nested view model property
+	};
+
 	// C-API for computeAlignment
     __declspec(dllexport) RiveMat2D rive_ComputeAlignment(RiveFit fit, RiveAlignment alignment, RiveAABB frame, RiveAABB content, float scaleFactor);
 	__declspec(dllexport) RiveMat2D rive_Mat2D_InvertOrIdentity(const RiveMat2D* inMat);
@@ -79,6 +87,9 @@ extern "C"
 	__declspec(dllexport) void rive_File_Destroy(File* file);
 	__declspec(dllexport) ArtboardInstance* rive_File_GetArtboardDefault(File* file);
 	__declspec(dllexport) ViewModelRuntime* rive_File_DefaultArtboardViewModel(File* file, Artboard* artboard);
+	__declspec(dllexport) int rive_File_ViewModelCount(File* file);
+	__declspec(dllexport) void rive_File_GetViewModel(File* file, int index, char** name_out, int* propertiesCount_out);
+	__declspec(dllexport) void rive_File_GetViewModelProperties(File* file, int index, RivePropertyData* properties_out);
 
 	// Artboard
 	__declspec(dllexport) Scene* rive_ArtboardInstance_StaticScene(ArtboardInstance* artboard);
@@ -143,13 +154,6 @@ extern "C"
 	// Creates a new ViewModelInstanceRuntime from the ViewModelRuntime
 	__declspec(dllexport) ViewModelInstanceRuntime* rive_ViewModelRuntime_CreateInstance(ViewModelRuntime* runtime);
 	__declspec(dllexport) ViewModelInstanceRuntime* rive_ViewModelRuntime_CreateDefaultInstance(ViewModelRuntime* runtime);
-
-	// Property data struct for C API
-	struct RivePropertyData
-	{
-		int type;
-		const char* name;
-	};
 
 	// ViewModelInstanceRuntime C-API
 	// Returns the name of the ViewModelInstanceRuntime (pointer valid as long as the object is alive)
