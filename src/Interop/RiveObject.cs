@@ -4,7 +4,7 @@ namespace VL.Rive.Interop;
 
 internal abstract class RiveObject : SafeHandle
 {
-    protected RiveObject(nint handle) : base(nint.Zero, true) 
+    protected RiveObject(nint handle, bool ownsHandle = true) : base(nint.Zero, ownsHandle) 
     {
         SetHandle(handle);
     }

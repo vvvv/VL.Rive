@@ -1,5 +1,4 @@
 ﻿using Stride.Core.Mathematics;
-using System.ComponentModel;
 using System.Runtime.InteropServices;
 using VL.Lib.Basics.Imaging;
 using static VL.Rive.Interop.Methods;
@@ -7,27 +6,24 @@ using static VL.Rive.Interop.Methods;
 namespace VL.Rive.Interop;
 
 // Maps to RiveViewModelInstanceValueRuntime in the C++ code
-internal unsafe class RiveViewModelInstanceValue : SafeHandle
+internal unsafe class RiveViewModelInstanceValue : RiveProperty
 {
     private readonly RiveViewModelInstance parent;
     private readonly PropertyData propertyData;
 
     public RiveViewModelInstanceValue(RiveViewModelInstance parent, nint handle, PropertyData propertyData)
-        : base(default, true)
+        : base(propertyData.Name, GetType(propertyData.Type), handle, true)
     {
         if (handle == nint.Zero)
             throw new ArgumentNullException(nameof(handle), "Handle cannot be zero.");
 
         this.parent = parent;
         this.propertyData = propertyData;
-        SetHandle(handle);
     }
 
     public override bool IsInvalid => parent.IsInvalid;
 
-    public string Name => propertyData.Name;
-
-    public Type Type => propertyData.Type switch
+    private static Type GetType(RiveDataType riveDataType) => riveDataType switch
     {
         RiveDataType.String => typeof(string),
         RiveDataType.Number => typeof(float),
@@ -39,7 +35,8 @@ internal unsafe class RiveViewModelInstanceValue : SafeHandle
         RiveDataType.Integer => typeof(int),
         RiveDataType.SymbolListIndex => typeof(int), // Assuming index is an integer
         RiveDataType.AssetImage => typeof(IImage),
-        _ => throw new NotSupportedException($"Unsupported data type: {propertyData.Type}")
+        RiveDataType.ViewModel => typeof(RiveViewModelInstance),
+        _ => throw new NotSupportedException($"Unsupported data type: {riveDataType}")
     };
 
     public bool HasChanged
@@ -86,53 +83,31 @@ internal unsafe class RiveViewModelInstanceValue : SafeHandle
             switch (propertyData.Type)
             {
                 case RiveDataType.String:
-                    if (TryConvert(value, out string? strValue))
+                    if (value is string strValue)
                     {
                         rive_ViewModelInstanceStringRuntime_SetValue(handle, (sbyte*)Marshal.StringToHGlobalAnsi(strValue));
                     }
                     break;
                 case RiveDataType.Number:
-                    if (TryConvert(value, out float floatValue))
+                    if (value is float floatValue)
                     {
                         rive_ViewModelInstanceNumberRuntime_SetValue(handle, floatValue);
                     }
                     break;
                 case RiveDataType.Boolean:
-                    if (TryConvert(value, out bool boolValue))
+                    if (value is bool boolValue)
                     {
                         rive_ViewModelInstanceBooleanRuntime_SetValue(handle, boolValue ? (byte)1 : (byte)0);
                     }
                     break;
                 case RiveDataType.Color:
-                    if (TryConvert(value, out Color4 colorValue))
+                    if (value is Color4 colorValue)
                     {
                         rive_ViewModelInstanceColorRuntime_SetValue(handle, (uint)colorValue.ToBgra());
                     }
                     break;
                 default:
                     throw new NotSupportedException($"Unsupported data type: {propertyData.Type}");
-            }
-
-            static bool TryConvert<T>(object? value, out T? convertedValue)
-            {
-                try
-                {
-                    if (Convert.ChangeType(value, typeof(T)) is T v)
-                    {
-                        convertedValue = v;
-                        return true;
-                    }
-                    else
-                    {
-                        convertedValue = default;
-                        return false;
-                    }
-                }
-                catch
-                {
-                    convertedValue = default;
-                    return false;
-                }
             }
         }
     }

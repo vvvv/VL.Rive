@@ -6,6 +6,7 @@ using Stride.Graphics;
 using Stride.Input;
 using Stride.Rendering;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using VL.Core;
@@ -177,50 +178,93 @@ public sealed partial class RiveRenderer : RendererBase
     {
         if (viewModel is IChannel channel)
         {
+            // TODO: Remove this restriction once new binding branch is merged
             if (channel.Object is IVLObject o)
             {
-                var ourDataChanged = false;
-                foreach (var riveProp in riveViewModelInstance.Properties)
+                if (ReadIntoObject(riveViewModelInstance, o))
                 {
-                    if (riveProp.HasChanged)
-                    {
-                        var type = o.GetVLTypeInfo();
-                        var prop = type.GetProperty(riveProp.Name);
-                        if (prop is not null)
-                        {
-                            ourDataChanged = true;
-                            // Set the value on the object
-                            o = prop.WithValue(o, riveProp.Value);
-                        }
-                        riveProp.ClearChanges();
-                    }
-                }
-
-                if (ourDataChanged)
                     channel.Object = o;
+                }
             }
         }
-    }
 
-    private static void WriteValuesToRive(RiveViewModelInstance riveViewModel, object? viewModel)
-    {
-        if (viewModel is IChannel c)
+        static bool ReadIntoObject(RiveViewModelInstance vm, IVLObject o)
         {
-            var v = c.Object;
-            // TODO: Remove this restriction once new binding branch is merged
-            if (v is not IVLObject o)
-                return;
+            var type = o.GetVLTypeInfo();
 
-            var type = v.GetVLTypeInfo();
-            foreach (var riveProp in riveViewModel.Properties)
+            var changed = false;
+            foreach (var riveProp in vm.Properties)
             {
                 var prop = type.GetProperty(riveProp.Name);
                 if (prop is null)
                     continue;
 
-                var value = prop.GetValue(o);
-                riveProp.Value = value;
+                if (riveProp is RiveViewModelInstanceValue v)
+                {
+                    if (v.HasChanged && TryConvert(v.Value, type.ClrType, out var vlValue))
+                    {
+                        changed = true;
+                        // Acknowledge the change
+                        v.ClearChanges();
+                        // Set the value on the object
+                        o = prop.WithValue(o, vlValue);
+                    }
+                }
+                else if (riveProp is RiveViewModelInstance vmi && prop.GetValue(o) is IVLObject sub)
+                {
+                    changed |= ReadIntoObject(vmi, sub);
+                }
             }
+            return changed;
+        }
+    }
+
+    private static void WriteValuesToRive(RiveViewModelInstance riveViewModel, object? viewModel)
+    {
+        if (viewModel is IChannel channel)
+        {
+            // TODO: Remove this restriction once new binding branch is merged
+            if (channel.Object is IVLObject o)
+            {
+                WriteFromObject(riveViewModel, o);
+            }
+        }
+
+        static void WriteFromObject(RiveViewModelInstance vm, IVLObject o)
+        {
+            var type = o.GetVLTypeInfo();
+            foreach (var riveProp in vm.Properties)
+            {
+                var prop = type.GetProperty(riveProp.Name);
+                if (prop is null)
+                    continue;
+
+                if (riveProp is RiveViewModelInstanceValue v)
+                {
+                    if (TryConvert(prop.GetValue(o), riveProp.Type, out var vlValue))
+                    {
+                        v.Value = vlValue;
+                    }
+                }
+                else if (riveProp is RiveViewModelInstance vmi && prop.GetValue(o) is IVLObject sub)
+                {
+                    WriteFromObject(vmi, sub);
+                }
+            }
+        }
+    }
+
+    private static bool TryConvert(object v, Type type, [NotNullWhen(true)] out object? result)
+    {
+        try
+        {
+            result = Convert.ChangeType(v, type);
+            return true;
+        }
+        catch
+        {
+            result = null;
+            return false;
         }
     }
 

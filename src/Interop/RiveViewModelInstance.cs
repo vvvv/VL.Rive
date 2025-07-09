@@ -4,15 +4,13 @@ using static VL.Rive.Interop.Methods;
 
 namespace VL.Rive.Interop;
 
-// Maps to the RiveViewModelInstanceRuntime class in the Rive C++ runtime
-internal unsafe class RiveViewModelInstance : SafeHandle
+internal unsafe class RiveViewModelInstance : RiveProperty
 {
-    private ImmutableArray<RiveViewModelInstanceValue> properties;
+    private ImmutableArray<RiveProperty> properties;
 
-    public RiveViewModelInstance(nint handle, bool ownsHandle = true)
-        : base(default, ownsHandle)
+    public RiveViewModelInstance(string name, nint handle, bool ownsHandle = true)
+        : base(name, typeof(RiveViewModelInstance), handle, ownsHandle)
     {
-        SetHandle(handle);
     }
 
     // Pointer to RiveViewModelInstance
@@ -20,16 +18,22 @@ internal unsafe class RiveViewModelInstance : SafeHandle
 
     public override bool IsInvalid => handle == default || IsClosed;
 
-    public ImmutableArray<RiveViewModelInstanceValue> Properties
+    protected override bool ReleaseHandle()
+    {
+        rive_ViewModelInstanceRuntime_Destroy(handle);
+        return true;
+    }
+
+    public ImmutableArray<RiveProperty> Properties
     {
         get
         {
             if (properties.IsDefault)
             {
                 var count = rive_ViewModelInstanceRuntime_PropertyCount(handle);
-                var nativeProperties = stackalloc Interop.RivePropertyData[count];
+                var nativeProperties = stackalloc RivePropertyData[count];
                 rive_ViewModelInstanceRuntime_Properties(handle, nativeProperties);
-                var properties = ImmutableArray.CreateBuilder<RiveViewModelInstanceValue>(count);
+                var properties = ImmutableArray.CreateBuilder<RiveProperty>(count);
                 for (int i = 0; i < count; i++)
                 {
                     var nativeProperty = nativeProperties[i];
@@ -46,7 +50,7 @@ internal unsafe class RiveViewModelInstance : SafeHandle
             }
             return properties;
 
-            RiveViewModelInstanceValue? FromPropertyData(nint viewModel, PropertyData propertyData)
+            RiveProperty? FromPropertyData(nint viewModel, PropertyData propertyData)
             {
                 if (propertyData.Name.Contains('/'))
                     return null; // Skip properties with slashes in their names - Rive treats these as paths and will not be able to resolve them correctly
@@ -62,16 +66,12 @@ internal unsafe class RiveViewModelInstance : SafeHandle
                         return new RiveViewModelInstanceValue(this, rive_ViewModelInstanceRuntime_PropertyBoolean(viewModel, path.Value), propertyData);
                     case RiveDataType.Color:
                         return new RiveViewModelInstanceValue(this, rive_ViewModelInstanceRuntime_PropertyColor(viewModel, path.Value), propertyData);
+                    case RiveDataType.ViewModel:
+                        return new RiveViewModelInstance(propertyData.Name, rive_ViewModelInstanceRuntime_PropertyViewModel(viewModel, path.Value));
                     default:
                         return null;
                 }
             }
         }
-    }
-
-    protected override bool ReleaseHandle()
-    {
-        rive_ViewModelInstanceRuntime_Destroy(handle);
-        return true;
     }
 }
