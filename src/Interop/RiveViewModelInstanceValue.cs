@@ -1,18 +1,17 @@
-﻿using VL.Rive.Interop;
-using Stride.Core.Mathematics;
+﻿using Stride.Core.Mathematics;
 using System.Runtime.InteropServices;
 using VL.Lib.Basics.Imaging;
 using static VL.Rive.Interop.Methods;
 
-namespace VL.Rive;
+namespace VL.Rive.Interop;
 
 // Maps to RiveViewModelInstanceValueRuntime in the C++ code
 internal unsafe class RiveViewModelInstanceValue : SafeHandle
 {
     private readonly RiveViewModelInstance parent;
-    private readonly RivePropertyData propertyData;
+    private readonly PropertyData propertyData;
 
-    public RiveViewModelInstanceValue(RiveViewModelInstance parent, nint handle, RivePropertyData propertyData)
+    public RiveViewModelInstanceValue(RiveViewModelInstance parent, nint handle, PropertyData propertyData)
         : base(default, true)
     {
         if (handle == nint.Zero)

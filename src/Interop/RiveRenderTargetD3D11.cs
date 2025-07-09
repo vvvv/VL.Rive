@@ -1,6 +1,6 @@
 ﻿using static VL.Rive.Interop.Methods;
 
-namespace VL.Rive;
+namespace VL.Rive.Interop;
 
 internal class RiveRenderTargetD3D11 : RiveRenderTarget
 {

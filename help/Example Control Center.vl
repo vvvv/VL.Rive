@@ -15,11 +15,11 @@
       </p:NodeReference>
       <Patch Id="MbWniaZrtjoM9qAgKhqE49">
         <Canvas Id="LFb7HQG0XktPcqvvDtfkQO" CanvasType="Group">
-          <Node Bounds="490,508,65,19" Id="AbYa7YE6VwqL9epbxiyM91">
-            <p:NodeReference LastCategoryFullName="Rive" LastDependency="VL.Rive.dll">
+          <Node Bounds="490,508,125,19" Id="AbYa7YE6VwqL9epbxiyM91">
+            <p:NodeReference LastCategoryFullName="Rive" LastDependency="VL.Rive.vl">
               <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
               <CategoryReference Kind="Category" Name="Rive" />
-              <Choice Kind="ProcessAppFlag" Name="RivePlayer" />
+              <Choice Kind="ProcessAppFlag" Name="RiveRenderer" />
             </p:NodeReference>
             <Pin Id="NX5fPnQskweMEl2V0UGqJV" Name="Output" Kind="StateOutputPin" />
             <Pin Id="LwBJZpIjGRKMV5Vk3z5K3A" Name="Node Context" Kind="InputPin" IsHidden="true" />

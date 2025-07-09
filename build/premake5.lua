@@ -1,5 +1,5 @@
 REPO_ROOT_DIR = path.getabsolute("..")
-VL_RIVE_SRC_DIR = REPO_ROOT_DIR .. "/src"
+VL_RIVE_SRC_DIR = REPO_ROOT_DIR .. "/src/Interop"
 RIVE_RUNTIME_DIR = REPO_ROOT_DIR .. "/submodules/rive-runtime"
 RIVE_RENDERER_DIR = REPO_ROOT_DIR .. "/submodules/rive-runtime/renderer"
 premake.path = premake.path .. ";" .. RIVE_RUNTIME_DIR .. "/build"

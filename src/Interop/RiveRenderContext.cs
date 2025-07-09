@@ -1,8 +1,8 @@
 ﻿using System.Runtime.CompilerServices;
-using VL.Rive.Interop;
+
 using static VL.Rive.Interop.Methods;
 
-namespace VL.Rive;
+namespace VL.Rive.Interop;
 
 internal abstract class RiveRenderContext : RiveObject
 {

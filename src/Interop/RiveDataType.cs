@@ -1,4 +1,4 @@
-﻿namespace VL.Rive;
+﻿namespace VL.Rive.Interop;
 
 enum RiveDataType : uint
 {

@@ -1,6 +1,6 @@
 ﻿using static VL.Rive.Interop.Methods;
 
-namespace VL.Rive;
+namespace VL.Rive.Interop;
 
 internal abstract class RiveRenderTarget : RiveObject
 {

@@ -123,7 +123,7 @@
               <Choice Kind="ProcessAppFlag" Name="SceneWindow" />
             </p:NodeReference>
             <Pin Id="MqWzmaXAuWMMX9PvGyiwts" Name="Node Context" Kind="InputPin" IsHidden="true" />
-            <Pin Id="Gmc8id4QpgFPpykXoL4vJp" Name="Bounds" Kind="InputPin" DefaultValue="1369, 53, 878, 772">
+            <Pin Id="Gmc8id4QpgFPpykXoL4vJp" Name="Bounds" Kind="InputPin" DefaultValue="1368.6666, 52.666668, 878, 772">
               <p:TypeAnnotation LastCategoryFullName="2D" LastDependency="CoreLibBasics.vl">
                 <Choice Kind="TypeFlag" Name="Rectangle" />
               </p:TypeAnnotation>
@@ -495,10 +495,10 @@
             </p:ValueBoxSettings>
           </Pad>
           <Node Bounds="1110,691,125,19" Id="UdgiFUqA9tUO3tByw5Ld0N">
-            <p:NodeReference LastCategoryFullName="Rive" LastDependency="VL.Rive.dll">
+            <p:NodeReference LastCategoryFullName="Rive" LastDependency="VL.Rive.vl">
               <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
               <CategoryReference Kind="Category" Name="Rive" />
-              <Choice Kind="ProcessAppFlag" Name="RivePlayer" />
+              <Choice Kind="ProcessAppFlag" Name="RiveRenderer" />
             </p:NodeReference>
             <Pin Id="D18DDovm3mzMRwDaFyQk1Y" Name="Output" Kind="StateOutputPin" />
             <Pin Id="OPniNYfIVlUL2ZPnMVs2ym" Name="Node Context" Kind="InputPin" IsHidden="true" />

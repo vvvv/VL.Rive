@@ -14,3 +14,4 @@ bin/
 /build/dependencies/
 /build/out/
 /runtimes/
+/.nuke/temp

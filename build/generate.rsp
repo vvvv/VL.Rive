@@ -10,7 +10,7 @@ c++
 -std
 c++17
 --file
-C:\Users\elias\source\repos\VL.Rive\src\RiveSharpInterop.hpp
+C:\Users\elias\source\repos\VL.Rive\src\Interop\RiveSharpInterop.hpp
 --namespace
 VL.Rive.Interop
 --output

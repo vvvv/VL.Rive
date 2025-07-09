@@ -1,8 +1,7 @@
 ﻿using System.Runtime.InteropServices;
-using VL.Rive.Interop;
 using static VL.Rive.Interop.Methods;
 
-namespace VL.Rive;
+namespace VL.Rive.Interop;
 
 internal class RiveScene : RiveObject
 {

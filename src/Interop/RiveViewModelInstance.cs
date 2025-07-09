@@ -1,9 +1,8 @@
 ﻿using System.Collections.Immutable;
 using System.Runtime.InteropServices;
-using VL.Rive.Interop;
 using static VL.Rive.Interop.Methods;
 
-namespace VL.Rive;
+namespace VL.Rive.Interop;
 
 // Maps to the RiveViewModelInstanceRuntime class in the Rive C++ runtime
 internal unsafe class RiveViewModelInstance : SafeHandle
@@ -34,7 +33,7 @@ internal unsafe class RiveViewModelInstance : SafeHandle
                 for (int i = 0; i < count; i++)
                 {
                     var nativeProperty = nativeProperties[i];
-                    var propertyData = new RivePropertyData(Marshal.PtrToStringAnsi((nint)nativeProperty.name) ?? string.Empty, (RiveDataType)nativeProperty.type);
+                    var propertyData = new PropertyData(Marshal.PtrToStringAnsi((nint)nativeProperty.name) ?? string.Empty, (RiveDataType)nativeProperty.type);
                     NativeMemory.Free(nativeProperty.name); // Free the native string memory
 
                     var property = FromPropertyData(handle, propertyData);
@@ -47,7 +46,7 @@ internal unsafe class RiveViewModelInstance : SafeHandle
             }
             return properties;
 
-            RiveViewModelInstanceValue? FromPropertyData(nint viewModel, RivePropertyData propertyData)
+            RiveViewModelInstanceValue? FromPropertyData(nint viewModel, PropertyData propertyData)
             {
                 if (propertyData.Name.Contains('/'))
                     return null; // Skip properties with slashes in their names - Rive treats these as paths and will not be able to resolve them correctly

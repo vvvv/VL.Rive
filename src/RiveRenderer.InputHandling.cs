@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace VL.Rive;
 
-partial class RivePlayer
+partial class RiveRenderer
 {
     IDisposable SubscribeToInputSource(IInputSource inputSource, RenderDrawContext context)
     {
