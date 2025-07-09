@@ -1,4 +1,5 @@
 ﻿using Stride.Core.Mathematics;
+using System.ComponentModel;
 using System.Runtime.InteropServices;
 using VL.Lib.Basics.Imaging;
 using static VL.Rive.Interop.Methods;
@@ -85,31 +86,53 @@ internal unsafe class RiveViewModelInstanceValue : SafeHandle
             switch (propertyData.Type)
             {
                 case RiveDataType.String:
-                    if (value is string strValue)
+                    if (TryConvert(value, out string? strValue))
                     {
                         rive_ViewModelInstanceStringRuntime_SetValue(handle, (sbyte*)Marshal.StringToHGlobalAnsi(strValue));
                     }
                     break;
                 case RiveDataType.Number:
-                    if (value is float floatValue)
+                    if (TryConvert(value, out float floatValue))
                     {
                         rive_ViewModelInstanceNumberRuntime_SetValue(handle, floatValue);
                     }
                     break;
                 case RiveDataType.Boolean:
-                    if (value is bool boolValue)
+                    if (TryConvert(value, out bool boolValue))
                     {
                         rive_ViewModelInstanceBooleanRuntime_SetValue(handle, boolValue ? (byte)1 : (byte)0);
                     }
                     break;
                 case RiveDataType.Color:
-                    if (value is Color4 colorValue)
+                    if (TryConvert(value, out Color4 colorValue))
                     {
                         rive_ViewModelInstanceColorRuntime_SetValue(handle, (uint)colorValue.ToBgra());
                     }
                     break;
                 default:
                     throw new NotSupportedException($"Unsupported data type: {propertyData.Type}");
+            }
+
+            static bool TryConvert<T>(object? value, out T? convertedValue)
+            {
+                try
+                {
+                    if (Convert.ChangeType(value, typeof(T)) is T v)
+                    {
+                        convertedValue = v;
+                        return true;
+                    }
+                    else
+                    {
+                        convertedValue = default;
+                        return false;
+                    }
+                }
+                catch
+                {
+                    convertedValue = default;
+                    return false;
+                }
             }
         }
     }
