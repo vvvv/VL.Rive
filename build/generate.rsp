@@ -10,14 +10,14 @@ c++
 -std
 c++17
 --file
-C:\Users\elias\source\repos\VL.Rive\src\Interop\RiveSharpInterop.hpp
+..\VL.Rive\src\Interop\RiveSharpInterop.hpp
 --namespace
 VL.Rive.Interop
 --output
 generated
 --include-directory
-C:\Users\elias\source\repos\VL.Rive\submodules\rive-runtime\include
-C:\Users\elias\source\repos\VL.Rive\submodules\rive-runtime\renderer\include
+..\submodules\rive-runtime\include
+..\submodules\rive-runtime\renderer\include
 --define-macro
 _CRT_USE_BUILTIN_OFFSETOF
 --with-access-specifier
