@@ -223,16 +223,17 @@
               <Choice Kind="TypeFlag" Name="PresentInterval" />
             </p:TypeAnnotation>
           </Pad>
-          <Node Bounds="791,500,93,26" Id="TANq8pY6jl7N7jV7DduEd4">
+          <Node Bounds="791,500,93,19" Id="TANq8pY6jl7N7jV7DduEd4">
             <p:NodeReference LastCategoryFullName="Rive.RiveRenderer" LastDependency="VL.Rive.vl">
               <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
-              <Choice Kind="OperationCallFlag" Name="DumpViewModel" />
+              <CategoryReference Kind="ClassType" Name="RiveRenderer" NeedsToBeDirectParent="true" />
+              <Choice Kind="OperationCallFlag" Name="DumpViewModelAsJson" />
             </p:NodeReference>
             <Pin Id="RFMTgIIVyAgNiYxGwM7JQL" Name="Input" Kind="StateInputPin" />
             <Pin Id="EJjTk0N1tq6QKT2ENxf935" Name="Output" Kind="StateOutputPin" />
             <Pin Id="T5kwW2RTfOyMUd9fzzrn7l" Name="Result" Kind="OutputPin" />
           </Node>
-          <Pad Id="GFA0UXCxvohO85ZofGEoPS" Comment="" Bounds="881,600,517,816" ShowValueBox="true" isIOBox="true" />
+          <Pad Id="GFA0UXCxvohO85ZofGEoPS" Comment="" Bounds="911,581,517,816" ShowValueBox="true" isIOBox="true" />
         </Canvas>
         <Patch Id="GICtUBakYQsOX8Xvon2K3b" Name="Create" />
         <Patch Id="COl7NXW6wlcMWa8tA3Cl2V" Name="Update" />

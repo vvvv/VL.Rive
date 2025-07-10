@@ -11,6 +11,13 @@ namespace VL.Rive.Interop
         public static extern RiveMat2D rive_Mat2D_InvertOrIdentity([NativeTypeName("const RiveMat2D *")] RiveMat2D* inMat);
 
         [DllImport("rive_interop", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        [return: NativeTypeName("rive::Factory *")]
+        public static extern nint rive_Factory_Create();
+
+        [DllImport("rive_interop", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern void rive_Factory_Destroy([NativeTypeName("rive::Factory *")] nint factory);
+
+        [DllImport("rive_interop", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         [return: NativeTypeName("rive::gpu::RenderContext *")]
         public static extern nint rive_RenderContext_Create_D3D11([NativeTypeName("ID3D11Device*")] nint device, [NativeTypeName("ID3D11DeviceContext*")] nint deviceContext);
 

@@ -64,6 +64,10 @@ extern "C"
     __declspec(dllexport) RiveMat2D rive_ComputeAlignment(RiveFit fit, RiveAlignment alignment, RiveAABB frame, RiveAABB content, float scaleFactor);
 	__declspec(dllexport) RiveMat2D rive_Mat2D_InvertOrIdentity(const RiveMat2D* inMat);
 
+	// Factory - useful when only inspecting files without rendering
+	__declspec(dllexport) Factory* rive_Factory_Create();
+	__declspec(dllexport) void rive_Factory_Destroy(Factory* factory);
+
 	// RenderContext
     __declspec(dllexport) RenderContext* rive_RenderContext_Create_D3D11(ID3D11Device* device, ID3D11DeviceContext* deviceContext);
 	__declspec(dllexport) RenderTarget* rive_RenderContext_MakeRenderTarget_D3D11(RenderContext* self, int width, int height);

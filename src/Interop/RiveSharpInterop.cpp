@@ -1,6 +1,7 @@
 #include "RiveSharpInterop.hpp"
 #include "rive/static_scene.hpp"
 #include "rive/generated/viewmodel/viewmodel_property_viewmodel_base.hpp";
+#include "utils/no_op_factory.hpp"
 
 using namespace rive;
 using namespace rive::gpu;
@@ -39,6 +40,16 @@ extern "C"
         RiveMat2D result;
         memcpy(result.values, cppMat.invertOrIdentity().values(), sizeof(float) * 6);
         return result;
+    }
+
+    Factory* rive_Factory_Create()
+    {
+        return new NoOpFactory();
+    }
+
+    void rive_Factory_Destroy(Factory* factory)
+    {
+        delete factory;
     }
 
     // RenderContext

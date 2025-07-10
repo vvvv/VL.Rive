@@ -43,7 +43,7 @@ do
 
   includedirs({ RIVE_RUNTIME_DIR .. "/include", RIVE_RUNTIME_DIR .. "/renderer/include" })
 
-  files({ VL_RIVE_SRC_DIR .. "/*.cpp", VL_RIVE_SRC_DIR .. "/*.hpp" })
+  files({ VL_RIVE_SRC_DIR .. "/*.cpp", VL_RIVE_SRC_DIR .. "/*.hpp", RIVE_RUNTIME_DIR .. "/utils/no_op_factory.cpp" })
 
   filter("platforms:x64")
     architecture("x64")
