@@ -89,6 +89,9 @@ extern "C"
 	// File
 	__declspec(dllexport) File* rive_File_Import(uint8_t* data, int dataLength, Factory* factory);
 	__declspec(dllexport) void rive_File_Destroy(File* file);
+	__declspec(dllexport) int rive_File_ArtboardCount(File* file);
+	__declspec(dllexport) void rive_File_Artboards(File* file, Artboard** artboards_out);
+	__declspec(dllexport) ArtboardInstance* rive_File_ArtboardByName(File* file, const char* name);
 	__declspec(dllexport) ArtboardInstance* rive_File_GetArtboardDefault(File* file);
 	__declspec(dllexport) ViewModelRuntime* rive_File_DefaultArtboardViewModel(File* file, Artboard* artboard);
 	__declspec(dllexport) int rive_File_ViewModelCount(File* file);
@@ -96,6 +99,20 @@ extern "C"
 	__declspec(dllexport) void rive_File_GetViewModelProperties(File* file, int index, RivePropertyData* properties_out);
 
 	// Artboard
+	__declspec(dllexport) const char* rive_Artboard_Name(Artboard* artboard);
+	__declspec(dllexport) int rive_Artboard_StateMachineCount(Artboard* artboard);
+	__declspec(dllexport) void rive_Artboard_StateMachines(Artboard* artboard, StateMachine** stateMachines_out);
+	__declspec(dllexport) int rive_Artboard_AnimationCount(Artboard* artboard);
+	__declspec(dllexport) void rive_Artboard_Animations(Artboard* artboard, Animation** animations_out);
+
+	// StateMachine
+	__declspec(dllexport) const char* rive_StateMachine_Name(StateMachine* stateMachine);
+
+	// Animation
+	__declspec(dllexport) const char* rive_Animation_Name(Animation* animation);
+
+	// ArtboardInstance (inherits from Artboard)
+	__declspec(dllexport) Scene* rive_ArtboardInstance_SceneByName(ArtboardInstance* artboard, const char* name);
 	__declspec(dllexport) Scene* rive_ArtboardInstance_StaticScene(ArtboardInstance* artboard);
 	__declspec(dllexport) Scene* rive_ArtboardInstance_StateMachineAt(ArtboardInstance* artboard, int index);
 	__declspec(dllexport) Scene* rive_ArtboardInstance_AnimationAt(ArtboardInstance* artboard, int index);

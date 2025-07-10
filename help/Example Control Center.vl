@@ -24,6 +24,8 @@
             <Pin Id="NX5fPnQskweMEl2V0UGqJV" Name="Output" Kind="StateOutputPin" />
             <Pin Id="LwBJZpIjGRKMV5Vk3z5K3A" Name="Node Context" Kind="InputPin" IsHidden="true" />
             <Pin Id="BvQeL8gB3yUPYKQLo7uo8E" Name="File" Kind="InputPin" DefaultValue="assets\zapper.riv" />
+            <Pin Id="Smnc16MBbt7QctRCoURIEh" Name="Artboard Name" Kind="InputPin" />
+            <Pin Id="DkEuhxZ9jD4NknladwSgC3" Name="Scene Name" Kind="InputPin" />
             <Pin Id="UtxVMDa84a8QKn70Rurd8N" Name="Fit" Kind="InputPin" />
             <Pin Id="SSsrNxslhnSMtCrspnoiRQ" Name="Alignment" Kind="InputPin" />
             <Pin Id="Rm29DO5D7SAP2egS4luoHy" Name="Frame" Kind="InputPin" />
@@ -223,11 +225,11 @@
               <Choice Kind="TypeFlag" Name="PresentInterval" />
             </p:TypeAnnotation>
           </Pad>
-          <Node Bounds="791,500,93,19" Id="TANq8pY6jl7N7jV7DduEd4">
+          <Node Bounds="791,500,123,19" Id="TANq8pY6jl7N7jV7DduEd4">
             <p:NodeReference LastCategoryFullName="Rive.RiveRenderer" LastDependency="VL.Rive.vl">
               <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
               <CategoryReference Kind="ClassType" Name="RiveRenderer" NeedsToBeDirectParent="true" />
-              <Choice Kind="OperationCallFlag" Name="DumpViewModelAsJson" />
+              <Choice Kind="OperationCallFlag" Name="DumpFileAsJson" />
             </p:NodeReference>
             <Pin Id="RFMTgIIVyAgNiYxGwM7JQL" Name="Input" Kind="StateInputPin" />
             <Pin Id="EJjTk0N1tq6QKT2ENxf935" Name="Output" Kind="StateOutputPin" />

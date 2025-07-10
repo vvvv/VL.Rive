@@ -64,6 +64,16 @@ namespace VL.Rive.Interop
         public static extern void rive_File_Destroy([NativeTypeName("rive::File *")] nint file);
 
         [DllImport("rive_interop", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern int rive_File_ArtboardCount([NativeTypeName("rive::File *")] nint file);
+
+        [DllImport("rive_interop", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern void rive_File_Artboards([NativeTypeName("rive::File *")] nint file, [NativeTypeName("Artboard **")] nint* artboards_out);
+
+        [DllImport("rive_interop", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        [return: NativeTypeName("rive::ArtboardInstance *")]
+        public static extern nint rive_File_ArtboardByName([NativeTypeName("rive::File *")] nint file, [NativeTypeName("const char *")] sbyte* name);
+
+        [DllImport("rive_interop", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         [return: NativeTypeName("rive::ArtboardInstance *")]
         public static extern nint rive_File_GetArtboardDefault([NativeTypeName("rive::File *")] nint file);
 
@@ -79,6 +89,34 @@ namespace VL.Rive.Interop
 
         [DllImport("rive_interop", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern void rive_File_GetViewModelProperties([NativeTypeName("rive::File *")] nint file, int index, RivePropertyData* properties_out);
+
+        [DllImport("rive_interop", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        [return: NativeTypeName("const char *")]
+        public static extern sbyte* rive_Artboard_Name([NativeTypeName("rive::Artboard *")] nint artboard);
+
+        [DllImport("rive_interop", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern int rive_Artboard_StateMachineCount([NativeTypeName("rive::Artboard *")] nint artboard);
+
+        [DllImport("rive_interop", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern void rive_Artboard_StateMachines([NativeTypeName("rive::Artboard *")] nint artboard, [NativeTypeName("StateMachine **")] nint* stateMachines_out);
+
+        [DllImport("rive_interop", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern int rive_Artboard_AnimationCount([NativeTypeName("rive::Artboard *")] nint artboard);
+
+        [DllImport("rive_interop", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern void rive_Artboard_Animations([NativeTypeName("rive::Artboard *")] nint artboard, [NativeTypeName("Animation **")] nint* animations_out);
+
+        [DllImport("rive_interop", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        [return: NativeTypeName("const char *")]
+        public static extern sbyte* rive_StateMachine_Name([NativeTypeName("rive::StateMachine *")] nint stateMachine);
+
+        [DllImport("rive_interop", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        [return: NativeTypeName("const char *")]
+        public static extern sbyte* rive_Animation_Name([NativeTypeName("rive::Animation *")] nint animation);
+
+        [DllImport("rive_interop", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        [return: NativeTypeName("rive::Scene *")]
+        public static extern nint rive_ArtboardInstance_SceneByName([NativeTypeName("rive::ArtboardInstance *")] nint artboard, [NativeTypeName("const char *")] sbyte* name);
 
         [DllImport("rive_interop", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         [return: NativeTypeName("rive::Scene *")]

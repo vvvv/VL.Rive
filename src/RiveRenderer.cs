@@ -29,7 +29,7 @@ public sealed partial class RiveRenderer : RendererBase
     Interop.RiveRenderer? riveRenderer;
     RiveFile? riveFile;
     Path? riveFilePath;
-    RiveArtboard? riveArtboard;
+    RiveArtboardInstance? riveArtboard;
     RiveScene? riveScene;
     RiveViewModelInstance? riveViewModelInstance;
     IFrameClock frameClock;
@@ -44,6 +44,8 @@ public sealed partial class RiveRenderer : RendererBase
     object? lastViewModel;
     int needToWrite;
 
+    string? artboardName;
+    string? sceneName;
     RiveFit riveFit;
     RiveAlignment riveAlignment;
     Optional<RectangleF> riveFrame;
@@ -57,7 +59,7 @@ public sealed partial class RiveRenderer : RendererBase
         graphicsDeviceService = appHost.Services.GetRequiredService<Game>().Services.GetService<IGraphicsDeviceService>();
     }
 
-    public void Update(Path? file, RiveFit fit, RiveAlignment alignment, Optional<RectangleF> frame, Optional<RectangleF> content, [DefaultValue(1f)] float scaleFactor, object? viewModel)
+    public void Update(Path? file, string? artboardName, string? sceneName, RiveFit fit, RiveAlignment alignment, Optional<RectangleF> frame, Optional<RectangleF> content, [DefaultValue(1f)] float scaleFactor, object? viewModel, bool reload)
     {
         riveFit = fit;
         riveAlignment = alignment;
@@ -87,25 +89,57 @@ public sealed partial class RiveRenderer : RendererBase
             }
         }
 
-        if (file != riveFilePath)
+        // Load file
+        if (reload || file != riveFilePath)
         {
             riveFilePath = file;
 
             DisposeRiveFileResources();
 
-            if (riveRenderContext != null)
+            riveFile = riveRenderContext?.LoadFile(file);
+        }
+
+        // Load artboard and view model instance
+        if (riveArtboard is null || artboardName != this.artboardName)
+        {
+            this.artboardName = artboardName;
+            this.sceneName = sceneName;
+
+            DisposeAndSetNull(ref riveArtboard);
+            DisposeAndSetNull(ref riveScene);
+            DisposeAndSetNull(ref riveViewModelInstance);
+
+            if (string.IsNullOrEmpty(artboardName))
+                riveArtboard = riveFile?.GetArtboardDefault();
+            else
             {
-                riveFile = riveRenderContext.LoadFile(file);
-                riveArtboard = riveFile.GetArtboardDefault();
-                riveScene = riveArtboard.DefaultScene();
-                // Needs more careful memory management
-                riveViewModelInstance = riveFile.DefaultArtboardViewModel(riveArtboard);
-                if (riveViewModelInstance != default)
-                {
-                    riveArtboard.BindViewModelInstance(riveViewModelInstance);
-                    riveScene?.BindViewModelInstance(riveViewModelInstance);
-                }
+                riveArtboard = riveFile?.GetArtboard(artboardName);
+                if (riveArtboard is null)
+                    throw new ArgumentException($"Rive artboard '{artboardName}' not found in file '{file}'.");
             }
+
+            if (riveArtboard != null)
+                riveViewModelInstance = riveFile?.DefaultArtboardViewModel(riveArtboard);
+        }
+
+        // Load scene
+        if (riveScene is null || sceneName != this.sceneName)
+        {
+            this.sceneName = sceneName;
+
+            DisposeAndSetNull(ref riveScene);
+
+            if (string.IsNullOrEmpty(sceneName))
+                riveScene = riveArtboard?.GetDefaultScene();
+            else
+            {
+                riveScene = riveArtboard?.GetScene(sceneName);
+                if (riveScene is null)
+                    throw new ArgumentException($"Rive scene '{sceneName}' not found in artboard '{artboardName}' of file '{file}'.");
+            }
+
+            if (riveViewModelInstance != null)
+                riveScene?.BindViewModelInstance(riveViewModelInstance);
         }
 
         if (riveScene is null)
@@ -121,15 +155,14 @@ public sealed partial class RiveRenderer : RendererBase
             ReadValuesFromRive(riveViewModelInstance, viewModel);
     }
 
-    public string DumpViewModelAsJson()
+    public string DumpFileAsJson()
     {
-        var sb = new System.Text.StringBuilder();
         if (riveFile is null)
-        {
-            sb.AppendLine("No Rive file or ViewModel instance available.");
-            return sb.ToString();
-        }
-        return riveFile.DumpViewModelAsJson();
+            return string.Empty;
+
+        var sb = new System.Text.StringBuilder();
+        riveFile.WriteRiveFileAsJson(sb);
+        return sb.ToString();
     }
 
     protected override unsafe void DrawCore(RenderDrawContext context)

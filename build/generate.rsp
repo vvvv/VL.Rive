@@ -10,14 +10,14 @@ c++
 -std
 c++17
 --file
-..\VL.Rive\src\Interop\RiveSharpInterop.hpp
+../src/Interop/RiveSharpInterop.hpp
 --namespace
 VL.Rive.Interop
 --output
 generated
 --include-directory
-..\submodules\rive-runtime\include
-..\submodules\rive-runtime\renderer\include
+../submodules/rive-runtime/include
+../submodules/rive-runtime/renderer/include
 --define-macro
 _CRT_USE_BUILTIN_OFFSETOF
 --with-access-specifier
@@ -33,6 +33,8 @@ RenderTarget*=nint
 Renderer*=nint
 Artboard*=nint
 ArtboardInstance*=nint
+StateMachine*=nint
+Animation*=nint
 Scene*=nint
 ViewModelRuntime*=nint
 ViewModelInstance*=nint

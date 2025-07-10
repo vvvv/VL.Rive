@@ -136,6 +136,25 @@ extern "C"
         delete file;
     }
 
+    int rive_File_ArtboardCount(File* file)
+    {
+		return file->artboardCount();
+    }
+
+    void rive_File_Artboards(File* file, Artboard** artboards_out)
+    {
+        auto artboards = file->artboards();
+        for (int i = 0; i < artboards.size(); ++i)
+        {
+            artboards_out[i] = artboards[i];
+		}
+    }
+
+    ArtboardInstance* rive_File_ArtboardByName(File* file, const char* name)
+    {
+        return file->artboardNamed(name).release();
+    }
+
     ArtboardInstance* rive_File_GetArtboardDefault(File* file)
     {
         return file->artboardDefault().release();
@@ -179,6 +198,63 @@ extern "C"
     }
 
     // Artboard
+    const char* rive_Artboard_Name(Artboard* artboard)
+    {
+		return artboard->name().c_str();
+    }
+
+    int rive_Artboard_StateMachineCount(Artboard* artboard)
+    {
+        return artboard->stateMachineCount();
+    }
+
+    void rive_Artboard_StateMachines(Artboard* artboard, StateMachine** machines_out)
+    {
+        for (int i = 0; i < artboard->stateMachineCount(); ++i)
+        {
+            machines_out[i] = artboard->stateMachine(i);
+		}
+    }
+
+    int rive_Artboard_AnimationCount(Artboard* artboard)
+    {
+		return artboard->animationCount();
+    }
+
+    void rive_Artboard_Animations(Artboard* artboard, Animation** animations_out)
+    {
+        for (int i = 0; i < artboard->animationCount(); ++i)
+        {
+            animations_out[i] = artboard->animation(i);
+        }
+    }
+
+	// StateMachine
+    const char* rive_StateMachine_Name(StateMachine* stateMachine)
+    {
+        return stateMachine->name().c_str();
+    }
+
+    // Animation
+    const char* rive_Animation_Name(Animation* animation)
+    {
+        return animation->name().c_str();
+    }
+
+	// ArtboardInstance
+    Scene* rive_ArtboardInstance_SceneByName(ArtboardInstance* artboard, const char* name)
+    {
+        auto sm = artboard->stateMachineNamed(name);
+        if (sm != nullptr)
+            return sm.release();
+
+        auto animation = artboard->animationNamed(name);
+        if (animation != nullptr)
+            return animation.release();
+
+        return nullptr;
+    }
+
     Scene* rive_ArtboardInstance_StaticScene(ArtboardInstance* artboard)
     {
         return new StaticScene(artboard);
