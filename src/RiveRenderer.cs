@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using SharpDX.Direct3D11;
 using Stride.Core.Mathematics;
 using Stride.Engine;
@@ -23,6 +24,8 @@ namespace VL.Rive;
 [ProcessNode(HasStateOutput = true)]
 public sealed partial class RiveRenderer : RendererBase
 {
+    readonly ILogger logger;
+
     RiveRenderContextD3D11? riveRenderContext;
     RiveRenderTargetD3D11? riveRenderTarget;
 
@@ -55,6 +58,7 @@ public sealed partial class RiveRenderer : RendererBase
     public RiveRenderer([Pin(Visibility = Model.PinVisibility.Hidden)] NodeContext nodeContext)
     {
         var appHost = nodeContext.AppHost;
+        logger = nodeContext.GetLogger();
         frameClock = appHost.Services.GetRequiredService<IFrameClock>();
         graphicsDeviceService = appHost.Services.GetRequiredService<Game>().Services.GetService<IGraphicsDeviceService>();
     }
@@ -170,6 +174,13 @@ public sealed partial class RiveRenderer : RendererBase
         if (riveRenderContext is null || riveScene is null)
             return;
 
+        var renderTarget = context.CommandList.RenderTarget;
+        if (!IsSupportedByRive(renderTarget.Format))
+        {
+            logger.LogError($"The render target format '{renderTarget.Format}' is not supported by Rive.");
+            return;
+        }
+
         // Subscribe to input events - in case we have many sinks we assume that there's only one input source active
         var inputSource = context.RenderContext.Tags.Get(InputExtensions.WindowInputSource);
         if (inputSource != lastInputSource)
@@ -178,7 +189,6 @@ public sealed partial class RiveRenderer : RendererBase
             inputSubscription.Disposable = SubscribeToInputSource(inputSource, context);
         }
 
-        var renderTarget = context.CommandList.RenderTarget;
         var nativeRenderTarget = SharpDXInterop.GetNativeResource(renderTarget) as Texture2D;
         if (nativeRenderTarget is null)
             return;
@@ -216,6 +226,22 @@ public sealed partial class RiveRenderer : RendererBase
 
         // Release render target texture
         riveRenderTarget.SetTargetTexture(default);
+
+        // See submodules\rive-runtime\renderer\src\d3d11\render_context_d3d_impl.cpp
+        static bool IsSupportedByRive(PixelFormat format)
+        {
+            switch (format)
+            {
+                case PixelFormat.B8G8R8A8_UNorm:
+                case PixelFormat.B8G8R8A8_UNorm_SRgb:
+                case PixelFormat.B8G8R8A8_Typeless:
+                case PixelFormat.R8G8B8A8_UNorm:
+                case PixelFormat.R8G8B8A8_UNorm_SRgb:
+                case PixelFormat.R8G8B8A8_Typeless:
+                    return true;
+            }
+            return false;
+        }
     }
 
     private static void ReadValuesFromRive(RiveViewModelInstance riveViewModelInstance, object? viewModel)
