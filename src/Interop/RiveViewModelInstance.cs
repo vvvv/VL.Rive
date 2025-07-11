@@ -8,21 +8,13 @@ internal unsafe class RiveViewModelInstance : RiveProperty
 {
     private ImmutableArray<RiveProperty> properties;
 
-    public RiveViewModelInstance(string name, nint handle, bool ownsHandle = true)
-        : base(name, typeof(RiveViewModelInstance), handle, ownsHandle)
+    public RiveViewModelInstance(string name, nint handle)
+        : base(name, typeof(RiveViewModelInstance), handle)
     {
     }
 
     // Pointer to RiveViewModelInstance
     internal nint InstanceHandle => rive_ViewModelInstanceRuntime_Instance(handle);
-
-    public override bool IsInvalid => handle == default || IsClosed;
-
-    protected override bool ReleaseHandle()
-    {
-        rive_ViewModelInstanceRuntime_Destroy(handle);
-        return true;
-    }
 
     public ImmutableArray<RiveProperty> Properties
     {

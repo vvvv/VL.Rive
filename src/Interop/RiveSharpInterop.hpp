@@ -113,7 +113,6 @@ extern "C"
 
 	// ArtboardInstance (inherits from Artboard)
 	__declspec(dllexport) Scene* rive_ArtboardInstance_SceneByName(ArtboardInstance* artboard, const char* name);
-	__declspec(dllexport) Scene* rive_ArtboardInstance_StaticScene(ArtboardInstance* artboard);
 	__declspec(dllexport) Scene* rive_ArtboardInstance_StateMachineAt(ArtboardInstance* artboard, int index);
 	__declspec(dllexport) Scene* rive_ArtboardInstance_AnimationAt(ArtboardInstance* artboard, int index);
 	__declspec(dllexport) Scene* rive_ArtboardInstance_DefaultScene(ArtboardInstance* artboard);
@@ -219,8 +218,6 @@ extern "C"
 	// Returns the underlying ViewModelInstance pointer from a ViewModelInstanceRuntime.
 	// The returned pointer is valid as long as the ViewModelInstanceRuntime is alive.
 	__declspec(dllexport) ViewModelInstance* rive_ViewModelInstanceRuntime_Instance(ViewModelInstanceRuntime* runtime);
-
-	__declspec(dllexport) void rive_ViewModelInstanceRuntime_Destroy(ViewModelInstanceRuntime* runtime);
 
 	// ViewModelInstanceValueRuntime
 	__declspec(dllexport) bool rive_ViewModelInstanceValueRuntime_HasChanged(ViewModelInstanceValueRuntime* value);

@@ -107,11 +107,10 @@ public sealed partial class RiveRenderer : RendererBase
         if (riveArtboard is null || artboardName != this.artboardName)
         {
             this.artboardName = artboardName;
-            this.sceneName = sceneName;
 
             DisposeAndSetNull(ref riveArtboard);
             DisposeAndSetNull(ref riveScene);
-            DisposeAndSetNull(ref riveViewModelInstance);
+            riveViewModelInstance = null;
 
             if (string.IsNullOrEmpty(artboardName))
                 riveArtboard = riveFile?.GetArtboardDefault();

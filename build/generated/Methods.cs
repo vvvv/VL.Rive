@@ -120,10 +120,6 @@ namespace VL.Rive.Interop
 
         [DllImport("rive_interop", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         [return: NativeTypeName("rive::Scene *")]
-        public static extern nint rive_ArtboardInstance_StaticScene([NativeTypeName("rive::ArtboardInstance *")] nint artboard);
-
-        [DllImport("rive_interop", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        [return: NativeTypeName("rive::Scene *")]
         public static extern nint rive_ArtboardInstance_StateMachineAt([NativeTypeName("rive::ArtboardInstance *")] nint artboard, int index);
 
         [DllImport("rive_interop", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
@@ -273,9 +269,6 @@ namespace VL.Rive.Interop
         [DllImport("rive_interop", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         [return: NativeTypeName("rive::ViewModelInstance *")]
         public static extern nint rive_ViewModelInstanceRuntime_Instance([NativeTypeName("rive::ViewModelInstanceRuntime *")] nint runtime);
-
-        [DllImport("rive_interop", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void rive_ViewModelInstanceRuntime_Destroy([NativeTypeName("rive::ViewModelInstanceRuntime *")] nint runtime);
 
         [DllImport("rive_interop", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         [return: NativeTypeName("bool")]

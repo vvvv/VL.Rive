@@ -1,5 +1,6 @@
-﻿using System.Runtime.CompilerServices;
-
+﻿using CommunityToolkit.HighPerformance.Buffers;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using static VL.Rive.Interop.Methods;
 
 namespace VL.Rive.Interop;
@@ -12,12 +13,27 @@ internal abstract class RiveRenderContext : RiveObject
 
     public unsafe RiveFile LoadFile(string path)
     {
-        var bytes = File.ReadAllBytes(path);
-        fixed (byte* p = bytes)
+        // TODO: Check how it reacts if load fails
+
+        using Stream fileStream = File.OpenRead(path);
+        if (fileStream.Length <= int.MaxValue)
         {
-            // TODO: Check how it reacts if load fails
-            var riveFileHandle = rive_File_Import(p, bytes.Length, handle);
-            return new RiveFile(riveFileHandle);
+            using var bytes = MemoryOwner<byte>.Allocate((int)fileStream.Length);
+            fileStream.Read(bytes.Span);
+            fixed (byte* p = bytes.Span)
+            {
+                var riveFileHandle = rive_File_Import(p, bytes.Length, handle);
+                return new RiveFile(riveFileHandle);
+            }
+        }
+        else
+        {
+            var bytes = File.ReadAllBytes(path);
+            fixed (byte* p = bytes)
+            {
+                var riveFileHandle = rive_File_Import(p, bytes.Length, handle);
+                return new RiveFile(riveFileHandle);
+            }
         }
     }
 

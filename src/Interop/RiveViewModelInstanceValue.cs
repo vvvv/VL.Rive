@@ -12,7 +12,7 @@ internal unsafe class RiveViewModelInstanceValue : RiveProperty
     private readonly PropertyData propertyData;
 
     public RiveViewModelInstanceValue(RiveViewModelInstance parent, nint handle, PropertyData propertyData)
-        : base(propertyData.Name, GetType(propertyData.Type), handle, true)
+        : base(propertyData.Name, GetType(propertyData.Type), handle)
     {
         if (handle == nint.Zero)
             throw new ArgumentNullException(nameof(handle), "Handle cannot be zero.");
@@ -20,8 +20,6 @@ internal unsafe class RiveViewModelInstanceValue : RiveProperty
         this.parent = parent;
         this.propertyData = propertyData;
     }
-
-    public override bool IsInvalid => parent.IsInvalid;
 
     private static Type GetType(RiveDataType riveDataType) => riveDataType switch
     {
@@ -43,14 +41,12 @@ internal unsafe class RiveViewModelInstanceValue : RiveProperty
     {
         get
         {
-            ObjectDisposedException.ThrowIf(IsInvalid, "RiveViewModelInstance is disposed.");
             return rive_ViewModelInstanceValueRuntime_HasChanged(handle) != 0;
         }
     }
 
     public void ClearChanges()
     {
-        ObjectDisposedException.ThrowIf(IsInvalid, "RiveViewModelInstance is disposed.");
         rive_ViewModelInstanceValueRuntime_ClearChanges(handle);
     }
 
@@ -58,8 +54,6 @@ internal unsafe class RiveViewModelInstanceValue : RiveProperty
     {
         get
         {
-            ObjectDisposedException.ThrowIf(IsInvalid, "RiveViewModelInstance is disposed.");
-
             switch (propertyData.Type)
             {
                 case RiveDataType.String:
@@ -78,8 +72,6 @@ internal unsafe class RiveViewModelInstanceValue : RiveProperty
         }
         set
         {
-            ObjectDisposedException.ThrowIf(IsInvalid, "RiveViewModelInstance is disposed.");
-
             switch (propertyData.Type)
             {
                 case RiveDataType.String:
@@ -110,11 +102,5 @@ internal unsafe class RiveViewModelInstanceValue : RiveProperty
                     throw new NotSupportedException($"Unsupported data type: {propertyData.Type}");
             }
         }
-    }
-
-    protected override bool ReleaseHandle()
-    {
-        // Cleaned up by the parent instance
-        return true;
     }
 }

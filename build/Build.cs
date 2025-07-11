@@ -208,7 +208,7 @@ class Build : NukeBuild
 
     Target BuildRiveManaged => _ => _
         .Unlisted()
-        .DependsOn(GenerateInteropCode)
+        .DependsOn(GenerateInteropCode, BuildRiveNative)
         .Executes(() =>
         {
             DotNetTasks.DotNetBuild(s => s

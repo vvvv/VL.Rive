@@ -255,11 +255,6 @@ extern "C"
         return nullptr;
     }
 
-    Scene* rive_ArtboardInstance_StaticScene(ArtboardInstance* artboard)
-    {
-        return new StaticScene(artboard);
-    }
-
     Scene* rive_ArtboardInstance_StateMachineAt(ArtboardInstance* artboard, int index)
     {
         return artboard->stateMachineAt(index).release();
@@ -282,8 +277,6 @@ extern "C"
 
     void rive_Artboard_BindViewModelInstance(Artboard* artboard, ViewModelInstance* viewModelInstance)
     {
-        // TODO: Needed?
-        viewModelInstance->ref();
         artboard->bindViewModelInstance(rcp<ViewModelInstance>(viewModelInstance));
     }
 
@@ -346,8 +339,6 @@ extern "C"
 
     void rive_Scene_BindViewModelInstance(Scene* scene, ViewModelInstance* viewModelInstance)
     {
-		// TODO: Needed?
-        viewModelInstance->ref();
         scene->bindViewModelInstance(rcp<ViewModelInstance>(viewModelInstance));
     }
 
@@ -486,11 +477,6 @@ extern "C"
     ViewModelInstance* rive_ViewModelInstanceRuntime_Instance(ViewModelInstanceRuntime* runtime)
     {
         return runtime->instance().release();
-    }
-
-    void rive_ViewModelInstanceRuntime_Destroy(ViewModelInstanceRuntime* runtime)
-    {
-        runtime->unref();
     }
 
     bool rive_ViewModelInstanceValueRuntime_HasChanged(ViewModelInstanceValueRuntime* value)
