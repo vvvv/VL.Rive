@@ -245,7 +245,7 @@ public sealed partial class RiveRenderer : RendererBase
 
                 if (riveProp is RiveViewModelInstanceValue v)
                 {
-                    if (v.HasChanged && TryConvert(v.Value, type.ClrType, out var vlValue))
+                    if (v.HasChanged && TryConvert(v.Value, prop.Type.ClrType, out var vlValue))
                     {
                         changed = true;
                         // Acknowledge the change
