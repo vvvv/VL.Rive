@@ -26,6 +26,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <!-- Workaround for https://github.com/stride3d/stride/issues/2232 -->
+    <PackageReference Include="Stride.Core.Assets.CompilerApp" Version="4.2.0.2232" PrivateAssets="all" ExcludeAssets="runtime" />
     <PackageReference Include="VL.Core" Version="2024.6.7" PrivateAssets="all" />
     <PackageReference Include="VL.Stride.Runtime" Version="2024.6.7" PrivateAssets="all" />
   </ItemGroup>
