@@ -9,6 +9,9 @@
     <OutputPath>..\lib</OutputPath>
     <Version>0.0.1-pre</Version>
 
+    <!-- Breaks build on github: https://github.com/stride3d/stride/issues/2232, luckily we don't need it -->
+    <StrideAssemblyProcessor>false</StrideAssemblyProcessor>
+
     <!-- Package properties -->
     <Year>$([System.DateTime]::Now.ToString('yyyy'))</Year>
     <Authors>vvvv group</Authors>
