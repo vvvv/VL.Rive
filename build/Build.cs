@@ -1,5 +1,6 @@
 using Nuke.Common;
 using Nuke.Common.CI;
+using Nuke.Common.CI.GitHubActions;
 using Nuke.Common.Execution;
 using Nuke.Common.IO;
 using Nuke.Common.ProjectModel;
@@ -20,6 +21,22 @@ using static Nuke.Common.EnvironmentInfo;
 using static Nuke.Common.IO.PathConstruction;
 using static System.Net.WebRequestMethods;
 
+[GitHubActions(
+    "develop",
+    GitHubActionsImage.WindowsLatest,
+    OnPushBranches = ["develop"],
+    Lfs = true,
+    Submodules = GitHubActionsSubmodules.Recursive,
+    InvokedTargets = [nameof(PushToGithub)],
+    EnableGitHubToken = true)]
+[GitHubActions(
+    "nuget.org",
+    GitHubActionsImage.WindowsLatest,
+    On = [ GitHubActionsTrigger.WorkflowDispatch ],
+    Lfs = true,
+    Submodules = GitHubActionsSubmodules.Recursive,
+    InvokedTargets = [nameof(PushToNugetOrg)],
+    ImportSecrets = [nameof(NuGetApiKey)])]
 class Build : NukeBuild
 {
     /// Support plugins are available for:
@@ -32,6 +49,10 @@ class Build : NukeBuild
 
     [Parameter("Configuration to build - Default is 'Debug' (local) or 'Release' (server)")]
     readonly Configuration Configuration = IsLocalBuild ? Configuration.Debug : Configuration.Release;
+
+    [Parameter]
+    [Secret]
+    readonly string NuGetApiKey;
 
     AbsolutePath BuildDirectory => RootDirectory / "build";
     AbsolutePath LocalBinDirectory => BuildDirectory / "bin";
@@ -47,6 +68,7 @@ class Build : NukeBuild
     AbsolutePath PremakeOutputDirectory => BuildDirectory / "out" / "debug";
     AbsolutePath RiveNativeSolution => PremakeOutputDirectory / "rive.sln";
     AbsolutePath RiveManagedProject => RootDirectory / "src" / "VL.Rive.csproj";
+    AbsolutePath PackageOutputDirectory => RootDirectory / "lib";
 
     Target Clean => _ => _
         .Before(Restore)
@@ -221,6 +243,32 @@ class Build : NukeBuild
         {
             DotNetTasks.DotNetPack(s => s
                 .SetProject(RiveManagedProject));
+        });
+
+    Target PushToGithub => _ => _
+        .DependsOn(Pack)
+        .Executes(() =>
+        {
+            foreach (var file in PackageOutputDirectory.GetFiles("*.nupkg"))
+            {
+                DotNetTasks.DotNetNuGetPush(_ => _
+                    .SetTargetPath(file)
+                    .SetApiKey(GitHubActions.Instance.Token)
+                    .SetSource("https://nuget.pkg.github.com/vvvv/index.json"));
+            }
+        });
+
+    Target PushToNugetOrg => _ => _
+        .DependsOn(Pack)
+        .Executes(() =>
+        {
+            foreach (var file in PackageOutputDirectory.GetFiles("*.nupkg"))
+            {
+                DotNetTasks.DotNetNuGetPush(_ => _
+                    .SetTargetPath(file)
+                    .SetApiKey(NuGetApiKey)
+                    .SetSource("nuget.org"));
+            }
         });
 
     private static async Task DownloadFile(string url, string file)
