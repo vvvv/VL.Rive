@@ -9,17 +9,14 @@
 #
 #     - To trigger manual generation invoke:
 #
-#         nuke --generate-configuration GitHubActions_main --host GitHubActions
+#         nuke --generate-configuration GitHubActions_nuget.org --host GitHubActions
 #
 # </auto-generated>
 # ------------------------------------------------------------------------------
 
-name: main
+name: nuget.org
 
-on:
-  push:
-    branches:
-      - main
+on: [workflow_dispatch]
 
 jobs:
   windows-latest:
@@ -37,7 +34,7 @@ jobs:
             .nuke/temp
             ~/.nuget/packages
           key: ${{ runner.os }}-${{ hashFiles('**/global.json', '**/*.csproj', '**/Directory.Packages.props') }}
-      - name: 'Run: PushToGithub'
-        run: ./build.cmd PushToGithub
+      - name: 'Run: PushToNugetOrg'
+        run: ./build.cmd PushToNugetOrg
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NuGetApiKey: ${{ secrets.NUGET_API_KEY }}

@@ -1,0 +1,50 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <OutputType>Library</OutputType>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <OutputPath>..\lib</OutputPath>
+    <Version>0.0.2-pre</Version>
+
+    <!-- Breaks build on github: https://github.com/stride3d/stride/issues/2232, luckily we don't need it -->
+    <StrideAssemblyProcessor>false</StrideAssemblyProcessor>
+
+    <!-- Package properties -->
+    <Year>$([System.DateTime]::Now.ToString('yyyy'))</Year>
+    <Authors>vvvv group</Authors>
+    <Owners>$(Authors)</Owners>
+    <Copyright>Copyright © $(Year) by $(Authors). All rights reserved.</Copyright>
+    <PackageProjectUrl>https://github.com/vvvv/VL.Rive</PackageProjectUrl>
+    <PackageIcon>nugeticon.png</PackageIcon>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="..\build\generated\*.cs" LinkBase="Interop\generated" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Workaround for https://github.com/stride3d/stride/issues/2232 -->
+    <PackageReference Include="Stride.Core.Assets.CompilerApp" Version="4.2.0.2232" PrivateAssets="all" ExcludeAssets="runtime" />
+    <PackageReference Include="VL.Core" Version="2024.6.7" PrivateAssets="all" />
+    <PackageReference Include="VL.Stride.Runtime" Version="2024.6.7" PrivateAssets="all" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\deployment\nugeticon.png" Pack="True" PackagePath="" />
+    <None Include="..\runtimes\**\*.dll">
+      <LinkBase>runtimes</LinkBase>
+      <Pack>true</Pack>
+      <PackagePath>runtimes\%(RecursiveDir)%(Filename)%(Extension)</PackagePath>
+      <!--<Visible>false</Visible>-->
+    </None>
+    <None Include="..\**\*.vl">
+      <Pack>true</Pack>
+      <PackagePath>%(RecursiveDir)%(Filename)%(Extension)</PackagePath>
+      <!--<Visible>false</Visible>-->
+    </None>
+  </ItemGroup>
+
+</Project>

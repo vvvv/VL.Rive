@@ -9,3 +9,9 @@ bin/
 
 .vl/
 /lib/
+/native/dependencies/
+/native/out/
+/build/dependencies/
+/build/out/
+/runtimes/
+/.nuke/temp
