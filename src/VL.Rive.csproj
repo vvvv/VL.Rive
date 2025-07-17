@@ -7,7 +7,7 @@
     <OutputType>Library</OutputType>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <OutputPath>..\lib</OutputPath>
-    <Version>0.0.2-pre</Version>
+    <Version>0.0.3-pre</Version>
 
     <!-- Breaks build on github: https://github.com/stride3d/stride/issues/2232, luckily we don't need it -->
     <StrideAssemblyProcessor>false</StrideAssemblyProcessor>
@@ -43,6 +43,11 @@
     <None Include="..\**\*.vl">
       <Pack>true</Pack>
       <PackagePath>%(RecursiveDir)%(Filename)%(Extension)</PackagePath>
+      <!--<Visible>false</Visible>-->
+    </None>
+    <None Include="..\assets\control_center.riv">
+      <Pack>true</Pack>
+      <PackagePath>assets\%(RecursiveDir)%(Filename)%(Extension)</PackagePath>
       <!--<Visible>false</Visible>-->
     </None>
   </ItemGroup>
