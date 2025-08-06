@@ -73,17 +73,6 @@ public sealed partial class RiveRenderer : RendererBase
         riveContent = content;
         riveScaleFactor = scaleFactor;
 
-        if (viewModel != lastViewModel)
-        {
-            lastViewModel = viewModel;
-            Interlocked.Increment(ref needToWrite);
-            viewModelSubscription.Disposable = null;
-            if (viewModel is IChannel c)
-                viewModelSubscription.Disposable = c.ChannelOfObject.Subscribe(_ => Interlocked.Increment(ref needToWrite));
-        }
-        if (viewModel is IVLObject obj && !obj.Type.IsImmutable)
-            Interlocked.Increment(ref needToWrite); // Force writing to Rive if the object is mutable
-
         // Native device can change - check on each update
         var nativeDevice = SharpDXInterop.GetNativeDevice(graphicsDeviceService.GraphicsDevice) as Device;
         if (riveRenderContext?.DevicePointer != nativeDevice?.NativePointer)
@@ -115,6 +104,7 @@ public sealed partial class RiveRenderer : RendererBase
             DisposeAndSetNull(ref riveArtboard);
             DisposeAndSetNull(ref riveScene);
             riveViewModelInstance = null;
+            lastViewModel = null;
 
             if (string.IsNullOrEmpty(artboardName))
                 riveArtboard = riveFile?.GetArtboardDefault();
@@ -151,6 +141,17 @@ public sealed partial class RiveRenderer : RendererBase
 
         if (riveScene is null)
             return;
+
+        if (viewModel != lastViewModel)
+        {
+            lastViewModel = viewModel;
+            Interlocked.Increment(ref needToWrite);
+            viewModelSubscription.Disposable = null;
+            if (viewModel is IChannel c)
+                viewModelSubscription.Disposable = c.ChannelOfObject.Subscribe(_ => Interlocked.Increment(ref needToWrite));
+        }
+        if (viewModel is IVLObject obj && !obj.Type.IsImmutable)
+            Interlocked.Increment(ref needToWrite); // Force writing to Rive if the object is mutable
 
         // Write values to rive
         if (riveViewModelInstance != null && Interlocked.Exchange(ref needToWrite, 0) > 0)
