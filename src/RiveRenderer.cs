@@ -251,21 +251,20 @@ public sealed partial class RiveRenderer : RendererBase
     {
         if (viewModel is IChannel channel)
         {
-            // TODO: Remove this restriction once new binding branch is merged
-            if (channel.Object is IVLObject o)
+            if (channel.Object is object o)
             {
-                if (ReadIntoObject(riveViewModelInstance, o))
+                if (ReadIntoObject(riveViewModelInstance, ref o))
                 {
                     channel.Object = o;
                 }
             }
         }
-        else if (viewModel is IVLObject o && !o.Type.IsImmutable)
+        else if (viewModel is not null && viewModel.GetType() != typeof(object))
         {
-            ReadIntoObject(riveViewModelInstance, o);
+            ReadIntoObject(riveViewModelInstance, ref viewModel);
         }
 
-        static bool ReadIntoObject(RiveViewModelInstance vm, IVLObject o)
+        static bool ReadIntoObject(RiveViewModelInstance vm, ref object o)
         {
             var type = o.GetVLTypeInfo();
 
@@ -287,9 +286,14 @@ public sealed partial class RiveRenderer : RendererBase
                         o = prop.WithValue(o, vlValue);
                     }
                 }
-                else if (riveProp is RiveViewModelInstance vmi && prop.GetValue(o) is IVLObject sub)
+                else if (riveProp is RiveViewModelInstance vmi && prop.GetValue(o) is object sub)
                 {
-                    changed |= ReadIntoObject(vmi, sub);
+                    if (ReadIntoObject(vmi, ref sub))
+                    {
+                        changed = true;
+                        // Set the value on the object
+                        o = prop.WithValue(o, sub);
+                    }
                 }
             }
             return changed;
@@ -300,18 +304,17 @@ public sealed partial class RiveRenderer : RendererBase
     {
         if (viewModel is IChannel channel)
         {
-            // TODO: Remove this restriction once new binding branch is merged
-            if (channel.Object is IVLObject o)
+            if (channel.Object is object o)
             {
                 WriteFromObject(riveViewModel, o);
             }
         }
-        else if (viewModel is IVLObject o)
+        else if (viewModel is not null && viewModel.GetType() != typeof(object))
         {
-            WriteFromObject(riveViewModel, o);
+            WriteFromObject(riveViewModel, viewModel);
         }
 
-        static void WriteFromObject(RiveViewModelInstance vm, IVLObject o)
+        static void WriteFromObject(RiveViewModelInstance vm, object o)
         {
             var type = o.GetVLTypeInfo();
             foreach (var riveProp in vm.Properties)
@@ -335,12 +338,12 @@ public sealed partial class RiveRenderer : RendererBase
         }
     }
 
-    private static bool TryConvert(object v, Type type, [NotNullWhen(true)] out object? result)
+    private static bool TryConvert(object? v, Type type, [NotNullWhen(true)] out object? result)
     {
         try
         {
             result = Convert.ChangeType(v, type);
-            return true;
+            return result is not null;
         }
         catch
         {
