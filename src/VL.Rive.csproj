@@ -7,7 +7,7 @@
     <OutputType>Library</OutputType>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <OutputPath>..\lib</OutputPath>
-    <Version>0.0.5-pre</Version>
+    <Version>0.0.6-pre</Version>
 
     <!-- Breaks build on github: https://github.com/stride3d/stride/issues/2232, luckily we don't need it -->
     <StrideAssemblyProcessor>false</StrideAssemblyProcessor>
@@ -26,8 +26,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="VL.Core" Version="2025.7.0-0466-gd08b05f117" PrivateAssets="all" />
-    <PackageReference Include="VL.Stride.Runtime" Version="2025.7.0-0466-gd08b05f117" PrivateAssets="all" />
+    <PackageReference Include="VL.Core" Version="2025.7.0" PrivateAssets="all" />
+    <PackageReference Include="VL.Stride.Runtime" Version="2025.7.0" PrivateAssets="all" />
   </ItemGroup>
 
   <ItemGroup>
