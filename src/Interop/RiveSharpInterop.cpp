@@ -197,6 +197,11 @@ extern "C"
         }
     }
 
+    ViewModelRuntime* rive_File_ViewModelByName(File* file, const char* name)
+    {
+        return file->viewModelByName(std::string(name));
+    }
+
     // Artboard
     const char* rive_Artboard_Name(Artboard* artboard)
     {
@@ -489,6 +494,11 @@ extern "C"
         value->clearChanges();
     }
 
+    RiveDataType rive_ViewModelInstanceValueRuntime_DataType(ViewModelInstanceValueRuntime* value)
+    {
+        return static_cast<RiveDataType>(value->dataType());
+    }
+
     // Number
     float rive_ViewModelInstanceNumberRuntime_Value(ViewModelInstanceNumberRuntime* value)
     {
@@ -559,5 +569,30 @@ extern "C"
     ViewModelInstanceRuntime* rive_ViewModelInstanceListRuntime_At(ViewModelInstanceListRuntime* value, int index)
     {
         return value->instanceAt(index);
+    }
+
+    void rive_ViewModelInstanceListRuntime_AddInstance(ViewModelInstanceListRuntime* value, ViewModelInstanceRuntime* instance)
+    {
+        value->addInstance(instance);
+    }
+
+    bool rive_ViewModelInstanceListRuntime_AddInstanceAt(ViewModelInstanceListRuntime* value, ViewModelInstanceRuntime* instance, int index)
+    {
+        return value->addInstanceAt(instance, index);
+    }
+
+    void rive_ViewModelInstanceListRuntime_RemoveInstance(ViewModelInstanceListRuntime* value, ViewModelInstanceRuntime* instance)
+    {
+        value->removeInstance(instance);
+    }
+
+    void rive_ViewModelInstanceListRuntime_RemoveInstanceAt(ViewModelInstanceListRuntime* value, int index)
+    {
+        value->removeInstanceAt(index);
+    }
+
+    void rive_ViewModelInstanceListRuntime_Swap(ViewModelInstanceListRuntime* value, uint32_t index1, uint32_t index2)
+    {
+        value->swap(index1, index2);
     }
 }

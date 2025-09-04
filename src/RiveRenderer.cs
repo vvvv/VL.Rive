@@ -13,6 +13,7 @@ using System.Reactive.Linq;
 using VL.Core;
 using VL.Core.Import;
 using VL.Lib.Animation;
+using VL.Lib.Collections;
 using VL.Lib.Reactive;
 using VL.Rive;
 using VL.Rive.Interop;
@@ -24,6 +25,7 @@ namespace VL.Rive;
 [ProcessNode(HasStateOutput = true, FragmentSelection = FragmentSelection.Explicit)]
 public sealed partial class RiveRenderer : RendererBase
 {
+    readonly AppHost appHost;
     readonly ILogger logger;
 
     RiveRenderContextD3D11? riveRenderContext;
@@ -58,7 +60,7 @@ public sealed partial class RiveRenderer : RendererBase
     [Fragment]
     public RiveRenderer([Pin(Visibility = Model.PinVisibility.Hidden)] NodeContext nodeContext)
     {
-        var appHost = nodeContext.AppHost;
+        appHost = nodeContext.AppHost;
         logger = nodeContext.GetLogger();
         frameClock = appHost.Services.GetRequiredService<IFrameClock>();
         graphicsDeviceService = appHost.Services.GetRequiredService<Game>().Services.GetService<IGraphicsDeviceService>();
@@ -248,7 +250,7 @@ public sealed partial class RiveRenderer : RendererBase
         }
     }
 
-    private static void ReadValuesFromRive(RiveViewModelInstance riveViewModelInstance, object? viewModel)
+    private void ReadValuesFromRive(RiveViewModelInstance riveViewModelInstance, object? viewModel)
     {
         if (viewModel is IChannel channel)
         {
@@ -265,43 +267,85 @@ public sealed partial class RiveRenderer : RendererBase
             ReadIntoObject(riveViewModelInstance, ref viewModel);
         }
 
-        static bool ReadIntoObject(RiveViewModelInstance vm, ref object o)
+        bool ReadIntoObject(RiveViewModelInstance vm, ref object o)
         {
             var type = o.GetVLTypeInfo();
 
             var changed = false;
             foreach (var riveProp in vm.Properties)
             {
+                var riveValue = riveProp.Value;
+                if (!IsSupportedRiveType(riveValue.RiveType))
+                    continue;
+
+                if (!riveValue.HasChanged)
+                    continue;
+
+                // Acknowledge the change
+                riveValue.ClearChanges();
+
                 var prop = type.GetProperty(riveProp.Name);
                 if (prop is null)
                     continue;
 
-                if (riveProp is RiveViewModelInstanceValue v)
+                if (riveValue.Value is RiveViewModelInstance vmi)
                 {
-                    if (v.HasChanged && TryConvert(v.Value, prop.Type.ClrType, out var vlValue))
+                    if (prop.GetValue(o) is object sub)
                     {
-                        changed = true;
-                        // Acknowledge the change
-                        v.ClearChanges();
-                        // Set the value on the object
-                        o = prop.WithValue(o, vlValue);
+                        if (ReadIntoObject(vmi, ref sub))
+                        {
+                            changed = true;
+                            // Set the value on the object
+                            o = prop.WithValue(o, sub);
+                        }
                     }
                 }
-                else if (riveProp is RiveViewModelInstance vmi && prop.GetValue(o) is object sub)
+                else if (riveValue.Value is RiveViewModelList riveList)
                 {
-                    if (ReadIntoObject(vmi, ref sub))
+                    if (prop.GetValue(o) is ISpread spread)
                     {
-                        changed = true;
-                        // Set the value on the object
-                        o = prop.WithValue(o, sub);
+                        var newSpread = spread.ToBuilder();
+                        newSpread.Clear();
+                        var i = 0;
+                        foreach (var item in riveList)
+                        {
+                            if (i < spread.Count && spread.GetItem(i) is object sub)
+                            {
+                                if (ReadIntoObject(item, ref sub))
+                                {
+                                    newSpread.Add(sub);
+                                    changed = true;
+                                }
+                                else
+                                    newSpread.Add(sub); // No change
+                            }
+                            else
+                            {
+                                var typeInfo = appHost.TypeRegistry.GetTypeInfo(spread.ElementType);
+                                var instance = appHost.CreateInstance(typeInfo);
+                                if (instance != null)
+                                {
+                                    ReadIntoObject(item, ref instance);
+                                    newSpread.Add(instance);
+                                    changed = true;
+                                }
+                            }
+                        }
+                        o = prop.WithValue(o, riveList.ToSpread());
                     }
+                }
+                else if (TryConvert(riveProp.Value, prop.Type.ClrType, out var vlValue))
+                {
+                    changed = true;
+                    // Set the value on the object
+                    o = prop.WithValue(o, vlValue);
                 }
             }
             return changed;
         }
     }
 
-    private static void WriteValuesToRive(RiveViewModelInstance riveViewModel, object? viewModel)
+    private void WriteValuesToRive(RiveViewModelInstance riveViewModel, object? viewModel)
     {
         if (viewModel is IChannel channel)
         {
@@ -315,29 +359,78 @@ public sealed partial class RiveRenderer : RendererBase
             WriteFromObject(riveViewModel, viewModel);
         }
 
-        static void WriteFromObject(RiveViewModelInstance vm, object o)
+        void WriteFromObject(RiveViewModelInstance vm, object o)
         {
             var type = o.GetVLTypeInfo();
             foreach (var riveProp in vm.Properties)
             {
+                var riveValue = riveProp.Value;
+                if (!IsSupportedRiveType(riveValue.RiveType))
+                    continue;
+
                 var prop = type.GetProperty(riveProp.Name);
                 if (prop is null)
                     continue;
 
-                if (riveProp is RiveViewModelInstanceValue v)
+                if (riveValue.Value is RiveViewModelInstance vmi)
                 {
-                    if (TryConvert(prop.GetValue(o), riveProp.Type, out var vlValue))
+                    if (prop.GetValue(o) is object sub)
                     {
-                        v.Value = vlValue;
+                        WriteFromObject(vmi, sub);
                     }
                 }
-                else if (riveProp is RiveViewModelInstance vmi && prop.GetValue(o) is IVLObject sub)
+                if (riveValue.Value is RiveViewModelList riveList)
                 {
-                    WriteFromObject(vmi, sub);
+                    if (prop.GetValue(o) is ISpread spread)
+                    {
+                        // Clear the existing list and populate with spread items
+                        var riveCount = riveList.Count;
+                        for (int i = 0; i < spread.Count; i++)
+                        {
+                            var item = spread.GetItem(i);
+                            if (item is null)
+                                continue;
+
+                            if (i < riveCount)
+                                WriteFromObject(riveList[i], item);
+                            else
+                            {
+                                // Find view model
+                                foreach (var viewModel in riveFile!.ViewModels)
+                                {
+                                    if (viewModel.Name == item.GetVLTypeInfo().Name)
+                                    {
+                                        var instance = riveFile.CreateViewModelInstance(viewModel.Name);
+                                        riveList.Add(instance);
+                                        WriteFromObject(instance, item);
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                        for (int i = riveCount - 1; i >= spread.Count; i--)
+                            riveList.RemoveAt(i);
+                    }
+                }
+                else if (TryConvert(prop.GetValue(o), riveValue.Type, out var vlValue))
+                {
+                    riveValue.Value = vlValue;
                 }
             }
         }
     }
+
+    private static bool IsSupportedRiveType(RiveDataType type) => type switch
+    {
+        RiveDataType.String => true,
+        RiveDataType.Number => true,
+        RiveDataType.Boolean => true,
+        RiveDataType.Color => true,
+        RiveDataType.Integer => true,
+        RiveDataType.ViewModel => true,
+        RiveDataType.List => true,
+        _ => false,
+    };
 
     private static bool TryConvert(object? v, Type type, [NotNullWhen(true)] out object? result)
     {

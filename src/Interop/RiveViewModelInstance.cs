@@ -4,17 +4,20 @@ using static VL.Rive.Interop.Methods;
 
 namespace VL.Rive.Interop;
 
-internal unsafe class RiveViewModelInstance : RiveProperty
+internal unsafe class RiveViewModelInstance
 {
+    private readonly nint handle;
     private ImmutableArray<RiveProperty> properties;
 
-    public RiveViewModelInstance(string name, nint handle)
-        : base(name, typeof(RiveViewModelInstance), handle)
+    public RiveViewModelInstance(nint handle)
     {
+        this.handle = handle;
     }
 
     // Pointer to RiveViewModelInstance
     internal nint InstanceHandle => rive_ViewModelInstanceRuntime_Instance(handle);
+
+    internal nint Handle => handle;
 
     public ImmutableArray<RiveProperty> Properties
     {
@@ -36,7 +39,7 @@ internal unsafe class RiveViewModelInstance : RiveProperty
                     if (property is null)
                         continue;
 
-                    properties.Add(property);
+                    properties.Add(property.Value);
                 }
                 this.properties = properties.ToImmutable();
             }
@@ -48,21 +51,9 @@ internal unsafe class RiveViewModelInstance : RiveProperty
                     return null; // Skip properties with slashes in their names - Rive treats these as paths and will not be able to resolve them correctly
 
                 using var path = new MarshaledString(propertyData.Name);
-                switch (propertyData.Type)
-                {
-                    case RiveDataType.String:
-                        return new RiveViewModelInstanceValue(this, rive_ViewModelInstanceRuntime_PropertyString(viewModel, path.Value), propertyData);
-                    case RiveDataType.Number:
-                        return new RiveViewModelInstanceValue(this, rive_ViewModelInstanceRuntime_PropertyNumber(viewModel, path.Value), propertyData);
-                    case RiveDataType.Boolean:
-                        return new RiveViewModelInstanceValue(this, rive_ViewModelInstanceRuntime_PropertyBoolean(viewModel, path.Value), propertyData);
-                    case RiveDataType.Color:
-                        return new RiveViewModelInstanceValue(this, rive_ViewModelInstanceRuntime_PropertyColor(viewModel, path.Value), propertyData);
-                    case RiveDataType.ViewModel:
-                        return new RiveViewModelInstance(propertyData.Name, rive_ViewModelInstanceRuntime_PropertyViewModel(viewModel, path.Value));
-                    default:
-                        return null;
-                }
+                var valueHandle = rive_ViewModelInstanceRuntime_Property(this.handle, path.Value);
+                var riveValue = new RiveValue(valueHandle, propertyData.Type);
+                return new RiveProperty(propertyData.Name, riveValue);
             }
         }
     }

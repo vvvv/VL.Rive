@@ -52,6 +52,24 @@ extern "C"
 		float values[6];
 	} RiveMat2D;
 
+	// C-compatible enum for DataType
+	typedef enum RiveDataType
+	{
+		RiveDataType_None = 0,
+		RiveDataType_String = 1,
+		RiveDataType_Number = 2,
+		RiveDataType_Boolean = 3,
+		RiveDataType_Color = 4,
+		RiveDataType_List = 5,
+		RiveDataType_EnumType = 6,
+		RiveDataType_Trigger = 7,
+		RiveDataType_ViewModel = 8,
+		RiveDataType_Integer = 9,
+		RiveDataType_SymbolListIndex = 10,
+		RiveDataType_AssetImage = 11,
+		RiveDataType_Artboard = 12
+	} RiveDataType;
+
 	// Property data struct for C API
 	struct RivePropertyData
 	{
@@ -97,6 +115,7 @@ extern "C"
 	__declspec(dllexport) int rive_File_ViewModelCount(File* file);
 	__declspec(dllexport) void rive_File_GetViewModel(File* file, int index, char** name_out, int* propertiesCount_out);
 	__declspec(dllexport) void rive_File_GetViewModelProperties(File* file, int index, RivePropertyData* properties_out);
+	__declspec(dllexport) ViewModelRuntime* rive_File_ViewModelByName(File* file, const char* name);
 
 	// Artboard
 	__declspec(dllexport) const char* rive_Artboard_Name(Artboard* artboard);
@@ -222,7 +241,7 @@ extern "C"
 	// ViewModelInstanceValueRuntime
 	__declspec(dllexport) bool rive_ViewModelInstanceValueRuntime_HasChanged(ViewModelInstanceValueRuntime* value);
 	__declspec(dllexport) void rive_ViewModelInstanceValueRuntime_ClearChanges(ViewModelInstanceValueRuntime* value);
-
+	__declspec(dllexport) RiveDataType rive_ViewModelInstanceValueRuntime_DataType(ViewModelInstanceValueRuntime* value);
 	// ViewModelInstanceNumberRuntime
 	__declspec(dllexport) float rive_ViewModelInstanceNumberRuntime_Value(ViewModelInstanceNumberRuntime* value);
 	__declspec(dllexport) void rive_ViewModelInstanceNumberRuntime_SetValue(ViewModelInstanceNumberRuntime* value, float v);
@@ -249,4 +268,9 @@ extern "C"
 	// ViewModelInstanceListRuntime
 	__declspec(dllexport) size_t rive_ViewModelInstanceListRuntime_Size(ViewModelInstanceListRuntime* value);
 	__declspec(dllexport) ViewModelInstanceRuntime* rive_ViewModelInstanceListRuntime_At(ViewModelInstanceListRuntime* value, int index);
+	__declspec(dllexport) void rive_ViewModelInstanceListRuntime_AddInstance(ViewModelInstanceListRuntime* value, ViewModelInstanceRuntime* instance);
+	__declspec(dllexport) bool rive_ViewModelInstanceListRuntime_AddInstanceAt(ViewModelInstanceListRuntime* value, ViewModelInstanceRuntime* instance, int index);
+	__declspec(dllexport) void rive_ViewModelInstanceListRuntime_RemoveInstance(ViewModelInstanceListRuntime* value, ViewModelInstanceRuntime* instance);
+	__declspec(dllexport) void rive_ViewModelInstanceListRuntime_RemoveInstanceAt(ViewModelInstanceListRuntime* value, int index);
+	__declspec(dllexport) void rive_ViewModelInstanceListRuntime_Swap(ViewModelInstanceListRuntime* value, uint32_t index1, uint32_t index2);
 }
