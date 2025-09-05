@@ -190,8 +190,8 @@ class Build : NukeBuild
             var environmentVariables = env.Cast<System.Collections.DictionaryEntry>()
                 .ToDictionary(entry => (string)entry.Key, entry => (string)entry.Value);
 
-            var premakeArgs = "vs2022 --with_rive_text --with_rive_layout";
-            var cmd = $@"/c """"{vcvarsPath}"" x64 && ""{Premake5Exe}"" {premakeArgs}""";
+            var premakeArgs = "vs2022 --with_rive_text --with_rive_layout --with_rive_scripting";
+            var cmd = $@"/c """"{vcvarsPath}"" ARM64 && ""{Premake5Exe}"" {premakeArgs}""";
 
             ProcessTasks.StartProcess("cmd.exe", cmd, workingDirectory: BuildDirectory, environmentVariables: environmentVariables)
                 .AssertWaitForExit()
@@ -205,7 +205,7 @@ class Build : NukeBuild
         {
             MSBuildTasks.MSBuild(s => s
                 .SetSolutionFile(RiveNativeSolution)
-                .SetTargetPlatform(MSBuildTargetPlatform.x64)
+                .SetTargetPlatform("ARM64")
                 .SetVerbosity(MSBuildVerbosity.Quiet));
         });
 

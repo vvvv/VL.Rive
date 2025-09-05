@@ -20,7 +20,7 @@ do
   language("C++")
   cppdialect("C++17")
   exceptionhandling("CThrow")
-  targetdir(REPO_ROOT_DIR .. "/runtimes/win-x64/native")
+  targetdir(REPO_ROOT_DIR .. "/runtimes/win-arm64/native")
 
   links({
       'rive',
