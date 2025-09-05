@@ -288,7 +288,8 @@ public sealed partial class RiveRenderer : RendererBase
                 if (prop is null)
                     continue;
 
-                if (riveValue.Value is RiveViewModelInstance vmi)
+                var value = riveValue.Value;
+                if (value is RiveViewModelInstance vmi)
                 {
                     if (prop.GetValue(o) is object sub)
                     {
@@ -300,7 +301,7 @@ public sealed partial class RiveRenderer : RendererBase
                         }
                     }
                 }
-                else if (riveValue.Value is RiveViewModelList riveList)
+                else if (value is RiveViewModelList riveList)
                 {
                     if (prop.GetValue(o) is ISpread spread)
                     {
@@ -334,7 +335,7 @@ public sealed partial class RiveRenderer : RendererBase
                         o = prop.WithValue(o, riveList.ToSpread());
                     }
                 }
-                else if (TryConvert(riveProp.Value, prop.Type.ClrType, out var vlValue))
+                else if (TryConvert(value, prop.Type.ClrType, out var vlValue))
                 {
                     changed = true;
                     // Set the value on the object
