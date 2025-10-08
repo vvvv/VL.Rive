@@ -1,6 +1,6 @@
 # VL.Rive
 
-Support for [Rive] files in VL including bi-directional [Data Binding](https://rive.app/docs/editor/data-binding/overview). Does not support legacy features like [Inputs]() and [Events]()!
+Support for [Rive](https://rive.app/) files in VL including bi-directional [Data Binding](https://rive.app/docs/editor/data-binding/overview). Does not support legacy features like [Inputs]() and [Events]()!
 
 For use with vvvv, the visual live-programming environment for .NET: http://vvvv.org
 
