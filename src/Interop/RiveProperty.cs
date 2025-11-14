@@ -12,12 +12,18 @@ internal struct RiveValue
 
     public RiveValue(nint handle)
     {
+        if (handle == default)
+            throw new ArgumentNullException(nameof(handle));
+
         this.handle = handle;
         RiveType = rive_ViewModelInstanceValueRuntime_DataType(handle);
     }
 
     public RiveValue(nint handle, RiveDataType type)
     {
+        if (handle == default)
+            throw new ArgumentNullException(nameof(handle));
+
         this.handle = handle;
         RiveType = type;
     }
@@ -104,7 +110,27 @@ internal struct RiveValue
         }
     }
 
-    public bool HasChanged => rive_ViewModelInstanceValueRuntime_HasChanged(handle) != 0;
+    public bool? HasChanged
+    {
+        get
+        {
+            if (IsRuntimeValue)
+                return rive_ViewModelInstanceValueRuntime_HasChanged(handle) != 0;
+            return null;
+        }
+    }
 
-    public void ClearChanges() => rive_ViewModelInstanceValueRuntime_ClearChanges(handle);
+    public void ClearChanges()
+    {
+        if (IsRuntimeValue)
+            rive_ViewModelInstanceValueRuntime_ClearChanges(handle);
+    }
+
+    // Some types are not modeled as RuntimeValue internally - maybe we should reflect this in our managed types
+    bool IsRuntimeValue => RiveType switch
+    {
+        RiveDataType.ViewModel => false,
+        RiveDataType.SymbolListIndex => false,
+        _ => true
+    };
 }

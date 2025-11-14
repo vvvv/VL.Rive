@@ -278,7 +278,9 @@ public sealed partial class RiveRenderer : RendererBase
                 if (!IsSupportedRiveType(riveValue.RiveType))
                     continue;
 
-                if (!riveValue.HasChanged)
+                // ViewModelRuntimeInstance has no changed detection / not modeled as RuntimeValue internally
+                var hasChanged = riveValue.HasChanged;
+                if (hasChanged.HasValue && !hasChanged.Value)
                     continue;
 
                 // Acknowledge the change
@@ -380,7 +382,7 @@ public sealed partial class RiveRenderer : RendererBase
                         WriteFromObject(vmi, sub);
                     }
                 }
-                if (riveValue.Value is RiveViewModelList riveList)
+                else if (riveValue.Value is RiveViewModelList riveList)
                 {
                     if (prop.GetValue(o) is ISpread spread)
                     {
