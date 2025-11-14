@@ -36,7 +36,7 @@ using static System.Net.WebRequestMethods;
     Lfs = true,
     Submodules = GitHubActionsSubmodules.Recursive,
     InvokedTargets = [nameof(PushToNugetOrg)],
-    ImportSecrets = [nameof(NuGetApiKey)])]
+    ImportSecrets = [nameof(VvvvOrgNugetKey)])]
 class Build : NukeBuild
 {
     /// Support plugins are available for:
@@ -52,7 +52,7 @@ class Build : NukeBuild
 
     [Parameter]
     [Secret]
-    readonly string NuGetApiKey;
+    readonly string VvvvOrgNugetKey;
 
     AbsolutePath BuildDirectory => RootDirectory / "build";
     AbsolutePath LocalBinDirectory => BuildDirectory / "bin";
@@ -266,7 +266,7 @@ class Build : NukeBuild
             {
                 DotNetTasks.DotNetNuGetPush(_ => _
                     .SetTargetPath(file)
-                    .SetApiKey(NuGetApiKey)
+                    .SetApiKey(VvvvOrgNugetKey)
                     .SetSource("nuget.org"));
             }
         });
