@@ -48,16 +48,16 @@ partial class RiveRenderer
             switch (e.EventType)
             {
                 case PointerEventType.Pressed:
-                    riveScene.PointerDown(position.X, position.Y);
+                    riveScene.PointerDown(position.X, position.Y, e.PointerId);
                     break;
                 case PointerEventType.Moved:
-                    riveScene.PointerMove(position.X, position.Y);
+                    riveScene.PointerMove(position.X, position.Y, 0f, e.PointerId);
                     break;
                 case PointerEventType.Released:
-                    riveScene.PointerUp(position.X, position.Y);
+                    riveScene.PointerUp(position.X, position.Y, e.PointerId);
                     break;
                 case PointerEventType.Canceled:
-                    riveScene.PointerExit(position.X, position.Y);
+                    riveScene.PointerExit(position.X, position.Y, e.PointerId);
                     break;
                 default:
                     break;

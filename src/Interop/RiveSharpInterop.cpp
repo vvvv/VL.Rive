@@ -347,24 +347,24 @@ extern "C"
         scene->bindViewModelInstance(rcp<ViewModelInstance>(viewModelInstance));
     }
 
-    RiveHitResult rive_Scene_PointerDown(Scene* scene, float x, float y)
+    RiveHitResult rive_Scene_PointerDown(Scene* scene, float x, float y, int pointerId)
     {
-		return static_cast<RiveHitResult>(scene->pointerDown(Vec2D(x, y)));
+		return static_cast<RiveHitResult>(scene->pointerDown(Vec2D(x, y), pointerId));
     }
 
-    RiveHitResult rive_Scene_PointerMove(Scene* scene, float x, float y)
+    RiveHitResult rive_Scene_PointerMove(Scene* scene, float x, float y, float timeStamp, int pointerId)
     {
-        return static_cast<RiveHitResult>(scene->pointerMove(Vec2D(x, y)));
+        return static_cast<RiveHitResult>(scene->pointerMove(Vec2D(x, y), timeStamp, pointerId));
     }
 
-    RiveHitResult rive_Scene_PointerUp(Scene* scene, float x, float y)
+    RiveHitResult rive_Scene_PointerUp(Scene* scene, float x, float y, int pointerId)
     {
-        return static_cast<RiveHitResult>(scene->pointerUp(Vec2D(x, y)));
+        return static_cast<RiveHitResult>(scene->pointerUp(Vec2D(x, y), pointerId));
     }
 
-    RiveHitResult rive_Scene_PointerExit(Scene* scene, float x, float y)
+    RiveHitResult rive_Scene_PointerExit(Scene* scene, float x, float y, int pointerId)
     {
-        return static_cast<RiveHitResult>(scene->pointerExit(Vec2D(x, y)));
+        return static_cast<RiveHitResult>(scene->pointerExit(Vec2D(x, y), pointerId));
     }
 
     size_t rive_Scene_InputCount(Scene* scene)
@@ -400,12 +400,12 @@ extern "C"
 
     ViewModelInstanceRuntime* rive_ViewModelRuntime_CreateInstance(ViewModelRuntime* runtime)
     {
-        return runtime->createInstance();
+        return runtime->createInstance().release();
     }
 
     ViewModelInstanceRuntime* rive_ViewModelRuntime_CreateDefaultInstance(ViewModelRuntime* runtime)
     {
-        return runtime->createDefaultInstance();
+        return runtime->createDefaultInstance().release();
     }
 
     const char* rive_ViewModelInstanceRuntime_Name(ViewModelInstanceRuntime* runtime)
@@ -455,12 +455,17 @@ extern "C"
 
     ViewModelInstanceRuntime* rive_ViewModelInstanceRuntime_PropertyViewModel(ViewModelInstanceRuntime* runtime, const char* path)
     {
-        return runtime->propertyViewModel(std::string(path));
+        return runtime->propertyViewModel(std::string(path)).release();
     }
 
     ViewModelInstanceAssetImageRuntime* rive_ViewModelInstanceRuntime_PropertyImage(ViewModelInstanceRuntime* runtime, const char* path)
     {
         return runtime->propertyImage(std::string(path));
+    }
+
+    ViewModelInstanceArtboardRuntime* rive_ViewModelInstanceRuntime_PropertyArtboard(ViewModelInstanceRuntime* runtime, const char* path)
+    {
+        return runtime->propertyArtboard(std::string(path));
     }
 
     ViewModelInstanceValueRuntime* rive_ViewModelInstanceRuntime_Property(ViewModelInstanceRuntime* runtime, const char* path)
@@ -568,7 +573,7 @@ extern "C"
 
     ViewModelInstanceRuntime* rive_ViewModelInstanceListRuntime_At(ViewModelInstanceListRuntime* value, int index)
     {
-        return value->instanceAt(index);
+        return value->instanceAt(index).release();
     }
 
     void rive_ViewModelInstanceListRuntime_AddInstance(ViewModelInstanceListRuntime* value, ViewModelInstanceRuntime* instance)

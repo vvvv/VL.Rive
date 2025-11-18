@@ -48,6 +48,7 @@ ViewModelInstanceColorRuntime*=nint
 ViewModelInstanceTriggerRuntime*=nint
 ViewModelInstanceListRuntime*=nint
 ViewModelInstanceAssetImageRuntime*=nint
+ViewModelInstanceArtboardRuntime*=nint
 SMIInput*=nint
 SMINumber*=nint
 SMIString*=nint

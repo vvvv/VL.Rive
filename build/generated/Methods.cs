@@ -177,16 +177,16 @@ namespace VL.Rive.Interop
         public static extern void rive_Scene_BindViewModelInstance([NativeTypeName("rive::Scene *")] nint scene, [NativeTypeName("rive::ViewModelInstance *")] nint viewModelInstance);
 
         [DllImport("rive_interop", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern RiveHitResult rive_Scene_PointerDown([NativeTypeName("rive::Scene *")] nint scene, float x, float y);
+        public static extern RiveHitResult rive_Scene_PointerDown([NativeTypeName("rive::Scene *")] nint scene, float x, float y, int pointerId);
 
         [DllImport("rive_interop", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern RiveHitResult rive_Scene_PointerMove([NativeTypeName("rive::Scene *")] nint scene, float x, float y);
+        public static extern RiveHitResult rive_Scene_PointerMove([NativeTypeName("rive::Scene *")] nint scene, float x, float y, float timeStamp, int pointerId);
 
         [DllImport("rive_interop", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern RiveHitResult rive_Scene_PointerUp([NativeTypeName("rive::Scene *")] nint scene, float x, float y);
+        public static extern RiveHitResult rive_Scene_PointerUp([NativeTypeName("rive::Scene *")] nint scene, float x, float y, int pointerId);
 
         [DllImport("rive_interop", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern RiveHitResult rive_Scene_PointerExit([NativeTypeName("rive::Scene *")] nint scene, float x, float y);
+        public static extern RiveHitResult rive_Scene_PointerExit([NativeTypeName("rive::Scene *")] nint scene, float x, float y, int pointerId);
 
         [DllImport("rive_interop", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         [return: NativeTypeName("size_t")]
@@ -262,6 +262,10 @@ namespace VL.Rive.Interop
         [DllImport("rive_interop", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         [return: NativeTypeName("rive::ViewModelInstanceAssetImageRuntime *")]
         public static extern nint rive_ViewModelInstanceRuntime_PropertyImage([NativeTypeName("rive::ViewModelInstanceRuntime *")] nint runtime, [NativeTypeName("const char *")] sbyte* path);
+
+        [DllImport("rive_interop", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        [return: NativeTypeName("rive::ViewModelInstanceArtboardRuntime *")]
+        public static extern nint rive_ViewModelInstanceRuntime_PropertyArtboard([NativeTypeName("rive::ViewModelInstanceRuntime *")] nint runtime, [NativeTypeName("const char *")] sbyte* path);
 
         [DllImport("rive_interop", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         [return: NativeTypeName("rive::ViewModelInstanceValueRuntime *")]

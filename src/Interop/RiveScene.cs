@@ -35,28 +35,28 @@ internal class RiveScene : RiveObject
         rive_Scene_Draw(handle, renderer.DangerousGetHandle());
     }
 
-    public RiveHitResult PointerDown(float x, float y)
+    public RiveHitResult PointerDown(float x, float y, int pointerId)
     {
         ObjectDisposedException.ThrowIf(IsClosed, this);
-        return rive_Scene_PointerDown(handle, x, y);
+        return rive_Scene_PointerDown(handle, x, y, pointerId);
     }
 
-    public RiveHitResult PointerMove(float x, float y)
+    public RiveHitResult PointerMove(float x, float y, float timeStamp, int pointerId)
     {
         ObjectDisposedException.ThrowIf(IsClosed, this);
-        return rive_Scene_PointerMove(handle, x, y);
+        return rive_Scene_PointerMove(handle, x, y, timeStamp, pointerId);
     }
 
-    public RiveHitResult PointerUp(float x, float y)
+    public RiveHitResult PointerUp(float x, float y, int pointerId)
     {
         ObjectDisposedException.ThrowIf(IsClosed, this);
-        return rive_Scene_PointerUp(handle, x, y);
+        return rive_Scene_PointerUp(handle, x, y, pointerId);
     }
 
-    public RiveHitResult PointerExit(float x, float y)
+    public RiveHitResult PointerExit(float x, float y, int pointerId)
     {
         ObjectDisposedException.ThrowIf(IsClosed, this);
-        return rive_Scene_PointerExit(handle, x, y);
+        return rive_Scene_PointerExit(handle, x, y, pointerId);
     }
 
     protected override bool ReleaseHandle()

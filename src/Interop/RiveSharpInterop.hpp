@@ -176,10 +176,10 @@ extern "C"
 		RiveHitResult_HitOpaque = 2
 	} RiveHitResult;
 
-	__declspec(dllexport) RiveHitResult rive_Scene_PointerDown(Scene* scene, float x, float y);
-	__declspec(dllexport) RiveHitResult rive_Scene_PointerMove(Scene* scene, float x, float y);
-	__declspec(dllexport) RiveHitResult rive_Scene_PointerUp(Scene* scene, float x, float y);
-	__declspec(dllexport) RiveHitResult rive_Scene_PointerExit(Scene* scene, float x, float y);
+	__declspec(dllexport) RiveHitResult rive_Scene_PointerDown(Scene* scene, float x, float y, int pointerId);
+	__declspec(dllexport) RiveHitResult rive_Scene_PointerMove(Scene* scene, float x, float y, float timeStamp, int pointerId);
+	__declspec(dllexport) RiveHitResult rive_Scene_PointerUp(Scene* scene, float x, float y, int pointerId);
+	__declspec(dllexport) RiveHitResult rive_Scene_PointerExit(Scene* scene, float x, float y, int pointerId);
 	__declspec(dllexport) size_t rive_Scene_InputCount(Scene* scene);
 	__declspec(dllexport) SMIInput* rive_Scene_Input(Scene* scene, size_t index);
 	__declspec(dllexport) SMIBool* rive_Scene_GetBool(Scene* scene, const char* name);
@@ -227,6 +227,9 @@ extern "C"
 
 	// Returns a property as an asset image runtime by path (returns nullptr if not found or not an image)
 	__declspec(dllexport) ViewModelInstanceAssetImageRuntime* rive_ViewModelInstanceRuntime_PropertyImage(ViewModelInstanceRuntime* runtime, const char* path);
+
+	// Returns a property as an artboard runtime by path (returns nullptr if not found or not an artboard)
+	__declspec(dllexport) ViewModelInstanceArtboardRuntime* rive_ViewModelInstanceRuntime_PropertyArtboard(ViewModelInstanceRuntime* runtime, const char* path);
 
 	// Returns the generic property value runtime by path (returns nullptr if not found)
 	__declspec(dllexport) ViewModelInstanceValueRuntime* rive_ViewModelInstanceRuntime_Property(ViewModelInstanceRuntime* runtime, const char* path);
