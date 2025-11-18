@@ -24,7 +24,8 @@ using static System.Net.WebRequestMethods;
 [GitHubActions(
     "main",
     GitHubActionsImage.WindowsLatest,
-    OnPushBranches = ["main"],
+    //OnPushBranches = ["main"],
+    On = [GitHubActionsTrigger.WorkflowDispatch],
     Lfs = true,
     Submodules = GitHubActionsSubmodules.Recursive,
     InvokedTargets = [nameof(PushToGithub)],
