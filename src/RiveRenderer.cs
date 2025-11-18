@@ -19,6 +19,7 @@ using VL.Rive;
 using VL.Rive.Interop;
 using VL.Stride.Input;
 using Path = VL.Lib.IO.Path;
+using PixelFormat = SharpDX.DXGI.Format;
 
 namespace VL.Rive;
 
@@ -180,13 +181,6 @@ public sealed partial class RiveRenderer : RendererBase
         if (riveRenderContext is null || riveScene is null)
             return;
 
-        var renderTarget = context.CommandList.RenderTarget;
-        if (!IsSupportedByRive(renderTarget.Format))
-        {
-            logger.LogError($"The render target format '{renderTarget.Format}' is not supported by Rive.");
-            return;
-        }
-
         // Subscribe to input events - in case we have many sinks we assume that there's only one input source active
         var inputSource = context.RenderContext.Tags.Get(InputExtensions.WindowInputSource);
         if (inputSource != lastInputSource)
@@ -195,9 +189,19 @@ public sealed partial class RiveRenderer : RendererBase
             inputSubscription.Disposable = SubscribeToInputSource(inputSource, context);
         }
 
+        var renderTarget = context.CommandList.RenderTarget;
+        if (renderTarget is null)
+            return;
+
         var nativeRenderTarget = SharpDXInterop.GetNativeResource(renderTarget) as Texture2D;
         if (nativeRenderTarget is null)
             return;
+
+        if (!IsSupportedByRive(nativeRenderTarget.Description.Format))
+        {
+            logger.LogError($"The render target format '{renderTarget.Format}' is not supported by Rive. In case you render to a texture set its format to RGBA_Typeless and its view to RGBA_Srgb.");
+            return;
+        }
 
         var frameDescriptor = new FrameDescriptor
         {
@@ -239,10 +243,8 @@ public sealed partial class RiveRenderer : RendererBase
             switch (format)
             {
                 case PixelFormat.B8G8R8A8_UNorm:
-                case PixelFormat.B8G8R8A8_UNorm_SRgb:
                 case PixelFormat.B8G8R8A8_Typeless:
                 case PixelFormat.R8G8B8A8_UNorm:
-                case PixelFormat.R8G8B8A8_UNorm_SRgb:
                 case PixelFormat.R8G8B8A8_Typeless:
                     return true;
             }
