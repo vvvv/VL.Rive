@@ -52,6 +52,14 @@ extern "C"
 		float values[6];
 	} RiveMat2D;
 
+	// C-compatible enum for ImportResult
+	typedef enum RiveImportResult
+	{
+		RiveImportResult_Success = 0,
+		RiveImportResult_UnsupportedVersion = 1,
+		RiveImportResult_Malformed = 2
+	} RiveImportResult;
+
 	// C-compatible enum for DataType
 	typedef enum RiveDataType
 	{
@@ -105,7 +113,7 @@ extern "C"
 	__declspec(dllexport) void rive_Renderer_Transform(Renderer* renderer, const RiveMat2D* mat);
 
 	// File
-	__declspec(dllexport) File* rive_File_Import(uint8_t* data, int dataLength, Factory* factory);
+	__declspec(dllexport) File* rive_File_Import(uint8_t* data, int dataLength, Factory* factory, RiveImportResult* result);
 	__declspec(dllexport) void rive_File_Destroy(File* file);
 	__declspec(dllexport) int rive_File_ArtboardCount(File* file);
 	__declspec(dllexport) void rive_File_Artboards(File* file, Artboard** artboards_out);

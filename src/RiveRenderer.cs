@@ -68,7 +68,17 @@ public sealed partial class RiveRenderer : RendererBase
     }
 
     [Fragment]
-    public void Update(Path? file, string? artboardName, string? sceneName, RiveFit fit, RiveAlignment alignment, Optional<RectangleF> frame, Optional<RectangleF> content, [DefaultValue(1f)] float scaleFactor, object? viewModel, bool reload)
+    public void Update(
+        Path? file, 
+        string? artboardName, 
+        string? sceneName, 
+        [Pin(Visibility = Model.PinVisibility.Optional)] RiveFit fit,
+        [Pin(Visibility = Model.PinVisibility.Optional)] RiveAlignment alignment,
+        [Pin(Visibility = Model.PinVisibility.Optional)] Optional<RectangleF> frame,
+        [Pin(Visibility = Model.PinVisibility.Optional)] Optional<RectangleF> content,
+        [Pin(Visibility = Model.PinVisibility.Optional)] [DefaultValue(1f)] float scaleFactor, 
+        object? viewModel, 
+        bool reload)
     {
         riveFit = fit;
         riveAlignment = alignment;

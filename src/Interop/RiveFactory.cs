@@ -16,14 +16,7 @@ internal class RiveFactory : RiveObject
     public unsafe RiveFile LoadFile(string path)
     {
         ObjectDisposedException.ThrowIf(IsClosed, this);
-
-        var bytes = File.ReadAllBytes(path);
-        fixed (byte* p = bytes)
-        {
-            // TODO: Check how it reacts if load fails
-            var riveFileHandle = rive_File_Import(p, bytes.Length, handle);
-            return new RiveFile(riveFileHandle);
-        }
+        return Utils.LoadFile(path, handle);
     }
 
     protected override bool ReleaseHandle()

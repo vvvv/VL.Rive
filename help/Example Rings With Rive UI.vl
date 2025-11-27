@@ -510,7 +510,7 @@
             <Pin Id="CJSIg5MWsXVP35dU2VLCm3" Name="Scale Factor" Kind="InputPin" />
             <Pin Id="A2zYT81pkesPbAyuTmZGhq" Name="View Model" Kind="InputPin" />
           </Node>
-          <Pad Id="GJgIGD1NzKCNsr3CQ4uDGF" Comment="File" Bounds="982,607,140,15" ShowValueBox="true" isIOBox="true" Value="..\assets\control_center.riv">
+          <Pad Id="GJgIGD1NzKCNsr3CQ4uDGF" Comment="File" Bounds="982,607,140,15" ShowValueBox="true" isIOBox="true" Value="assets\control_center.riv">
             <p:TypeAnnotation LastCategoryFullName="IO" LastDependency="VL.CoreLib.vl">
               <Choice Kind="TypeFlag" Name="Path" />
             </p:TypeAnnotation>

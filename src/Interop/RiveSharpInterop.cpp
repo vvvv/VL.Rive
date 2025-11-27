@@ -125,9 +125,14 @@ extern "C"
     }
 
     // File
-    File* rive_File_Import(uint8_t* data, int dataLength, Factory* factory)
+    File* rive_File_Import(uint8_t* data, int dataLength, Factory* factory, RiveImportResult* result)
     {
-        auto file = File::import(rive::Span<const uint8_t>(data, dataLength), factory);
+        ImportResult importResult = ImportResult::success;
+        auto file = File::import(rive::Span<const uint8_t>(data, dataLength), factory, &importResult);
+        if (result != nullptr)
+        {
+            *result = static_cast<RiveImportResult>(importResult);
+        }
         return file ? file.release() : nullptr;
     }
 

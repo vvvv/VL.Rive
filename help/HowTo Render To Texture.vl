@@ -34,7 +34,7 @@
             <Pin Id="MqXsduck1FcQSFbf7UHk1j" Name="View Model" Kind="InputPin" />
             <Pin Id="BQGLiwnYIrOMJGXtXlJJSm" Name="Reload" Kind="InputPin" />
           </Node>
-          <Pad Id="T8K5IdaKRcEM85wBWX5Hby" Comment="File" Bounds="362,424,140,15" ShowValueBox="true" isIOBox="true" Value="..\assets\control_center.riv">
+          <Pad Id="T8K5IdaKRcEM85wBWX5Hby" Comment="File" Bounds="362,424,140,15" ShowValueBox="true" isIOBox="true" Value="assets\control_center.riv">
             <p:TypeAnnotation LastCategoryFullName="IO" LastDependency="VL.CoreLib.vl">
               <Choice Kind="TypeFlag" Name="Path" />
             </p:TypeAnnotation>

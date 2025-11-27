@@ -58,7 +58,7 @@ namespace VL.Rive.Interop
 
         [DllImport("rive_interop", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         [return: NativeTypeName("rive::File *")]
-        public static extern nint rive_File_Import([NativeTypeName("uint8_t *")] byte* data, int dataLength, [NativeTypeName("rive::Factory *")] nint factory);
+        public static extern nint rive_File_Import([NativeTypeName("uint8_t *")] byte* data, int dataLength, [NativeTypeName("rive::Factory *")] nint factory, RiveImportResult* result);
 
         [DllImport("rive_interop", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern void rive_File_Destroy([NativeTypeName("rive::File *")] nint file);

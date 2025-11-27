@@ -131,7 +131,7 @@
             <Pin Id="C2YYt7E9su7Ox5QByBCs6z" Name="String property" Kind="InputPin" />
             <Pin Id="HvXvXx1djuWOr0QeGtjRC8" Name="Output" Kind="StateOutputPin" />
           </Node>
-          <Pad Id="QwvCsfD3U7ZOWv4wYjUnXD" Comment="File" Bounds="307,390,174,15" ShowValueBox="true" isIOBox="true" Value="..\assets\MyButton.riv">
+          <Pad Id="QwvCsfD3U7ZOWv4wYjUnXD" Comment="File" Bounds="307,390,174,15" ShowValueBox="true" isIOBox="true" Value="assets\MyButton.riv">
             <p:TypeAnnotation LastCategoryFullName="IO" LastDependency="VL.CoreLib.vl">
               <Choice Kind="TypeFlag" Name="Path" />
             </p:TypeAnnotation>

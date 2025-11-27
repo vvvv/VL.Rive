@@ -1,12 +1,31 @@
-﻿using System.Collections.Immutable;
+﻿using CommunityToolkit.HighPerformance.Buffers;
+using System.Collections.Immutable;
 using System.Text;
 using VL.Rive.Interop;
 using Path = VL.Lib.IO.Path;
+using static VL.Rive.Interop.Methods;
 
 namespace VL.Rive;
 
-public static class Utils
+internal static class Utils
 {
+    internal static unsafe RiveFile LoadFile(string path, nint factory)
+    {
+        // TODO: Check how it reacts if load fails
+        using var fileStream = File.OpenRead(path);
+        using var bytes = MemoryOwner<byte>.Allocate((int)fileStream.Length);
+        fileStream.Read(bytes.Span);
+        fixed (byte* p = bytes.Span)
+        {
+            RiveImportResult importResult;
+            var riveFileHandle = rive_File_Import(p, bytes.Length, factory, &importResult);
+            if (riveFileHandle == default)
+                throw new FileLoadException($"Failed to load Rive file: {importResult}", path);
+
+            return new RiveFile(riveFileHandle);
+        }
+    }
+
     public static string DumpRiveFileAsJson(Path filePath)
     {
         using var factory = new RiveFactory();
