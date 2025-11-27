@@ -1,13 +1,13 @@
 # VL.Rive
 
-Support for [Rive](https://rive.app/) files in VL including bi-directional [Data Binding](https://rive.app/docs/editor/data-binding/overview). Does not support legacy features like [Inputs]() and [Events]()!
+Support for [Rive](https://rive.app/) files in VL including bi-directional [Data Binding](https://rive.app/docs/editor/data-binding/overview).
 
 For use with vvvv, the visual live-programming environment for .NET: http://vvvv.org
 
 ## Getting started
 - Install as [described here](https://thegraybook.vvvv.org/reference/hde/managing-nugets.html) via commandline:
 
-    `nuget install VL.Rive -pre -source https://nuget.pkg.github.com/vvvv/index.json;nuget.org`
+    `nuget install VL.Rive -pre`
 
 - Usage examples and more information are included in the pack and can be found via the [Help Browser](https://thegraybook.vvvv.org/reference/hde/findinghelp.html)
 
