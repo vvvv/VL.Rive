@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Document xmlns:p="property" xmlns:r="reflection" Id="Nth8CFNZnXsMdw6DOponQ2" LanguageVersion="2025.7.1-0113-g2109e90333" Version="0.128">
-  <NugetDependency Id="P31TcB21GpsQMoE5avRDIK" Location="VL.CoreLib" Version="2025.7.1-0113-g2109e90333" />
+<Document xmlns:p="property" xmlns:r="reflection" Id="Nth8CFNZnXsMdw6DOponQ2" LanguageVersion="2025.7.1-0114-g4ec32120e8" Version="0.128">
+  <NugetDependency Id="P31TcB21GpsQMoE5avRDIK" Location="VL.CoreLib" Version="2025.7.1-0114-g4ec32120e8" />
   <Patch Id="KwF3lactQFAPXQKeExxGTJ">
     <Canvas Id="SY42jCjyWwzNXSZcNcrit7" DefaultCategory="Main" BordersChecked="false" CanvasType="FullCategory" />
     <!--
@@ -15,7 +15,7 @@
       </p:NodeReference>
       <Patch Id="Qr4zBk43K2ALddqEWP5b4t">
         <Canvas Id="HLRPJWUCmaxNVqKXsb1yjL" CanvasType="Group">
-          <Node Bounds="158,460,63,19" Id="SGAxyowt8f8N09qNpQIibr">
+          <Node Bounds="129,540,63,19" Id="SGAxyowt8f8N09qNpQIibr">
             <p:NodeReference LastCategoryFullName="Stride" LastDependency="VL.Stride.Engine.vl">
               <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
               <Choice Kind="ProcessAppFlag" Name="RootScene" />
@@ -27,12 +27,12 @@
             <Pin Id="G23VS1ckq8WPxpiYUQd551" Name="Enabled" Kind="InputPin" />
             <Pin Id="V5r2ugI61iEN8qINUNVYwr" Name="Output" Kind="OutputPin" />
           </Node>
-          <Pad Id="GJgIGD1NzKCNsr3CQ4uDGF" Comment="File" Bounds="180,235,128,15" ShowValueBox="true" isIOBox="true" Value="assets\control_center.riv">
+          <Pad Id="GJgIGD1NzKCNsr3CQ4uDGF" Comment="File" Bounds="151,315,128,15" ShowValueBox="true" isIOBox="true" Value="assets\car_widgets_v01.riv">
             <p:TypeAnnotation LastCategoryFullName="IO" LastDependency="VL.CoreLib.vl">
               <Choice Kind="TypeFlag" Name="Path" />
             </p:TypeAnnotation>
           </Pad>
-          <Node Bounds="158,400,165,19" Id="VrsfWTnLoIDO9vOIqIp6rV">
+          <Node Bounds="129,480,165,19" Id="VrsfWTnLoIDO9vOIqIp6rV">
             <p:NodeReference LastCategoryFullName="Stride.Rendering" LastDependency="VL.Stride.vl">
               <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
               <Choice Kind="ProcessAppFlag" Name="RenderEntity" />
@@ -49,12 +49,12 @@
             <Pin Id="PIHBjN4Kfc1QaIZTQxBtX8" Name="Enabled" Kind="InputPin" />
             <Pin Id="GoFVEeKn1aDNwgQAvz0vkN" Name="Output" Kind="OutputPin" />
           </Node>
-          <Pad Id="FzaM3NGjOXROknAw4eLONc" Comment="Render Stage" Bounds="200,370,142,15" ShowValueBox="true" isIOBox="true" Value="AfterScene">
+          <Pad Id="FzaM3NGjOXROknAw4eLONc" Comment="Render Stage" Bounds="171,450,142,15" ShowValueBox="true" isIOBox="true" Value="AfterScene">
             <p:TypeAnnotation LastCategoryFullName="VL.Stride.Rendering" LastDependency="VL.Stride.vl">
               <Choice Kind="TypeFlag" Name="DrawerRenderStage" />
             </p:TypeAnnotation>
           </Pad>
-          <Pad Id="KdlqRy2lkB8LS8JG1FGnE7" Bounds="340,336,38,29" ShowValueBox="true" isIOBox="true" Value="⚠️">
+          <Pad Id="KdlqRy2lkB8LS8JG1FGnE7" Bounds="311,416,38,29" ShowValueBox="true" isIOBox="true" Value="⚠️">
             <p:TypeAnnotation LastCategoryFullName="Primitive" LastDependency="VL.CoreLib.vl">
               <Choice Kind="TypeFlag" Name="String" />
             </p:TypeAnnotation>
@@ -63,12 +63,12 @@
               <p:stringtype p:Assembly="VL.Core" p:Type="VL.Core.StringType">Comment</p:stringtype>
             </p:ValueBoxSettings>
           </Pad>
-          <Node Bounds="158,520,205,19" Id="QQcUGv6re5hPbIPGz3Wvxp">
+          <Node Bounds="129,600,205,19" Id="QQcUGv6re5hPbIPGz3Wvxp">
             <p:NodeReference LastCategoryFullName="Stride" LastDependency="VL.Stride.vl">
               <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
               <Choice Kind="ProcessAppFlag" Name="SceneWindow" />
             </p:NodeReference>
-            <Pin Id="TFVHMoUXk8vLJOYyOHru66" Name="Bounds" Kind="InputPin" DefaultValue="1438.6666, 72.666664, 350.66666, 349.33334" IsHidden="true" />
+            <Pin Id="TFVHMoUXk8vLJOYyOHru66" Name="Bounds" Kind="InputPin" DefaultValue="1189.3334, 36, 707.3333, 314" IsHidden="true" />
             <Pin Id="GUzmRIZRWPMLhYd7rSDnSI" Name="Bound to Document" Kind="InputPin" IsHidden="true" />
             <Pin Id="NVqMMPddGyHN8bqLn6PQOW" Name="Dialog If Document Changed" Kind="InputPin" IsHidden="true" />
             <Pin Id="OmjC0supQYkLMu2WQmrhFs" Name="Save Bounds" Kind="InputPin" IsHidden="true" />
@@ -111,7 +111,7 @@
             <Pin Id="SwYJuS5SQVvOXodzQgbJw8" Name="Back Buffer" Kind="OutputPin" IsHidden="true" />
             <Pin Id="Fg2diqIrRlgOihKghXTr9K" Name="Depth Buffer" Kind="OutputPin" IsHidden="true" />
           </Node>
-          <Node Bounds="178,290,85,19" Id="TadU6zcTNT4MiYFVzjXzOs">
+          <Node Bounds="149,370,85,19" Id="TadU6zcTNT4MiYFVzjXzOs">
             <p:NodeReference LastCategoryFullName="Rive" LastDependency="VL.Rive.vl">
               <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
               <Choice Kind="ProcessAppFlag" Name="RiveRenderer" />
@@ -130,7 +130,7 @@
             <Pin Id="RuAMnWsRKghNCypLyxClsh" Name="Reload" Kind="InputPin" />
             <Pin Id="UNH0rA1jtPANANuaB0mkSo" Name="Output" Kind="StateOutputPin" />
           </Node>
-          <Pad Id="HxYFtCSXEywLpoBZoauAIj" Bounds="137,88,314,31" ShowValueBox="true" isIOBox="true" Value="There are 3 ways to render rives:">
+          <Pad Id="HxYFtCSXEywLpoBZoauAIj" Bounds="115,213,314,31" ShowValueBox="true" isIOBox="true" Value="There are 3 ways to render rives:">
             <p:TypeAnnotation LastCategoryFullName="Primitive" LastDependency="VL.CoreLib.vl">
               <Choice Kind="TypeFlag" Name="String" />
             </p:TypeAnnotation>
@@ -139,7 +139,7 @@
               <p:stringtype p:Assembly="VL.Core" p:Type="VL.Core.StringType">Comment</p:stringtype>
             </p:ValueBoxSettings>
           </Pad>
-          <Pad Id="Lh6NBWkP6fRQNSRQr19B21" Bounds="144,184,148,19" ShowValueBox="true" isIOBox="true" Value="1) Into a SceneWindow">
+          <Pad Id="Lh6NBWkP6fRQNSRQr19B21" Bounds="115,264,148,19" ShowValueBox="true" isIOBox="true" Value="1) Into a SceneWindow">
             <p:TypeAnnotation LastCategoryFullName="Primitive" LastDependency="VL.CoreLib.vl">
               <Choice Kind="TypeFlag" Name="String" />
             </p:TypeAnnotation>
@@ -148,12 +148,12 @@
               <p:stringtype p:Assembly="VL.Core" p:Type="VL.Core.StringType">Comment</p:stringtype>
             </p:ValueBoxSettings>
           </Pad>
-          <Pad Id="PT1BHyiXl24PxUFfcLhTEG" Comment="File" Bounds="535,235,128,15" ShowValueBox="true" isIOBox="true" Value="assets\control_center.riv">
+          <Pad Id="PT1BHyiXl24PxUFfcLhTEG" Comment="File" Bounds="506,315,128,15" ShowValueBox="true" isIOBox="true" Value="assets\car_widgets_v01.riv">
             <p:TypeAnnotation LastCategoryFullName="IO" LastDependency="VL.CoreLib.vl">
               <Choice Kind="TypeFlag" Name="Path" />
             </p:TypeAnnotation>
           </Pad>
-          <Node Bounds="533,300,85,19" Id="NYUBVHHA8xnOMXzlDJQFNR">
+          <Node Bounds="504,380,85,19" Id="NYUBVHHA8xnOMXzlDJQFNR">
             <p:NodeReference LastCategoryFullName="Rive" LastDependency="VL.Rive.vl">
               <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
               <Choice Kind="ProcessAppFlag" Name="RiveRenderer" />
@@ -172,7 +172,7 @@
             <Pin Id="Bv7f2SEGJR5PJRqcZdM8dT" Name="Reload" Kind="InputPin" />
             <Pin Id="Vd2SSRrol9eMtjUQIKIe6x" Name="Output" Kind="StateOutputPin" />
           </Node>
-          <Pad Id="LncLEfbQdtaNSorr0aPpFI" Bounds="499,184,163,19" ShowValueBox="true" isIOBox="true" Value="2) Into a RenderWindow">
+          <Pad Id="LncLEfbQdtaNSorr0aPpFI" Bounds="470,264,163,19" ShowValueBox="true" isIOBox="true" Value="2) Into a RenderWindow">
             <p:TypeAnnotation LastCategoryFullName="Primitive" LastDependency="VL.CoreLib.vl">
               <Choice Kind="TypeFlag" Name="String" />
             </p:TypeAnnotation>
@@ -181,12 +181,12 @@
               <p:stringtype p:Assembly="VL.Core" p:Type="VL.Core.StringType">Comment</p:stringtype>
             </p:ValueBoxSettings>
           </Pad>
-          <Pad Id="ETmP99NK05QLMSsce3ilnr" Comment="File" Bounds="880,235,128,15" ShowValueBox="true" isIOBox="true" Value="assets\control_center.riv">
+          <Pad Id="ETmP99NK05QLMSsce3ilnr" Comment="File" Bounds="821,315,128,15" ShowValueBox="true" isIOBox="true" Value="assets\car_widgets_v01.riv">
             <p:TypeAnnotation LastCategoryFullName="IO" LastDependency="VL.CoreLib.vl">
               <Choice Kind="TypeFlag" Name="Path" />
             </p:TypeAnnotation>
           </Pad>
-          <Pad Id="PF419SQT6OMPiBGQhNqqWJ" Bounds="844,184,163,19" ShowValueBox="true" isIOBox="true" Value="2) Into a Texture">
+          <Pad Id="PF419SQT6OMPiBGQhNqqWJ" Bounds="785,264,163,19" ShowValueBox="true" isIOBox="true" Value="2) Into a Texture">
             <p:TypeAnnotation LastCategoryFullName="Primitive" LastDependency="VL.CoreLib.vl">
               <Choice Kind="TypeFlag" Name="String" />
             </p:TypeAnnotation>
@@ -195,13 +195,13 @@
               <p:stringtype p:Assembly="VL.Core" p:Type="VL.Core.StringType">Comment</p:stringtype>
             </p:ValueBoxSettings>
           </Pad>
-          <Node Bounds="533,350,145,19" Id="PhiXrwioIYzNwopfdkiwyG">
+          <Node Bounds="504,430,145,19" Id="PhiXrwioIYzNwopfdkiwyG">
             <p:NodeReference LastCategoryFullName="Stride" LastDependency="VL.Stride.vl">
               <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
               <Choice Kind="ProcessAppFlag" Name="RenderWindow" />
             </p:NodeReference>
             <Pin Id="FWK49etKakqNNBknQRZyXy" Name="Node Context" Kind="InputPin" IsHidden="true" />
-            <Pin Id="MNc8mGa1nMQOy1DLNSpSxa" Name="Bounds" Kind="InputPin" DefaultValue="1807.3334, 73.333336, 351.33334, 348" IsHidden="true" />
+            <Pin Id="MNc8mGa1nMQOy1DLNSpSxa" Name="Bounds" Kind="InputPin" DefaultValue="1190.6666, 391.33334, 707.3333, 338.66666" IsHidden="true" />
             <Pin Id="NBGNSJdMtRiM2dlUnA3QC8" Name="Bound to Document" Kind="InputPin" IsHidden="true" />
             <Pin Id="BCVk3xV7IUwObzxOlR7Oxn" Name="Dialog If Document Changed" Kind="InputPin" IsHidden="true" />
             <Pin Id="HmrmMMgRrn2PmwZn29fs4b" Name="Save Bounds" Kind="InputPin" IsHidden="true" />
@@ -234,13 +234,13 @@
             <Pin Id="OfgJgOnhLUeL69wJ1RH15B" Name="Output Color Space" Kind="InputPin" IsHidden="true" />
             <Pin Id="Ff5MTxZ8Ck4MIAhMRxO0Cz" Name="Backbuffer Format" Kind="InputPin" IsHidden="true" />
           </Node>
-          <Node Bounds="878,350,185,19" Id="JXBCFEbgph0LSbbzBrHla7">
+          <Node Bounds="819,430,185,19" Id="JXBCFEbgph0LSbbzBrHla7">
             <p:NodeReference LastCategoryFullName="Stride.Textures" LastDependency="VL.Stride.vl">
               <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
               <Choice Kind="ProcessAppFlag" Name="TextureWindow" />
             </p:NodeReference>
             <Pin Id="O2UoTppD0zINF2peSBkPhE" Name="Node Context" Kind="InputPin" IsHidden="true" />
-            <Pin Id="VeAizHTHLFINRUs2y2NRpA" Name="Bounds" Kind="InputPin" DefaultValue="1456, 475.33334, 330.66666, 302.66666" IsHidden="true" />
+            <Pin Id="VeAizHTHLFINRUs2y2NRpA" Name="Bounds" Kind="InputPin" DefaultValue="1190, 772, 708.6667, 288" IsHidden="true" />
             <Pin Id="LIrForRKqoLMnyla8pekBD" Name="Bound to Document" Kind="InputPin" IsHidden="true" />
             <Pin Id="KM0Mz6uGlvlPyWzH0Z1wYF" Name="Dialog If Document Changed" Kind="InputPin" IsHidden="true" />
             <Pin Id="InR539aSaExL0ikL1sJ376" Name="Save Bounds" Kind="InputPin" IsHidden="true" />
@@ -262,7 +262,7 @@
             <Pin Id="Gp7K3CM2jdiMfVRbfrFDM6" Name="Input Source" Kind="OutputPin" />
             <Pin Id="KU5AkMYapWZOXekIIM9ars" Name="Back Buffer" Kind="OutputPin" IsHidden="true" />
           </Node>
-          <Node Bounds="878,300,125,19" Id="MzOChyNNEcINqhrKNm45XM">
+          <Node Bounds="819,380,125,19" Id="MzOChyNNEcINqhrKNm45XM">
             <p:NodeReference LastCategoryFullName="Rive" LastDependency="VL.Rive.vl">
               <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
               <Choice Kind="ProcessAppFlag" Name="RiveTexture" />
@@ -283,10 +283,64 @@
             <Pin Id="EzF77fmTuN6N0E4rUgJDl2" Name="Clear Color" Kind="InputPin" />
             <Pin Id="V3l61QViZJzPtglsm3JDQk" Name="Output" Kind="OutputPin" />
           </Node>
-          <Pad Id="Om8dj95YDwlQXx2KPWMp3T" Comment="Size" Bounds="980,271,35,28" ShowValueBox="true" isIOBox="true" Value="512, 512">
+          <Pad Id="Om8dj95YDwlQXx2KPWMp3T" Comment="Size" Bounds="921,351,35,28" ShowValueBox="true" isIOBox="true" Value="1024, 512">
             <p:TypeAnnotation LastCategoryFullName="Primitive" LastDependency="VL.CoreLib.vl">
               <Choice Kind="TypeFlag" Name="Int2" />
             </p:TypeAnnotation>
+          </Pad>
+          <Pad Id="UKzQDS7jvGDLZtEmlD9AS4" Bounds="182,68,55,19" ShowValueBox="true" isIOBox="true" Value="rive.app">
+            <p:TypeAnnotation LastCategoryFullName="Primitive" LastDependency="VL.CoreLib.vl">
+              <Choice Kind="TypeFlag" Name="String" />
+            </p:TypeAnnotation>
+            <p:ValueBoxSettings>
+              <p:fontsize p:Type="Int32">9</p:fontsize>
+              <p:stringtype p:Assembly="VL.Core" p:Type="VL.Core.StringType">Link</p:stringtype>
+            </p:ValueBoxSettings>
+          </Pad>
+          <Pad Id="PQ2QMJKJjOfMpwmAi3M4qo" Bounds="115,93,71,22" ShowValueBox="true" isIOBox="true" Value="Features: ">
+            <p:TypeAnnotation LastCategoryFullName="Primitive" LastDependency="VL.CoreLib.vl">
+              <Choice Kind="TypeFlag" Name="String" />
+            </p:TypeAnnotation>
+            <p:ValueBoxSettings>
+              <p:fontsize p:Type="Int32">9</p:fontsize>
+              <p:stringtype p:Assembly="VL.Core" p:Type="VL.Core.StringType">Comment</p:stringtype>
+            </p:ValueBoxSettings>
+          </Pad>
+          <Pad Id="RPgJzsll7ORNW7ODIQltZx" Bounds="182,93,160,19" ShowValueBox="true" isIOBox="true" Value="https://rive.app/features">
+            <p:TypeAnnotation LastCategoryFullName="Primitive" LastDependency="VL.CoreLib.vl">
+              <Choice Kind="TypeFlag" Name="String" />
+            </p:TypeAnnotation>
+            <p:ValueBoxSettings>
+              <p:fontsize p:Type="Int32">9</p:fontsize>
+              <p:stringtype p:Assembly="VL.Core" p:Type="VL.Core.StringType">Link</p:stringtype>
+            </p:ValueBoxSettings>
+          </Pad>
+          <Pad Id="HkLfG1G3CE8MJGIzrz27cn" Bounds="115,68,60,19" ShowValueBox="true" isIOBox="true" Value="Get Rive:">
+            <p:TypeAnnotation LastCategoryFullName="Primitive" LastDependency="VL.CoreLib.vl">
+              <Choice Kind="TypeFlag" Name="String" />
+            </p:TypeAnnotation>
+            <p:ValueBoxSettings>
+              <p:fontsize p:Type="Int32">9</p:fontsize>
+              <p:stringtype p:Assembly="VL.Core" p:Type="VL.Core.StringType">Comment</p:stringtype>
+            </p:ValueBoxSettings>
+          </Pad>
+          <Pad Id="QfMi12LTLGXLmhjAOZRD12" Bounds="115,121,43,19" ShowValueBox="true" isIOBox="true" Value="News:">
+            <p:TypeAnnotation LastCategoryFullName="Primitive" LastDependency="VL.CoreLib.vl">
+              <Choice Kind="TypeFlag" Name="String" />
+            </p:TypeAnnotation>
+            <p:ValueBoxSettings>
+              <p:fontsize p:Type="Int32">9</p:fontsize>
+              <p:stringtype p:Assembly="VL.Core" p:Type="VL.Core.StringType">Comment</p:stringtype>
+            </p:ValueBoxSettings>
+          </Pad>
+          <Pad Id="FqCcJSZzzOlPvZUy42mugI" Bounds="182,121,294,19" ShowValueBox="true" isIOBox="true" Value="https://community.rive.app/c/announcements/">
+            <p:TypeAnnotation LastCategoryFullName="Primitive" LastDependency="VL.CoreLib.vl">
+              <Choice Kind="TypeFlag" Name="String" />
+            </p:TypeAnnotation>
+            <p:ValueBoxSettings>
+              <p:fontsize p:Type="Int32">9</p:fontsize>
+              <p:stringtype p:Assembly="VL.Core" p:Type="VL.Core.StringType">Link</p:stringtype>
+            </p:ValueBoxSettings>
           </Pad>
         </Canvas>
         <Patch Id="FCQKADm6yBYLpkOkLqF2Fm" Name="Create" />
@@ -301,14 +355,13 @@
         <Link Id="MUsoHVAi6V2N1n0bMhm6a5" Ids="GJgIGD1NzKCNsr3CQ4uDGF,DL4AU79pCpnNHyH6t2jKzw" />
         <Link Id="V2If0bZL2M1P6tbDWKzgZ2" Ids="PT1BHyiXl24PxUFfcLhTEG,PRP5wLXE4lFQalY0QRsyDc" />
         <Link Id="MuLEZwmQHIYMuGYMfDhFQc" Ids="Vd2SSRrol9eMtjUQIKIe6x,DThWWH3Lu5IPfmZrKsFkGq" />
-        <Link Id="T9nWcoj28PuOT6bBccP6Lh" Ids="V3l61QViZJzPtglsm3JDQk,LGHbF1Fs3mqMQFmLdOxORS" />
         <Link Id="RyDFUQwt469NjumKNrPjnl" Ids="ETmP99NK05QLMSsce3ilnr,CDUJFYnODjCN1iZz0bUW4o" />
         <Link Id="AizRRnxCrLQMJdvIf9KppU" Ids="Om8dj95YDwlQXx2KPWMp3T,NvW8LaO5PnFPWmhiAvhrv9" />
         <Link Id="Tfi8sT9eK8TOP5MAjKK8I6" Ids="FzaM3NGjOXROknAw4eLONc,DZqMk1u69tELAdLMAtHoMi" />
+        <Link Id="B6tN1VLNKTiPLjWnzqDUn6" Ids="V3l61QViZJzPtglsm3JDQk,LGHbF1Fs3mqMQFmLdOxORS" />
       </Patch>
     </Node>
   </Patch>
-  <NugetDependency Id="SBQOevSkfVYPvjUXsK23Iy" Location="VL.Stride" Version="2025.7.1-0113-g2109e90333" />
-  <NugetDependency Id="SZuu8RT1ZKPO9a57dzypJ3" Location="VL.Stride.TextureFX" Version="2025.7.1-0113-g2109e90333" />
+  <NugetDependency Id="SBQOevSkfVYPvjUXsK23Iy" Location="VL.Stride" Version="2025.7.1-0114-g4ec32120e8" />
   <NugetDependency Id="UoYPOyFhYUIMxPGgOOSocB" Location="VL.Rive" Version="0.0.0" />
 </Document>
