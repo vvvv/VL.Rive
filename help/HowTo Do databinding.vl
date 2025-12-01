@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Document xmlns:p="property" xmlns:r="reflection" Id="M8zdPMmrSiCPQKUT4IB04j" LanguageVersion="2025.7.0-0466-gd08b05f117" Version="0.128">
-  <NugetDependency Id="SwxgZupLuw8P2preLL9Udx" Location="VL.CoreLib" Version="2025.7.0-0466-gd08b05f117" />
+<Document xmlns:p="property" xmlns:r="reflection" Id="DzaSuvLxSh1QIZsQSIfOrB" LanguageVersion="2025.7.1-0113-g2109e90333" Version="0.128">
+  <NugetDependency Id="SwxgZupLuw8P2preLL9Udx" Location="VL.CoreLib" Version="2025.7.1-0113-g2109e90333" />
   <Patch Id="AhPlHQ6U4EoMODegN3mQT9">
     <Canvas Id="ClzymaM06xjONafBulyJpP" DefaultCategory="Main" CanvasType="FullCategory" />
     <!--
@@ -44,6 +44,8 @@
             <Pin Id="PEMoE2lsoKMOCMGA0kGOc3" Name="Bound to Document" Kind="InputPin" IsHidden="true" />
             <Pin Id="BrQdHLJ5MzcN5BA9EQ9RtQ" Name="Dialog If Document Changed" Kind="InputPin" IsHidden="true" />
             <Pin Id="EhbFo9INk0jQOjgmk6vqdx" Name="Save Bounds" Kind="InputPin" IsHidden="true" />
+            <Pin Id="FjKLnJkthHTOVpRrY84d6R" Name="Always On Top" Kind="InputPin" IsHidden="true" />
+            <Pin Id="IrQ92pYJ3qpP2QIlCnosZQ" Name="Extend Into Title Bar" Kind="InputPin" IsHidden="true" />
             <Pin Id="SUsM02TMSYhN3A5xQKbYGy" Name="Back Buffer Format" Kind="InputPin" IsHidden="true" />
             <Pin Id="Q21QPKaa6QuMJlHHYNnBcS" Name="Depth Buffer Format" Kind="InputPin" IsHidden="true" />
             <Pin Id="JfSc7mNuaOWLbhjD1En47I" Name="Multisample Count" Kind="InputPin" IsHidden="true" />
@@ -51,6 +53,7 @@
             <Pin Id="DaZkuuHKZETMGoRXjSgpcz" Name="Input" Kind="InputPin" />
             <Pin Id="GRSyA4Y1mcOMCwj10z9kxt" Name="Render View" Kind="InputPin" />
             <Pin Id="DsPVIwdiJYbOvGY9p01kyY" Name="Title" Kind="InputPin" />
+            <Pin Id="UM67fHe7rVfM1UDKV0wxQy" Name="Title Bar Interaction Width" Kind="InputPin" IsHidden="true" />
             <Pin Id="KxWFN0yRqLZNNoQFRVVyao" Name="Clear Flags" Kind="InputPin" IsHidden="true" />
             <Pin Id="M3TGAUXdSUfORuPkqagbTe" Name="Clear Color" Kind="InputPin" DefaultValue="0.39, 0.39, 0.39, 1" />
             <Pin Id="PxyilvD12fEQY3QI8YJfEX" Name="Clear Depth" Kind="InputPin" IsHidden="true" />
@@ -67,13 +70,15 @@
             <Pin Id="NALSM6Pgjc8O6J6vdAOj4N" Name="Back Buffer" Kind="OutputPin" />
             <Pin Id="N8A8GXwGGDMMIs2WQLxnBA" Name="Depth Buffer" Kind="OutputPin" />
             <Pin Id="CbjqcfQEyGLM3Rwxp6ZFuf" Name="Present Call Intercept" Kind="InputPin" IsHidden="true" />
+            <Pin Id="DAz6wUwlNwVLRX4GEoxS0o" Name="Output Color Space" Kind="InputPin" IsHidden="true" />
+            <Pin Id="LCKohfn4wnJM1qY7DW3l1l" Name="Backbuffer Format" Kind="InputPin" IsHidden="true" />
           </Node>
           <!--
 
     ************************ MyViewModel ************************
 
 -->
-          <Node Name="MyViewModel" Bounds="314,130" Id="E2Vaqk7U47GNNAsY59BRTR">
+          <Node Name="MyViewModel" Bounds="848,260" Id="E2Vaqk7U47GNNAsY59BRTR">
             <p:NodeReference>
               <Choice Kind="RecordDefinition" Name="Record" />
               <CategoryReference Kind="Category" Name="Primitive" />
@@ -173,7 +178,7 @@
           </Node>
           <Pad Id="PZwbHQrkKBOQS97Er0yOHt" SlotId="HwSAePfTWQfL2HXxEEEkrF" Bounds="579,421" />
           <Pad Id="OeiRTZhBeLBN4KWUa0cyYI" SlotId="HwSAePfTWQfL2HXxEEEkrF" Bounds="609,191" />
-          <Node Bounds="577,340,65,26" Id="JBMu2IjQI1hLQUw1Zv8d5M">
+          <Node Bounds="617,340,65,26" Id="JBMu2IjQI1hLQUw1Zv8d5M">
             <p:NodeReference LastCategoryFullName="Main.MyViewModel" LastDependency="ExampleSolBtn.vl">
               <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
               <CategoryReference Kind="RecordType" Name="MyViewModel" NeedsToBeDirectParent="true" />
@@ -184,6 +189,7 @@
             <Pin Id="O3u4P030qneOHHjqAbRmJA" Name="Boolean property" Kind="OutputPin" />
             <Pin Id="TJrL7xFbJvrOdTbvFi7Yu3" Name="String property" Kind="OutputPin" />
           </Node>
+          <Pad Id="D9iwBMP9EaoMcR4nqLARtd" Comment="String property" Bounds="679,390,80,15" ShowValueBox="true" isIOBox="true" />
         </Canvas>
         <Patch Id="GICtUBakYQsOX8Xvon2K3b" Name="Create" />
         <Patch Id="COl7NXW6wlcMWa8tA3Cl2V" Name="Update" />
@@ -201,9 +207,10 @@
         <Link Id="IVJJnxQs60IQDd32UCAANE" Ids="OeiRTZhBeLBN4KWUa0cyYI,RWGIOHuWEm1OGhA8cavS5k" />
         <Link Id="GLJpctPzO5DLwltmUY1jFB" Ids="JgAylmapc1vPB0z1m3cRRv,BwLWBR1llvNPB7ch8cFwUw" />
         <Link Id="D5OP40y5sJUQS44bqAkB3U" Ids="O3u4P030qneOHHjqAbRmJA,AFNewM5e0iVMCycE3Ker2G" />
+        <Link Id="Na1cs74F5OHLLCFwGDmmW6" Ids="TJrL7xFbJvrOdTbvFi7Yu3,D9iwBMP9EaoMcR4nqLARtd" />
       </Patch>
     </Node>
   </Patch>
-  <NugetDependency Id="OTYWy4ArYoTP71Xyay0qil" Location="VL.Stride" Version="2025.7.0-0466-gd08b05f117" />
+  <NugetDependency Id="OTYWy4ArYoTP71Xyay0qil" Location="VL.Stride" Version="2025.7.1-0113-g2109e90333" />
   <NugetDependency Id="NlUBFEYW27dLrc3TuSUzzd" Location="VL.Rive" Version="0.0.3-pre" />
 </Document>
