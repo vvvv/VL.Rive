@@ -24,6 +24,7 @@ using PixelFormat = SharpDX.DXGI.Format;
 namespace VL.Rive;
 
 [ProcessNode(HasStateOutput = true, FragmentSelection = FragmentSelection.Explicit)]
+[Smell(SymbolSmell.Advanced)]
 public sealed partial class RiveRenderer : RendererBase
 {
     readonly AppHost appHost;
@@ -59,6 +60,7 @@ public sealed partial class RiveRenderer : RendererBase
     float riveScaleFactor;
 
     [Fragment]
+    [Smell(SymbolSmell.Internal)]
     public RiveRenderer([Pin(Visibility = Model.PinVisibility.Hidden)] NodeContext nodeContext)
     {
         appHost = nodeContext.AppHost;
@@ -68,6 +70,7 @@ public sealed partial class RiveRenderer : RendererBase
     }
 
     [Fragment]
+    [Smell(SymbolSmell.Internal)]
     public void Update(
         Path? file, 
         string? artboardName, 
@@ -77,7 +80,7 @@ public sealed partial class RiveRenderer : RendererBase
         [Pin(Visibility = Model.PinVisibility.Optional)] Optional<RectangleF> frame,
         [Pin(Visibility = Model.PinVisibility.Optional)] Optional<RectangleF> content,
         [Pin(Visibility = Model.PinVisibility.Optional)] [DefaultValue(1f)] float scaleFactor, 
-        object? viewModel, 
+        [DefaultValue(null)] object? viewModel, 
         bool reload)
     {
         riveFit = fit;
@@ -106,7 +109,9 @@ public sealed partial class RiveRenderer : RendererBase
 
             DisposeRiveFileResources();
 
-            riveFile = riveRenderContext?.LoadFile(file);
+            var filePath = file?.ToString();
+            if (!string.IsNullOrEmpty(filePath))
+                riveFile = riveRenderContext?.LoadFile(file);
         }
 
         // Load artboard and view model instance

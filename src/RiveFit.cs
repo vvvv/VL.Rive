@@ -1,5 +1,9 @@
-﻿namespace VL.Rive;
+﻿using VL.Core;
+using VL.Core.Import;
 
+namespace VL.Rive;
+
+[Smell(SymbolSmell.Advanced)]
 public enum RiveFit
 {
     Contain,
