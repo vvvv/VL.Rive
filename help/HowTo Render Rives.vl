@@ -281,7 +281,7 @@
             <Pin Id="LVN1GJ91AVlPNHBK6fZIJ8" Name="Reload" Kind="InputPin" />
             <Pin Id="NvW8LaO5PnFPWmhiAvhrv9" Name="Size" Kind="InputPin" />
             <Pin Id="EzF77fmTuN6N0E4rUgJDl2" Name="Clear Color" Kind="InputPin" />
-            <Pin Id="V3l61QViZJzPtglsm3JDQk" Name="Color" Kind="OutputPin" />
+            <Pin Id="V3l61QViZJzPtglsm3JDQk" Name="Output" Kind="OutputPin" />
           </Node>
           <Pad Id="Om8dj95YDwlQXx2KPWMp3T" Comment="Size" Bounds="980,271,35,28" ShowValueBox="true" isIOBox="true" Value="512, 512">
             <p:TypeAnnotation LastCategoryFullName="Primitive" LastDependency="VL.CoreLib.vl">

@@ -67,7 +67,7 @@
                 <Choice Kind="TypeFlag" Name="PixelFormat" />
               </p:TypeAnnotation>
             </Pad>
-            <ControlPoint Id="U5mJy1kMkvbPpGnVdEWuk8" Bounds="202,380" />
+            <ControlPoint Id="U5mJy1kMkvbPpGnVdEWuk8" Bounds="202,390" />
             <ControlPoint Id="TLwgHbfdIPkNRwim2DnlL8" Bounds="222,150" />
             <Pad Id="BOUjJFleDbuN1eO6AfVo8B" Comment="Depth Format" Bounds="302,290,174,15" ShowValueBox="true" isIOBox="true" Value="None">
               <p:TypeAnnotation LastCategoryFullName="Stride.API.Graphics" LastDependency="VL.Stride.vl">
@@ -104,7 +104,7 @@
             <Pin Id="GmQfO1FeDnDLn36nGOoU3n" Name="Reload" Kind="InputPin" />
             <Pin Id="AkH6InzVu9kOV6QCZRarJm" Name="Size" Kind="InputPin" />
             <Pin Id="IZQUv7LY9QnOxpWYJnXxq5" Name="Clear Color" Kind="InputPin" />
-            <Pin Id="Rt9R2gXqJ56QLxMHFjITJY" Name="Color" Kind="OutputPin" />
+            <Pin Id="Rt9R2gXqJ56QLxMHFjITJY" Name="Output" Kind="OutputPin" />
           </Patch>
           <ProcessDefinition Id="RJ18v6U7dUNNPKs0itAIFh">
             <Fragment Id="RUKkLJW5PcLLf1eW4qnLmi" Patch="PSn5UqbHSNmM0OjTXcJvkd" Enabled="true" />
