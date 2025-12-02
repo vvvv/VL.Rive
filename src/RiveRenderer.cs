@@ -218,6 +218,8 @@ public sealed partial class RiveRenderer : RendererBase
             return;
         }
 
+        context.CommandList.ClearState();
+
         var frameDescriptor = new FrameDescriptor
         {
             RenderTargetWidth = (uint)renderTarget.Width,
