@@ -191,6 +191,14 @@ public sealed partial class RiveRenderer : RendererBase
         return sb.ToString();
     }
 
+    public RectangleF GetArtboardBounds()
+    {
+        if (riveArtboard is null)
+            return RectangleF.Empty;
+        var bounds = riveArtboard.Bounds;
+        return new RectangleF(bounds.minX, bounds.minY, bounds.maxX - bounds.minX, bounds.maxY - bounds.minY);
+    }
+
     protected override unsafe void DrawCore(RenderDrawContext context)
     {
         if (riveRenderContext is null || riveScene is null)

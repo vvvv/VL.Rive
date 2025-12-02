@@ -131,6 +131,7 @@ extern "C"
 	__declspec(dllexport) void rive_Artboard_StateMachines(Artboard* artboard, StateMachine** stateMachines_out);
 	__declspec(dllexport) int rive_Artboard_AnimationCount(Artboard* artboard);
 	__declspec(dllexport) void rive_Artboard_Animations(Artboard* artboard, Animation** animations_out);
+	__declspec(dllexport) RiveAABB rive_Artboard_Bounds(Artboard* artboard);
 
 	// StateMachine
 	__declspec(dllexport) const char* rive_StateMachine_Name(StateMachine* stateMachine);

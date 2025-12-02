@@ -239,6 +239,17 @@ extern "C"
         }
     }
 
+    RiveAABB rive_Artboard_Bounds(Artboard* artboard)
+    {
+        AABB bounds = artboard->bounds();
+        RiveAABB result;
+        result.minX = bounds.minX;
+        result.minY = bounds.minY;
+        result.maxX = bounds.maxX;
+        result.maxY = bounds.maxY;
+        return result;
+    }
+
 	// StateMachine
     const char* rive_StateMachine_Name(StateMachine* stateMachine)
     {

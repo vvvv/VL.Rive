@@ -6,6 +6,15 @@ internal class RiveArtboardInstance : RiveObject
 {
     public RiveArtboardInstance(nint handle) : base(handle) { }
 
+    public RiveAABB Bounds
+    {
+        get
+        {
+            ObjectDisposedException.ThrowIf(IsClosed, this);
+            return rive_Artboard_Bounds(handle);
+        }
+    }
+
     public RiveScene? GetDefaultScene()
     {
         var sceneHandle = rive_ArtboardInstance_DefaultScene(handle);
