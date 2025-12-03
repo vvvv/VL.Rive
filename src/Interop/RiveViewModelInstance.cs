@@ -34,7 +34,7 @@ internal unsafe class RiveViewModelInstance
                 for (int i = 0; i < count; i++)
                 {
                     var nativeProperty = nativeProperties[i];
-                    var propertyData = new PropertyData(Marshal.PtrToStringAnsi((nint)nativeProperty.name) ?? string.Empty, (RiveDataType)nativeProperty.type);
+                    var propertyData = new PropertyData(SpanExtensions.AsString(nativeProperty.name), (RiveDataType)nativeProperty.type);
                     NativeMemory.Free(nativeProperty.name); // Free the native string memory
 
                     var property = FromPropertyData(handle, propertyData);

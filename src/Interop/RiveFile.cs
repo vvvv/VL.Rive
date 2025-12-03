@@ -58,19 +58,19 @@ internal class RiveFile : RiveObject
                     animations.Add(GetAnimation(nativeAnimation));
                 }
 
-                var name = new string(rive_Artboard_Name(nativeArtboard));
+                var name = SpanExtensions.AsString(rive_Artboard_Name(nativeArtboard));
                 return new RiveArtboard(name, stateMachines.ToImmutable(), animations.ToImmutable());
             }
 
             unsafe RiveStateMachine GetStateMachine(nint nativeStateMachine)
             {
-                var name = new string(rive_StateMachine_Name(nativeStateMachine));
+                var name = SpanExtensions.AsString(rive_StateMachine_Name(nativeStateMachine));
                 return new RiveStateMachine(name);
             }
 
             unsafe RiveAnimation GetAnimation(nint nativeAnimation)
             {
-                var name = new string(rive_Animation_Name(nativeAnimation));
+                var name = SpanExtensions.AsString(rive_Animation_Name(nativeAnimation));
                 return new RiveAnimation(name);
             }
         }
@@ -107,7 +107,7 @@ internal class RiveFile : RiveObject
                         var nativeProperty = props[j];
                         try
                         {
-                            var propertyData = new PropertyData(Marshal.PtrToStringAnsi((nint)nativeProperty.name) ?? string.Empty, (RiveDataType)nativeProperty.type, nativeProperty.viewModelReferenceId);
+                            var propertyData = new PropertyData(SpanExtensions.AsString(nativeProperty.name), (RiveDataType)nativeProperty.type, nativeProperty.viewModelReferenceId);
                             builder.Add(propertyData);
                         }
                         finally
@@ -117,7 +117,7 @@ internal class RiveFile : RiveObject
                         }
                     }
 
-                    return new RiveViewModel(Marshal.PtrToStringAnsi((nint)namePtr) ?? string.Empty, builder.ToImmutable());
+                    return new RiveViewModel(SpanExtensions.AsString(namePtr), builder.ToImmutable());
                 }
                 finally
                 {

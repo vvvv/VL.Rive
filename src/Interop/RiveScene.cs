@@ -8,7 +8,7 @@ internal class RiveScene : RiveObject
     public unsafe RiveScene(nint handle) : base(handle) 
     {
         var namePtr = rive_Scene_Name(handle);
-        Name = Marshal.PtrToStringAnsi((nint)namePtr) ?? string.Empty;
+        Name = SpanExtensions.AsString(namePtr);
         NativeMemory.Free(namePtr);
     }
 

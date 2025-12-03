@@ -7,7 +7,7 @@
     <OutputType>Library</OutputType>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <OutputPath>..\lib</OutputPath>
-    <Version>0.0.13-pre</Version>
+    <Version>0.0.14-pre</Version>
 
     <!-- Breaks build on github: https://github.com/stride3d/stride/issues/2232, luckily we don't need it -->
     <StrideAssemblyProcessor>false</StrideAssemblyProcessor>
@@ -20,6 +20,7 @@
     <PackageProjectUrl>https://github.com/vvvv/VL.Rive</PackageProjectUrl>
     <PackageIcon>nugeticon.png</PackageIcon>
     <PackageDescription>Rive runtime for vvvv</PackageDescription>
+    <PackageReadmeFile>Readme.md</PackageReadmeFile>
   </PropertyGroup>
 
   <ItemGroup>

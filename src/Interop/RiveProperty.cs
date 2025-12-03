@@ -53,7 +53,7 @@ internal struct RiveValue
             switch (RiveType)
             {
                 case RiveDataType.String:
-                    return new string(rive_ViewModelInstanceStringRuntime_Value(handle));
+                    return SpanExtensions.AsString(rive_ViewModelInstanceStringRuntime_Value(handle));
                 case RiveDataType.Number:
                     return rive_ViewModelInstanceNumberRuntime_Value(handle);
                 case RiveDataType.Boolean:
