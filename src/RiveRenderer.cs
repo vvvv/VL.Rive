@@ -226,7 +226,6 @@ public sealed partial class RiveRenderer : RendererBase
             return;
         }
 
-        context.CommandList.ClearState();
 
         var frameDescriptor = new FrameDescriptor
         {
@@ -261,6 +260,10 @@ public sealed partial class RiveRenderer : RendererBase
 
         // Release render target texture
         riveRenderTarget.SetTargetTexture(default);
+
+        // Restore Stride's pipeline state
+        // TODO: Turn this into an official API in Stride
+        context.CommandList.RestorePipelineState();
 
         // See submodules\rive-runtime\renderer\src\d3d11\render_context_d3d_impl.cpp
         static bool IsSupportedByRive(PixelFormat format)
