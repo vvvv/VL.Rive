@@ -250,6 +250,11 @@ extern "C"
         return result;
     }
 
+    uint32_t rive_Artboard_ViewModelId(Artboard* artboard)
+    {
+        return artboard->viewModelId();
+    }
+
 	// StateMachine
     const char* rive_StateMachine_Name(StateMachine* stateMachine)
     {

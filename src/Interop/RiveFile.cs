@@ -58,8 +58,11 @@ internal class RiveFile : RiveObject
                     animations.Add(GetAnimation(nativeAnimation));
                 }
 
+                var defaultViewModelId = (int)rive_Artboard_ViewModelId(nativeArtboard);
+                var defaultViewModelName = ViewModels.ElementAtOrDefault(defaultViewModelId).Name;
+
                 var name = SpanExtensions.AsString(rive_Artboard_Name(nativeArtboard));
-                return new RiveArtboard(name, stateMachines.ToImmutable(), animations.ToImmutable());
+                return new RiveArtboard(name, stateMachines.ToImmutable(), animations.ToImmutable(), defaultViewModelName);
             }
 
             unsafe RiveStateMachine GetStateMachine(nint nativeStateMachine)

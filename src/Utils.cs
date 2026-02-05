@@ -89,6 +89,9 @@ internal static class Utils
         sb.AppendLine($"{indent}{{");
         sb.AppendLine($"{indent}  \"Name\": \"{artboard.Name}\",");
 
+        if (artboard.DefaultViewModel is not null)
+            sb.AppendLine($"{indent}  \"ViewModel\": \"{artboard.DefaultViewModel}\",");
+
         // State Machines
         sb.Append($"{indent}  \"StateMachines\": [ ");
         for (int i = 0; i < artboard.StateMachines.Length; i++)

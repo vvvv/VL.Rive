@@ -114,6 +114,10 @@ namespace VL.Rive.Interop
         public static extern RiveAABB rive_Artboard_Bounds([NativeTypeName("rive::Artboard *")] nint artboard);
 
         [DllImport("rive_interop", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        [return: NativeTypeName("uint32_t")]
+        public static extern uint rive_Artboard_ViewModelId([NativeTypeName("rive::Artboard *")] nint artboard);
+
+        [DllImport("rive_interop", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         [return: NativeTypeName("const char *")]
         public static extern sbyte* rive_StateMachine_Name([NativeTypeName("rive::StateMachine *")] nint stateMachine);
 
