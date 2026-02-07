@@ -52,6 +52,57 @@ extern "C"
         delete factory;
     }
 
+    RenderImage* rive_Factory_DecodeImage(Factory* factory, uint8_t* data, int dataLength)
+    {
+        auto image = factory->decodeImage(rive::Span<const uint8_t>(data, dataLength));
+        return image ? image.release() : nullptr;
+    }
+
+    Font* rive_Factory_DecodeFont(Factory* factory, uint8_t* data, int dataLength)
+    {
+        auto font = factory->decodeFont(rive::Span<const uint8_t>(data, dataLength));
+        return font ? font.release() : nullptr;
+    }
+
+    AudioSource* rive_Factory_DecodeAudio(Factory* factory, uint8_t* data, int dataLength)
+    {
+        auto audio = factory->decodeAudio(rive::Span<const uint8_t>(data, dataLength));
+        return audio ? audio.release() : nullptr;
+    }
+
+    // Resource management - properly release reference-counted resources
+    void rive_RenderImage_Release(RenderImage* image)
+    {
+        if (image != nullptr)
+        {
+            rcp<RenderImage>(image); // Wrap in rcp and let it go out of scope to decrement ref count
+        }
+    }
+
+    void rive_Font_Release(Font* font)
+    {
+        if (font != nullptr)
+        {
+            rcp<Font>(font); // Wrap in rcp and let it go out of scope to decrement ref count
+        }
+    }
+
+    void rive_AudioSource_Release(AudioSource* audioSource)
+    {
+        if (audioSource != nullptr)
+        {
+            rcp<AudioSource>(audioSource); // Wrap in rcp and let it go out of scope to decrement ref count
+        }
+    }
+
+    void rive_BindableArtboard_Release(BindableArtboard* artboard)
+    {
+        if (artboard != nullptr)
+        {
+            rcp<BindableArtboard>(artboard); // Wrap in rcp and let it go out of scope to decrement ref count
+        }
+    }
+
     // RenderContext
     RenderContext* rive_RenderContext_Create_D3D11(ID3D11Device* device, ID3D11DeviceContext* deviceContext)
     {
@@ -165,6 +216,18 @@ extern "C"
         return file->artboardDefault().release();
     }
 
+    BindableArtboard* rive_File_BindableArtboardNamed(File* file, const char* name)
+    {
+        auto bindableArtboard = file->bindableArtboardNamed(name);
+        return bindableArtboard ? bindableArtboard.release() : nullptr;
+    }
+
+    BindableArtboard* rive_File_BindableArtboardDefault(File* file)
+    {
+        auto bindableArtboard = file->bindableArtboardDefault();
+        return bindableArtboard ? bindableArtboard.release() : nullptr;
+    }
+
     ViewModelRuntime* rive_File_DefaultArtboardViewModel(File* file, Artboard* artboard)
     {
         return file->defaultArtboardViewModel(artboard);
@@ -200,6 +263,11 @@ extern "C"
                 properties_out[i].viewModelReferenceId = v->viewModelReferenceId();
             }
         }
+    }
+
+    ViewModelRuntime* rive_File_ViewModelByIndex(File* file, int index)
+    {
+        return file->viewModelByIndex(index);
     }
 
     ViewModelRuntime* rive_File_ViewModelByName(File* file, const char* name)
@@ -510,6 +578,11 @@ extern "C"
         return runtime->instance().release();
     }
 
+    uint32_t rive_ViewModelInstance_ViewModelId(ViewModelInstance* instance)
+    {
+        return instance->viewModelId();
+    }
+
     bool rive_ViewModelInstanceValueRuntime_HasChanged(ViewModelInstanceValueRuntime* value)
     {
         return value->hasChanged();
@@ -570,6 +643,16 @@ extern "C"
     }
 
     // Enum
+    const char* rive_ViewModelInstanceEnumRuntime_Value(ViewModelInstanceEnumRuntime* value)
+    {
+        return value->value().c_str();
+    }
+
+    void rive_ViewModelInstanceEnumRuntime_SetValue(ViewModelInstanceEnumRuntime* value, const char* v)
+    {
+        value->value(std::string(v));
+    }
+
     uint32_t rive_ViewModelInstanceEnumRuntime_ValueIndex(ViewModelInstanceEnumRuntime* value)
     {
         return value->valueIndex();
@@ -578,6 +661,26 @@ extern "C"
     void rive_ViewModelInstanceEnumRuntime_SetValueIndex(ViewModelInstanceEnumRuntime* value, uint32_t v)
     {
         value->valueIndex(v);
+    }
+
+    size_t rive_ViewModelInstanceEnumRuntime_ValuesCount(ViewModelInstanceEnumRuntime* value)
+    {
+        return value->values().size();
+    }
+
+    const char* rive_ViewModelInstanceEnumRuntime_ValueAt(ViewModelInstanceEnumRuntime* value, size_t index)
+    {
+        auto values = value->values();
+        if (index < values.size())
+        {
+            return _strdup(values[index].c_str());
+        }
+        return nullptr;
+    }
+
+    const char* rive_ViewModelInstanceEnumRuntime_EnumType(ViewModelInstanceEnumRuntime* value)
+    {
+        return value->enumType().c_str();
     }
 
     // Trigger
@@ -620,5 +723,17 @@ extern "C"
     void rive_ViewModelInstanceListRuntime_Swap(ViewModelInstanceListRuntime* value, uint32_t index1, uint32_t index2)
     {
         value->swap(index1, index2);
+    }
+
+    // AssetImage
+    void rive_ViewModelInstanceAssetImageRuntime_SetValue(ViewModelInstanceAssetImageRuntime* value, RenderImage* renderImage)
+    {
+        value->value(renderImage);
+    }
+
+    // Artboard
+    void rive_ViewModelInstanceArtboardRuntime_SetValue(ViewModelInstanceArtboardRuntime* value, BindableArtboard* bindableArtboard)
+    {
+        value->value(rcp<BindableArtboard>(bindableArtboard));
     }
 }

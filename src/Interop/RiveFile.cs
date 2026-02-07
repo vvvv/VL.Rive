@@ -4,16 +4,20 @@ using static VL.Rive.Interop.Methods;
 
 namespace VL.Rive.Interop;
 
-internal class RiveFile : RiveObject
+internal unsafe class RiveFile : RiveObject
 {
-    private ImmutableArray<RiveArtboard> artboards;
-    private ImmutableArray<RiveViewModel> viewModels;
+    private ImmutableArray<RiveArtboardInfo> artboards;
+    private ImmutableArray<RiveViewModelInfo> viewModels;
+    private readonly nint factoryHandle;
 
-    public RiveFile(nint handle) : base(handle) 
+    public RiveFile(nint handle, nint factoryHandle) : base(handle) 
     {
+        this.factoryHandle = factoryHandle;
     }
 
-    public ImmutableArray<RiveArtboard> Artboards
+    public nint FactoryHandle => factoryHandle;
+
+    public ImmutableArray<RiveArtboardInfo> Artboards
     {
         get
         {
@@ -21,12 +25,12 @@ internal class RiveFile : RiveObject
                 artboards = GetArtboards();
             return artboards;
 
-            unsafe ImmutableArray<RiveArtboard> GetArtboards()
+            unsafe ImmutableArray<RiveArtboardInfo> GetArtboards()
             {
                 var count = rive_File_ArtboardCount(handle);
                 var nativeArtboards = stackalloc nint[count];
                 rive_File_Artboards(handle, nativeArtboards);
-                var artboards = ImmutableArray.CreateBuilder<RiveArtboard>(count);
+                var artboards = ImmutableArray.CreateBuilder<RiveArtboardInfo>(count);
                 for (var i = 0; i < count; i++)
                 {
                     var artboard = GetArtboard(nativeArtboards[i]);
@@ -35,13 +39,13 @@ internal class RiveFile : RiveObject
                 return artboards.ToImmutable();
             }
 
-            unsafe RiveArtboard GetArtboard(nint nativeArtboard)
+            unsafe RiveArtboardInfo GetArtboard(nint nativeArtboard)
             {
                 // State Machines
                 var stateMachineCount = rive_Artboard_StateMachineCount(nativeArtboard);
                 var nativeStateMachines = stackalloc nint[stateMachineCount];
                 rive_Artboard_StateMachines(nativeArtboard, nativeStateMachines);
-                var stateMachines = ImmutableArray.CreateBuilder<RiveStateMachine>(stateMachineCount);
+                var stateMachines = ImmutableArray.CreateBuilder<RiveStateMachineInfo>(stateMachineCount);
                 for (var j = 0; j < stateMachineCount; j++)
                 {
                     var nativeStateMachine = nativeStateMachines[j];
@@ -49,7 +53,7 @@ internal class RiveFile : RiveObject
                 }
 
                 // Animations
-                var animations = ImmutableArray.CreateBuilder<RiveAnimation>(rive_Artboard_AnimationCount(nativeArtboard));
+                var animations = ImmutableArray.CreateBuilder<RiveAnimationInfo>(rive_Artboard_AnimationCount(nativeArtboard));
                 var nativeAnimations = stackalloc nint[rive_Artboard_AnimationCount(nativeArtboard)];
                 rive_Artboard_Animations(nativeArtboard, nativeAnimations);
                 for (var j = 0; j < rive_Artboard_AnimationCount(nativeArtboard); j++)
@@ -62,38 +66,38 @@ internal class RiveFile : RiveObject
                 var defaultViewModelName = ViewModels.ElementAtOrDefault(defaultViewModelId).Name;
 
                 var name = SpanExtensions.AsString(rive_Artboard_Name(nativeArtboard));
-                return new RiveArtboard(name, stateMachines.ToImmutable(), animations.ToImmutable(), defaultViewModelName);
+                return new RiveArtboardInfo(name, stateMachines.ToImmutable(), animations.ToImmutable(), defaultViewModelName);
             }
 
-            unsafe RiveStateMachine GetStateMachine(nint nativeStateMachine)
+            unsafe RiveStateMachineInfo GetStateMachine(nint nativeStateMachine)
             {
                 var name = SpanExtensions.AsString(rive_StateMachine_Name(nativeStateMachine));
-                return new RiveStateMachine(name);
+                return new RiveStateMachineInfo(name);
             }
 
-            unsafe RiveAnimation GetAnimation(nint nativeAnimation)
+            unsafe RiveAnimationInfo GetAnimation(nint nativeAnimation)
             {
                 var name = SpanExtensions.AsString(rive_Animation_Name(nativeAnimation));
-                return new RiveAnimation(name);
+                return new RiveAnimationInfo(name);
             }
         }
     }
 
-    public ImmutableArray<RiveViewModel> ViewModels
+    public ImmutableArray<RiveViewModelInfo> ViewModels
     {
         get
         {
             if (viewModels.IsDefault)
             {
                 var count = rive_File_ViewModelCount(handle);
-                var models = ImmutableArray.CreateBuilder<RiveViewModel>(count);
+                var models = ImmutableArray.CreateBuilder<RiveViewModelInfo>(count);
                 for (var i = 0; i < count; i++)
                     models.Add(GetViewModel(i));
                 viewModels = models.ToImmutableArray();
             }
             return viewModels;
 
-            unsafe RiveViewModel GetViewModel(int i)
+            unsafe RiveViewModelInfo GetViewModel(int i)
             {
                 sbyte* namePtr;
                 int propertyCount;
@@ -104,14 +108,14 @@ internal class RiveFile : RiveObject
                     var props = stackalloc RivePropertyData[propertyCount];
                     rive_File_GetViewModelProperties(handle, i, props);
 
-                    var builder = ImmutableArray.CreateBuilder<PropertyData>(propertyCount);
+                    var builder = ImmutableArray.CreateBuilder<RivePropertyInfo>(propertyCount);
                     for (int j = 0; j < propertyCount; j++)
                     {
                         var nativeProperty = props[j];
                         try
                         {
-                            var propertyData = new PropertyData(SpanExtensions.AsString(nativeProperty.name), (RiveDataType)nativeProperty.type, nativeProperty.viewModelReferenceId);
-                            builder.Add(propertyData);
+                            var property = new RivePropertyInfo(SpanExtensions.AsString(nativeProperty.name), (RiveDataType)nativeProperty.type, nativeProperty.viewModelReferenceId);
+                            builder.Add(property);
                         }
                         finally
                         {
@@ -120,7 +124,7 @@ internal class RiveFile : RiveObject
                         }
                     }
 
-                    return new RiveViewModel(SpanExtensions.AsString(namePtr), builder.ToImmutable());
+                    return new RiveViewModelInfo(SpanExtensions.AsString(namePtr), builder.ToImmutable());
                 }
                 finally
                 {
@@ -148,20 +152,15 @@ internal class RiveFile : RiveObject
         return new RiveArtboardInstance(artboardHandle);
     }
 
-    public RiveViewModelInstance? DefaultArtboardViewModel(RiveArtboardInstance artboard)
-    {
-        var viewModelRuntime = rive_File_DefaultArtboardViewModel(handle, artboard.DangerousGetHandle());
-        if (viewModelRuntime == default)
-            return null;
-
-        return new RiveViewModelInstance(rive_ViewModelRuntime_CreateDefaultInstance(viewModelRuntime));
-    }
-
-    public unsafe RiveViewModelInstance CreateViewModelInstance(string name)
+    public nint CreateViewModelRuntime(string name)
     {
         using var marshaledName = new MarshaledString(name);
-        var viewModelRuntime = rive_File_ViewModelByName(handle, marshaledName.Value);
-        return new RiveViewModelInstance(rive_ViewModelRuntime_CreateInstance(viewModelRuntime));
+        return rive_File_ViewModelByName(handle, marshaledName.Value);
+    }
+
+    public nint CreateViewModelRuntime(int index)
+    {
+        return rive_File_ViewModelByIndex(handle, index);
     }
 
     protected override bool ReleaseHandle()

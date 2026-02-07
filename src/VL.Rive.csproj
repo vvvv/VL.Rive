@@ -47,6 +47,7 @@
       <!--<Visible>false</Visible>-->
     </None>
     <None Include="..\help\assets\*.riv">
+      <LinkBase>help\assets</LinkBase>
       <Pack>true</Pack>
       <PackagePath>help\assets\%(Filename)%(Extension)</PackagePath>
       <!--<Visible>false</Visible>-->

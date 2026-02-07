@@ -1,20 +1,26 @@
 ﻿using System.Collections;
+using VL.Core;
+using VL.Core.Import;
+using VL.Rive.Internal;
 using static VL.Rive.Interop.Methods;
 
-namespace VL.Rive.Interop;
+namespace VL.Rive;
 
-internal class RiveViewModelList : IReadOnlyList<RiveViewModelInstance>, IList<RiveViewModelInstance>
+[Smell(SymbolSmell.Advanced)]
+public sealed class RiveList : IReadOnlyList<RiveViewModel>, IList<RiveViewModel>, IRiveValue<RiveList>
 {
     private readonly nint handle;
+    private readonly RiveContext riveContext;
 
-    public RiveViewModelList(nint handle) 
+    internal RiveList(RiveContext riveContext, nint handle)
     {
+        this.riveContext = riveContext;
         this.handle = handle;
     }
 
-    public RiveViewModelInstance this[int index]
+    public RiveViewModel this[int index]
     {
-        get => new RiveViewModelInstance(rive_ViewModelInstanceListRuntime_At(handle, index));
+        get => new RiveViewModel(riveContext, rive_ViewModelInstanceListRuntime_At(handle, index));
         set => throw new NotSupportedException();
     }
 
@@ -22,17 +28,28 @@ internal class RiveViewModelList : IReadOnlyList<RiveViewModelInstance>, IList<R
 
     public bool IsReadOnly => false;
 
-    public void Add(RiveViewModelInstance item)
+    RiveList? IRiveValue<RiveList>.TypedValue 
+    { 
+        get => this; 
+        set => throw new NotImplementedException(); 
+    }
+    object? IRiveValue.Value 
+    { 
+        get => this; 
+        set => throw new NotImplementedException(); 
+    }
+
+    public void Add(RiveViewModel item)
     {
         rive_ViewModelInstanceListRuntime_AddInstance(handle, item.Handle);
     }
 
-    public void Insert(int index, RiveViewModelInstance item)
+    public void Insert(int index, RiveViewModel item)
     {
         rive_ViewModelInstanceListRuntime_AddInstanceAt(handle, item.Handle, index);
     }
 
-    public void Remove(RiveViewModelInstance item)
+    public void Remove(RiveViewModel item)
     {
         rive_ViewModelInstanceListRuntime_RemoveInstance(handle, item.Handle);
     }
@@ -42,11 +59,11 @@ internal class RiveViewModelList : IReadOnlyList<RiveViewModelInstance>, IList<R
         rive_ViewModelInstanceListRuntime_RemoveInstanceAt(handle, index);
     }
 
-    public IEnumerator<RiveViewModelInstance> GetEnumerator()
+    public IEnumerator<RiveViewModel> GetEnumerator()
     {
         var i = 0;
         while (i < Count)
-            yield return new RiveViewModelInstance(rive_ViewModelInstanceListRuntime_At(handle, i++));
+            yield return new RiveViewModel(riveContext, rive_ViewModelInstanceListRuntime_At(handle, i++));
     }
 
     IEnumerator IEnumerable.GetEnumerator()
@@ -54,7 +71,7 @@ internal class RiveViewModelList : IReadOnlyList<RiveViewModelInstance>, IList<R
         return GetEnumerator();
     }
 
-    public int IndexOf(RiveViewModelInstance item)
+    public int IndexOf(RiveViewModel item)
     {
         throw new NotImplementedException();
     }
@@ -66,7 +83,7 @@ internal class RiveViewModelList : IReadOnlyList<RiveViewModelInstance>, IList<R
             rive_ViewModelInstanceListRuntime_RemoveInstanceAt(handle, i);
     }
 
-    public bool Contains(RiveViewModelInstance item)
+    public bool Contains(RiveViewModel item)
     {
         var count = Count;
         for (int i = 0; i < count; i++)
@@ -77,12 +94,12 @@ internal class RiveViewModelList : IReadOnlyList<RiveViewModelInstance>, IList<R
         return false;
     }
 
-    public void CopyTo(RiveViewModelInstance[] array, int arrayIndex)
+    public void CopyTo(RiveViewModel[] array, int arrayIndex)
     {
         throw new NotImplementedException();
     }
 
-    bool ICollection<RiveViewModelInstance>.Remove(RiveViewModelInstance item)
+    bool ICollection<RiveViewModel>.Remove(RiveViewModel item)
     {
         var count = Count;
         Remove(item);

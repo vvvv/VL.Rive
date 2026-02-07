@@ -2,10 +2,13 @@
 
 namespace VL.Rive.Interop;
 
-internal abstract class RiveObject : SafeHandle
+abstract class RiveObject : SafeHandle
 {
     protected RiveObject(nint handle, bool ownsHandle = true) : base(nint.Zero, ownsHandle) 
     {
+        if (handle == default)
+            throw new ArgumentNullException(nameof(handle));
+
         SetHandle(handle);
     }
 

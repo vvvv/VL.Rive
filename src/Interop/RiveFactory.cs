@@ -1,4 +1,5 @@
-﻿using static VL.Rive.Interop.Methods;
+﻿using VL.Rive.Internal;
+using static VL.Rive.Interop.Methods;
 
 namespace VL.Rive.Interop;
 

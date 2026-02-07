@@ -15,6 +15,8 @@ internal class RiveArtboardInstance : RiveObject
         }
     }
 
+    public int ViewModelId => (int)rive_Artboard_ViewModelId(handle);
+
     public RiveScene? GetDefaultScene()
     {
         var sceneHandle = rive_ArtboardInstance_DefaultScene(handle);
@@ -38,7 +40,7 @@ internal class RiveArtboardInstance : RiveObject
         return true;
     }
 
-    public void BindViewModelInstance(RiveViewModelInstance riveViewModelInstance)
+    public void BindViewModelInstance(RiveViewModel riveViewModelInstance)
     {
         rive_Artboard_BindViewModelInstance(handle, riveViewModelInstance.InstanceHandle);
     }

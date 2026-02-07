@@ -5,7 +5,7 @@ using VL.Rive.Interop;
 using Path = VL.Lib.IO.Path;
 using static VL.Rive.Interop.Methods;
 
-namespace VL.Rive;
+namespace VL.Rive.Internal;
 
 internal static class Utils
 {
@@ -22,7 +22,7 @@ internal static class Utils
             if (riveFileHandle == default)
                 throw new FileLoadException($"Failed to load Rive file: {importResult}", path);
 
-            return new RiveFile(riveFileHandle);
+            return new RiveFile(riveFileHandle, factory);
         }
     }
 
@@ -67,7 +67,7 @@ internal static class Utils
         sb.AppendLine("}");
     }
 
-    internal static void AppendViewModel(this StringBuilder sb, RiveViewModel viewModel, ImmutableArray<RiveViewModel> viewModels, string indent = "")
+    internal static void AppendViewModel(this StringBuilder sb, RiveViewModelInfo viewModel, ImmutableArray<RiveViewModelInfo> viewModels, string indent = "")
     {
         sb.AppendLine($"{indent}{{");
         sb.AppendLine($"{indent}  \"Name\": \"{viewModel.Name}\",");
@@ -84,7 +84,7 @@ internal static class Utils
         sb.Append($"{indent}}}");
     }
 
-    internal static void AppendArtboard(this StringBuilder sb, RiveArtboard artboard, string indent = "")
+    internal static void AppendArtboard(this StringBuilder sb, RiveArtboardInfo artboard, string indent = "")
     {
         sb.AppendLine($"{indent}{{");
         sb.AppendLine($"{indent}  \"Name\": \"{artboard.Name}\",");

@@ -65,7 +65,7 @@ internal class RiveScene : RiveObject
         return true;
     }
 
-    internal void BindViewModelInstance(RiveViewModelInstance riveViewModelInstance)
+    internal void BindViewModelInstance(RiveViewModel riveViewModelInstance)
     {
         ObjectDisposedException.ThrowIf(IsClosed, this);
         rive_Scene_BindViewModelInstance(handle, riveViewModelInstance.InstanceHandle);
