@@ -240,7 +240,7 @@
               <Choice Kind="ProcessAppFlag" Name="TextureWindow" />
             </p:NodeReference>
             <Pin Id="O2UoTppD0zINF2peSBkPhE" Name="Node Context" Kind="InputPin" IsHidden="true" />
-            <Pin Id="VeAizHTHLFINRUs2y2NRpA" Name="Bounds" Kind="InputPin" DefaultValue="1190, 772, 708.6667, 288" IsHidden="true" />
+            <Pin Id="VeAizHTHLFINRUs2y2NRpA" Name="Bounds" Kind="InputPin" DefaultValue="1190, 732, 708.6667, 328" IsHidden="true" />
             <Pin Id="LIrForRKqoLMnyla8pekBD" Name="Bound to Document" Kind="InputPin" IsHidden="true" />
             <Pin Id="KM0Mz6uGlvlPyWzH0Z1wYF" Name="Dialog If Document Changed" Kind="InputPin" IsHidden="true" />
             <Pin Id="InR539aSaExL0ikL1sJ376" Name="Save Bounds" Kind="InputPin" IsHidden="true" />
@@ -283,11 +283,6 @@
             <Pin Id="EzF77fmTuN6N0E4rUgJDl2" Name="Clear Color" Kind="InputPin" />
             <Pin Id="V3l61QViZJzPtglsm3JDQk" Name="Output" Kind="OutputPin" />
           </Node>
-          <Pad Id="Om8dj95YDwlQXx2KPWMp3T" Comment="Size" Bounds="921,351,35,28" ShowValueBox="true" isIOBox="true" Value="1024, 512">
-            <p:TypeAnnotation LastCategoryFullName="Primitive" LastDependency="VL.CoreLib.vl">
-              <Choice Kind="TypeFlag" Name="Int2" />
-            </p:TypeAnnotation>
-          </Pad>
           <Pad Id="UKzQDS7jvGDLZtEmlD9AS4" Bounds="182,68,55,19" ShowValueBox="true" isIOBox="true" Value="rive.app">
             <p:TypeAnnotation LastCategoryFullName="Primitive" LastDependency="VL.CoreLib.vl">
               <Choice Kind="TypeFlag" Name="String" />
@@ -356,7 +351,6 @@
         <Link Id="V2If0bZL2M1P6tbDWKzgZ2" Ids="PT1BHyiXl24PxUFfcLhTEG,PRP5wLXE4lFQalY0QRsyDc" />
         <Link Id="MuLEZwmQHIYMuGYMfDhFQc" Ids="Vd2SSRrol9eMtjUQIKIe6x,DThWWH3Lu5IPfmZrKsFkGq" />
         <Link Id="RyDFUQwt469NjumKNrPjnl" Ids="ETmP99NK05QLMSsce3ilnr,CDUJFYnODjCN1iZz0bUW4o" />
-        <Link Id="AizRRnxCrLQMJdvIf9KppU" Ids="Om8dj95YDwlQXx2KPWMp3T,NvW8LaO5PnFPWmhiAvhrv9" />
         <Link Id="Tfi8sT9eK8TOP5MAjKK8I6" Ids="FzaM3NGjOXROknAw4eLONc,DZqMk1u69tELAdLMAtHoMi" />
         <Link Id="B6tN1VLNKTiPLjWnzqDUn6" Ids="V3l61QViZJzPtglsm3JDQk,LGHbF1Fs3mqMQFmLdOxORS" />
       </Patch>

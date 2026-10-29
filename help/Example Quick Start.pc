@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<PublicChannels>
+  <Channel Name="foo" Type="RiveViewModel [Rive]" />
+  <Channel Name="foo.gameOver" Type="Unit [Reactive]" />
+  <Channel Name="foo.health" Type="Float32 [Primitive]" />
+  <Channel Name="foo.healthColor" Type="RGBA [Color]" />
+  <Channel Name="foo.hoverNo" Type="Boolean [Primitive]" />
+  <Channel Name="foo.hoverYes" Type="Boolean [Primitive]" />
+</PublicChannels>
