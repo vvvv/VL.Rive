@@ -63,7 +63,8 @@ public sealed partial class RiveRenderer : RendererBase
         appHost = nodeContext.AppHost;
         logger = nodeContext.GetLogger();
         frameClock = appHost.Services.GetRequiredService<IFrameClock>();
-        graphicsDeviceService = appHost.Services.GetRequiredService<Game>().Services.GetService<IGraphicsDeviceService>();
+        graphicsDeviceService = appHost.Services.GetRequiredService<Game>().Services.GetService<IGraphicsDeviceService>()
+            ?? throw new InvalidOperationException("No IGraphicsDeviceService available.");
     }
 
     [Fragment]

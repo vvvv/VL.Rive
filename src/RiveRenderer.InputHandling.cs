@@ -12,7 +12,7 @@ namespace VL.Rive;
 
 partial class RiveRenderer
 {
-    IDisposable SubscribeToInputSource(IInputSource inputSource, RenderDrawContext context)
+    IDisposable SubscribeToInputSource(IInputSource? inputSource, RenderDrawContext context)
     {
         if (inputSource is null)
             return Disposable.Empty;
