@@ -107,7 +107,7 @@ extern "C"
     __declspec(dllexport) RenderContext* rive_RenderContext_Create_D3D11(ID3D11Device* device, ID3D11DeviceContext* deviceContext);
 	__declspec(dllexport) RenderTarget* rive_RenderContext_MakeRenderTarget_D3D11(RenderContext* self, int width, int height);
 	__declspec(dllexport) void rive_RenderContext_BeginFrame(RenderContext* self, const RenderContext::FrameDescriptor* frameDesc);
-	__declspec(dllexport) void rive_RenderContext_Flush(RenderContext* self, RenderTarget* renderTarget);
+	__declspec(dllexport) void rive_RenderContext_Flush(RenderContext* self, RenderTarget* renderTarget, uint64_t currentFrameNumber, uint64_t safeFrameNumber);
 	__declspec(dllexport) void rive_RenderContext_Destroy(RenderContext* self);
 
 	// RenderTarget

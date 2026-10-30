@@ -22,14 +22,25 @@ internal abstract class RiveRenderContext : RiveObject
         return new RiveRenderer(renderer);
     }
 
+    // Must equal sizeof(RenderContext::FrameDescriptor), see static_assert in RiveSharpInterop.cpp.
+    private const int NativeFrameDescriptorSize = 72;
+
     public unsafe void BeginFrame(ref readonly FrameDescriptor frameDescriptor)
     {
+        if (sizeof(FrameDescriptor) != NativeFrameDescriptorSize)
+            throw new InvalidOperationException($"FrameDescriptor is {sizeof(FrameDescriptor)} bytes, native layout expects {NativeFrameDescriptorSize}.");
         rive_RenderContext_BeginFrame(handle, (FrameDescriptor*)Unsafe.AsPointer(ref Unsafe.AsRef(in frameDescriptor)));
     }
 
+    // Resources last used on or before the safe frame number may be recycled by Rive.
+    private const int FramesInFlight = 3;
+    private ulong frameNumber;
+
     public void Flush(RiveRenderTarget renderTarget)
     {
-        rive_RenderContext_Flush(handle, renderTarget.DangerousGetHandle());
+        frameNumber++;
+        var safeFrameNumber = frameNumber > FramesInFlight ? frameNumber - FramesInFlight : 0;
+        rive_RenderContext_Flush(handle, renderTarget.DangerousGetHandle(), frameNumber, safeFrameNumber);
     }
 
     protected override bool ReleaseHandle()

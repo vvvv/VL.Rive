@@ -53,7 +53,7 @@ namespace VL.Rive.Interop
         public static extern void rive_RenderContext_BeginFrame([NativeTypeName("rive::gpu::RenderContext *")] nint self, [NativeTypeName("const RenderContext::FrameDescriptor *")] FrameDescriptor* frameDesc);
 
         [DllImport("rive_interop", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void rive_RenderContext_Flush([NativeTypeName("rive::gpu::RenderContext *")] nint self, [NativeTypeName("rive::gpu::RenderTarget *")] nint renderTarget);
+        public static extern void rive_RenderContext_Flush([NativeTypeName("rive::gpu::RenderContext *")] nint self, [NativeTypeName("rive::gpu::RenderTarget *")] nint renderTarget, [NativeTypeName("uint64_t")] ulong currentFrameNumber, [NativeTypeName("uint64_t")] ulong safeFrameNumber);
 
         [DllImport("rive_interop", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern void rive_RenderContext_Destroy([NativeTypeName("rive::gpu::RenderContext *")] nint self);

@@ -6,6 +6,13 @@
 using namespace rive;
 using namespace rive::gpu;
 
+// FrameDescriptor.cs mirrors RenderContext::FrameDescriptor by hand: keep both in sync.
+// (RiveRenderContext checks the managed size against the same value.)
+static_assert(sizeof(RenderContext::FrameDescriptor) == 72, "FrameDescriptor layout changed: update src/Interop/FrameDescriptor.cs");
+static_assert(offsetof(RenderContext::FrameDescriptor, ditherMode) == 24, "FrameDescriptor layout changed");
+static_assert(offsetof(RenderContext::FrameDescriptor, triangulationThresholds) == 32, "FrameDescriptor layout changed");
+static_assert(offsetof(RenderContext::FrameDescriptor, wireframe) == 64, "FrameDescriptor layout changed");
+
 extern "C"
 {
     // Math
@@ -121,10 +128,12 @@ extern "C"
         self->beginFrame(*frameDesc);
     }
 
-    void rive_RenderContext_Flush(RenderContext* self, RenderTarget* renderTarget)
+    void rive_RenderContext_Flush(RenderContext* self, RenderTarget* renderTarget, uint64_t currentFrameNumber, uint64_t safeFrameNumber)
     {
         self->flush({
 			.renderTarget = renderTarget,
+			.currentFrameNumber = currentFrameNumber,
+			.safeFrameNumber = safeFrameNumber,
         });
     }
 
