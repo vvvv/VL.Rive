@@ -75,6 +75,8 @@ do
   toolset("clang")
 
   includedirs({ RIVE_RUNTIME_DIR .. "/include", RIVE_RUNTIME_DIR .. "/renderer/include" })
+  -- rive_lua_libs.hpp (the complete ScriptingContext) includes the Luau headers
+  includedirs({ luau .. "/VM/include" })
 
   files({ VL_RIVE_SRC_DIR .. "/*.cpp", VL_RIVE_SRC_DIR .. "/*.hpp", RIVE_RUNTIME_DIR .. "/utils/no_op_factory.cpp" })
 

@@ -121,6 +121,10 @@ extern "C"
 	__declspec(dllexport) void rive_Renderer_Restore(Renderer* renderer);
 	__declspec(dllexport) void rive_Renderer_Transform(Renderer* renderer, const RiveMat2D* mat);
 
+	// Scripting: receives each console line (level 0 info, 1 warn, 2 error) and Lua error of a script as UTF-8 text.
+	// Set it before importing a file; files import with a scripting VM that reports to it.
+	__declspec(dllexport) void rive_Scripting_SetLogCallback(void (*callback)(int level, const char* message, size_t length));
+
 	// File
 	__declspec(dllexport) File* rive_File_Import(uint8_t* data, int dataLength, Factory* factory, RiveImportResult* result);
 	__declspec(dllexport) void rive_File_Destroy(File* file);

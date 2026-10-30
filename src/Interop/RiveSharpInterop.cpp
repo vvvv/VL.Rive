@@ -2,6 +2,9 @@
 #include "rive/static_scene.hpp"
 #include "rive/generated/viewmodel/viewmodel_property_viewmodel_base.hpp";
 #include "utils/no_op_factory.hpp"
+#include "rive/logging_scripting_context.hpp"
+#include "rive/lua/scripting_vm.hpp"
+#include "rive/lua/rive_lua_libs.hpp"
 
 using namespace rive;
 using namespace rive::gpu;
@@ -12,6 +15,8 @@ static_assert(sizeof(RenderContext::FrameDescriptor) == 72, "FrameDescriptor lay
 static_assert(offsetof(RenderContext::FrameDescriptor, ditherMode) == 24, "FrameDescriptor layout changed");
 static_assert(offsetof(RenderContext::FrameDescriptor, triangulationThresholds) == 32, "FrameDescriptor layout changed");
 static_assert(offsetof(RenderContext::FrameDescriptor, wireframe) == 64, "FrameDescriptor layout changed");
+
+static void (*g_scriptLogCallback)(int level, const char* message, size_t length) = nullptr;
 
 extern "C"
 {
@@ -184,11 +189,38 @@ extern "C"
         renderer->transform(cppMat);
     }
 
+    // Scripting
+    void rive_Scripting_SetLogCallback(void (*callback)(int level, const char* message, size_t length))
+    {
+        g_scriptLogCallback = callback;
+    }
+
     // File
     File* rive_File_Import(uint8_t* data, int dataLength, Factory* factory, RiveImportResult* result)
     {
         ImportResult importResult = ImportResult::success;
-        auto file = File::import(rive::Span<const uint8_t>(data, dataLength), factory, &importResult);
+
+        // Without a context of our own, script console output goes to stdout and errors to nowhere:
+        // give the file a scripting VM that reports to the host's log callback.
+        rcp<ScriptingVM> scriptingVM;
+        if (g_scriptLogCallback != nullptr)
+        {
+            auto makeContext = makeLoggingScriptingContextFactory(
+                [](ScriptingLogLevel level, const char* message, size_t length)
+                {
+                    if (g_scriptLogCallback != nullptr)
+                        g_scriptLogCallback(static_cast<int>(level), message, length);
+                });
+            if (auto context = makeContext(factory))
+                scriptingVM = make_rcp<ScriptingVM>(std::move(context));
+        }
+
+        auto file = File::import(
+            rive::Span<const uint8_t>(data, dataLength),
+            factory,
+            &importResult,
+            static_cast<FileAssetLoader*>(nullptr),
+            scriptingVM.get());
         if (result != nullptr)
         {
             *result = static_cast<RiveImportResult>(importResult);

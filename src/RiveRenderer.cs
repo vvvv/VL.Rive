@@ -109,6 +109,7 @@ public sealed partial class RiveRenderer : RendererBase
             var filePath = file?.ToString();
             if (!string.IsNullOrEmpty(filePath))
             {
+                ScriptLog.Attach(logger);
                 var riveFile = riveRenderContext?.LoadFile(file);
                 if (riveFile != null)
                     riveContext = new RiveContext(nodeContext, riveFile);

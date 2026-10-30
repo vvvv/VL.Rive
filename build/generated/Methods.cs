@@ -81,6 +81,9 @@ namespace VL.Rive.Interop
         public static extern void rive_Renderer_Transform([NativeTypeName("rive::Renderer *")] nint renderer, [NativeTypeName("const RiveMat2D *")] RiveMat2D* mat);
 
         [DllImport("rive_interop", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern void rive_Scripting_SetLogCallback([NativeTypeName("void (*)(int, const char *, size_t)")] delegate* unmanaged[Cdecl]<int, sbyte*, nuint, void> callback);
+
+        [DllImport("rive_interop", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         [return: NativeTypeName("rive::File *")]
         public static extern nint rive_File_Import([NativeTypeName("uint8_t *")] byte* data, int dataLength, [NativeTypeName("rive::Factory *")] nint factory, RiveImportResult* result);
 
