@@ -67,6 +67,8 @@ do
   links({ 'libjpeg' })
 
   links({ 'd3dcompiler' })
+  -- The ore (GPU scripting) D3D11 backend uses WKPDID_D3DDebugObjectName
+  links({ 'dxguid' })
   --links({ 'd3d11', 'dxguid', 'dxgi', 'd3dcompiler' })
 
   --staticruntime("off") -- /MD for dll

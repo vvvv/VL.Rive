@@ -214,7 +214,7 @@ class Build : FalloutBuild
         var environmentVariables = env.Cast<System.Collections.DictionaryEntry>()
             .ToDictionary(entry => (string)entry.Key, entry => (string)entry.Value);
 
-        var premakeArgs = $"vs2026 --with_rive_text --with_rive_layout --with_rive_scripting --out=out/{PremakeOutputName(arm64)}";
+        var premakeArgs = $"vs2026 --with_rive_text --with_rive_layout --with_rive_scripting --with_rive_canvas --out=out/{PremakeOutputName(arm64)}";
         var cmd = $@"/c """"{vcvarsPath}"" x64 && ""{Premake5Exe}"" {premakeArgs}""";
 
         ProcessTasks.StartProcess("cmd.exe", cmd, workingDirectory: BuildDirectory, environmentVariables: environmentVariables)
