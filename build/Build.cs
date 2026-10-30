@@ -59,13 +59,22 @@ class Build : NukeBuild
     AbsolutePath BuildDirectory => RootDirectory / "build";
     AbsolutePath LocalBinDirectory => BuildDirectory / "bin";
     AbsolutePath SevenZip => LocalBinDirectory / "7zr.exe";
-    AbsolutePath W64DevKitExe => LocalBinDirectory / "w64devkit-x64-2.11.0.7z.exe";
-    AbsolutePath W64DevKitDirectory => LocalBinDirectory / "w64devkit" / "bin";
-    AbsolutePath Premake5Zip => LocalBinDirectory / "premake5.zip";
-    AbsolutePath Premake5Exe => LocalBinDirectory / "premake5.exe";
-    AbsolutePath Python3Zip => LocalBinDirectory / "python-3.13.17-embed-amd64.zip";
-    AbsolutePath PythonExe => LocalBinDirectory / "python.exe";
-    AbsolutePath Python3Exe => LocalBinDirectory / "python3.exe";
+    // Tools are unpacked into directories named after their version: bumping a version below
+    // makes the build fetch the new one instead of silently reusing an older, cached copy.
+    const string W64DevKitVersion = "2.11.0";
+    const string Premake5Version = "5.0.0-beta8";
+    const string Python3Version = "3.13.17";
+
+    AbsolutePath W64DevKitExe => LocalBinDirectory / $"w64devkit-x64-{W64DevKitVersion}.7z.exe";
+    AbsolutePath W64DevKitRoot => LocalBinDirectory / $"w64devkit-{W64DevKitVersion}";
+    AbsolutePath W64DevKitDirectory => W64DevKitRoot / "w64devkit" / "bin";
+    AbsolutePath Premake5Zip => LocalBinDirectory / $"premake-{Premake5Version}-windows.zip";
+    AbsolutePath Premake5Directory => LocalBinDirectory / $"premake-{Premake5Version}";
+    AbsolutePath Premake5Exe => Premake5Directory / "premake5.exe";
+    AbsolutePath Python3Zip => LocalBinDirectory / $"python-{Python3Version}-embed-amd64.zip";
+    AbsolutePath Python3Directory => LocalBinDirectory / $"python-{Python3Version}";
+    AbsolutePath PythonExe => Python3Directory / "python.exe";
+    AbsolutePath Python3Exe => Python3Directory / "python3.exe";
     AbsolutePath RiveBuildDirectory => RootDirectory / "submodules" / "rive-runtime" / "build";
     AbsolutePath PremakeOutputDirectory => BuildDirectory / "out" / "debug";
     // premake's vs2022 action writes rive.sln, vs2026 writes rive.slnx
@@ -127,7 +136,7 @@ class Build : NukeBuild
         .Executes(async () =>
         {
             LocalBinDirectory.CreateDirectory();
-            await DownloadFile("https://github.com/skeeto/w64devkit/releases/download/v2.11.0/w64devkit-x64-2.11.0.7z.exe", W64DevKitExe);
+            await DownloadFile($"https://github.com/skeeto/w64devkit/releases/download/v{W64DevKitVersion}/w64devkit-x64-{W64DevKitVersion}.7z.exe", W64DevKitExe);
         });
 
     Target ExtractW64DevKit => _ => _
@@ -136,7 +145,7 @@ class Build : NukeBuild
         .DependsOn(DownloadW64DevKit, Download7Zip)
         .Executes(() =>
         {
-            ProcessTasks.StartProcess(SevenZip, $"x -y {W64DevKitExe} -o{LocalBinDirectory}")
+            ProcessTasks.StartProcess(SevenZip, $"x -y {W64DevKitExe} -o{W64DevKitRoot}")
                 .AssertWaitForExit()
                 .AssertZeroExitCode();
         });
@@ -147,7 +156,7 @@ class Build : NukeBuild
         .Executes(async () =>
         {
             LocalBinDirectory.CreateDirectory();
-            await DownloadFile("https://github.com/premake/premake-core/releases/download/v5.0.0-beta8/premake-5.0.0-beta8-windows.zip", Premake5Zip);
+            await DownloadFile($"https://github.com/premake/premake-core/releases/download/v{Premake5Version}/premake-{Premake5Version}-windows.zip", Premake5Zip);
         });
 
     Target ExtractPremake5 => _ => _
@@ -156,8 +165,7 @@ class Build : NukeBuild
         .DependsOn(DownloadPremake5)
         .Executes(() =>
         {
-            LocalBinDirectory.CreateDirectory();
-            Premake5Zip.UnZipTo(LocalBinDirectory);
+            Premake5Zip.UnZipTo(Premake5Directory);
         });
 
     Target DownloadPython3 => _ => _
@@ -166,7 +174,7 @@ class Build : NukeBuild
         .Executes(async () =>
         {
             LocalBinDirectory.CreateDirectory();
-            await DownloadFile("https://www.python.org/ftp/python/3.13.17/python-3.13.17-embed-amd64.zip", Python3Zip);
+            await DownloadFile($"https://www.python.org/ftp/python/{Python3Version}/python-{Python3Version}-embed-amd64.zip", Python3Zip);
         });
 
     Target ExtractPython3 => _ => _
@@ -175,8 +183,7 @@ class Build : NukeBuild
         .DependsOn(DownloadPython3)
         .Executes(() =>
         {
-            LocalBinDirectory.CreateDirectory();
-            Python3Zip.UnZipTo(LocalBinDirectory);
+            Python3Zip.UnZipTo(Python3Directory);
             PythonExe.Copy(Python3Exe, ExistsPolicy.FileOverwrite);
         });
 
@@ -195,7 +202,7 @@ class Build : NukeBuild
             env["Path"] = string.Join(
                 Path.PathSeparator,
                 RiveBuildDirectory,
-                LocalBinDirectory,
+                Python3Directory,
                 W64DevKitDirectory,
                 env["Path"]
             );
