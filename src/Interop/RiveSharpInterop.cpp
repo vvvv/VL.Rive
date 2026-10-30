@@ -5,6 +5,7 @@
 #include "rive/logging_scripting_context.hpp"
 #include "rive/lua/scripting_vm.hpp"
 #include "rive/lua/rive_lua_libs.hpp"
+#include "rive/renderer/cmd/deferred_host.hpp"
 
 using namespace rive;
 using namespace rive::gpu;
@@ -17,6 +18,92 @@ static_assert(offsetof(RenderContext::FrameDescriptor, triangulationThresholds) 
 static_assert(offsetof(RenderContext::FrameDescriptor, wireframe) == 64, "FrameDescriptor layout changed");
 
 static void (*g_scriptLogCallback)(int level, const char* message, size_t length) = nullptr;
+
+
+#if defined(RIVE_CANVAS) && defined(RIVE_ORE)
+// Records a file's drawing, including what its scripts do on the GPU, into a deferred session and replays it
+// against the render context once per frame. The plain render context cannot host GPU scripts: a script's
+// render pass cannot nest inside the open screen frame, so upstream's own hosts all go through a session.
+struct DeferredHostD3D11 final : public cmd::HostFrameSink
+{
+    DeferredHostD3D11(RenderContext* renderContext, ore::Context* ore)
+        : cmd::HostFrameSink(/*clear*/ false, /*color*/ 0)
+        , m_renderContext(renderContext)
+        , m_session(ore::ReplayCaps::from(*ore))
+    {
+        m_session.bindRenderContext(renderContext);
+        m_host.bindSession(&m_session);
+        // D3D11 flushes without an external command buffer
+        m_useExternalCommandBuffer = false;
+    }
+
+    Factory* sessionFactory() { return static_cast<Factory*>(&m_session); }
+
+    Renderer* beginFrame(uint32_t width, uint32_t height)
+    {
+        m_width = width;
+        m_height = height;
+        // Scripts may draw into the render target under Rive's content: tell them its size and format
+        m_host.beginRecord(
+            /*clear*/ false,
+            /*color*/ 0,
+            ore::Context::TargetDesc::color8(width, height, /*bgra*/ false));
+        return m_host.screenRenderer();
+    }
+
+    void endFrame(RenderTarget* renderTarget, uint64_t frame, uint64_t safeFrame)
+    {
+        m_renderTarget = renderTarget;
+        m_frame = frame;
+        m_safeFrame = safeFrame;
+        m_host.replayInline(*this, [this]() {
+            RenderContext::FlushResources resources;
+            resources.renderTarget = m_renderTarget;
+            resources.currentFrameNumber = m_frame;
+            resources.safeFrameNumber = m_safeFrame;
+            m_renderContext->flush(resources);
+        });
+        m_screen.reset();
+        m_renderTarget = nullptr;
+    }
+
+    // cmd::HostFrameSink
+    RenderContext* renderContext() override { return m_renderContext; }
+
+    Renderer* beginScreen(uint64_t, bool clear, uint32_t color) override
+    {
+        RenderContext::FrameDescriptor descriptor;
+        descriptor.renderTargetWidth = m_width;
+        descriptor.renderTargetHeight = m_height;
+        descriptor.loadAction = clear ? LoadAction::clear : LoadAction::preserveRenderTarget;
+        descriptor.clearColor = color;
+        m_renderContext->beginFrame(descriptor);
+        m_screen = std::make_unique<RiveRenderer>(m_renderContext);
+        return m_screen.get();
+    }
+
+    RenderTarget* targetRenderTarget() override { return m_renderTarget; }
+
+    RenderContext::FlushResources canvasFlushResources() override
+    {
+        RenderContext::FlushResources resources;
+        resources.currentFrameNumber = m_frame;
+        resources.safeFrameNumber = m_safeFrame;
+        return resources;
+    }
+
+private:
+    RenderContext* m_renderContext;
+    cmd::DeferredSession m_session;
+    cmd::DeferredInlineHost m_host;
+    std::unique_ptr<RiveRenderer> m_screen;
+    RenderTarget* m_renderTarget = nullptr;
+    uint32_t m_width = 0;
+    uint32_t m_height = 0;
+    uint64_t m_frame = 0;
+    uint64_t m_safeFrame = 0;
+};
+#endif
 
 extern "C"
 {
@@ -157,6 +244,48 @@ extern "C"
     void rive_RenderTarget_Destroy(RenderTarget* self)
     {
         delete self;
+    }
+
+    // Deferred recording host (GPU scripting)
+    DeferredHostD3D11* rive_Deferred_Create(RenderContext* renderContext)
+    {
+#if defined(RIVE_CANVAS) && defined(RIVE_ORE)
+        if (auto* ore = renderContext->ore())
+            return new DeferredHostD3D11(renderContext, ore);
+#endif
+        return nullptr;
+    }
+
+    void rive_Deferred_Destroy(DeferredHostD3D11* host)
+    {
+#if defined(RIVE_CANVAS) && defined(RIVE_ORE)
+        delete host;
+#endif
+    }
+
+    Factory* rive_Deferred_Factory(DeferredHostD3D11* host)
+    {
+#if defined(RIVE_CANVAS) && defined(RIVE_ORE)
+        return host->sessionFactory();
+#else
+        return nullptr;
+#endif
+    }
+
+    Renderer* rive_Deferred_BeginFrame(DeferredHostD3D11* host, uint32_t width, uint32_t height)
+    {
+#if defined(RIVE_CANVAS) && defined(RIVE_ORE)
+        return host->beginFrame(width, height);
+#else
+        return nullptr;
+#endif
+    }
+
+    void rive_Deferred_EndFrame(DeferredHostD3D11* host, RenderTarget* renderTarget, uint64_t currentFrameNumber, uint64_t safeFrameNumber)
+    {
+#if defined(RIVE_CANVAS) && defined(RIVE_ORE)
+        host->endFrame(renderTarget, currentFrameNumber, safeFrameNumber);
+#endif
     }
 
     // Renderer

@@ -5,7 +5,7 @@ namespace VL.Rive.Interop;
 
 internal class RiveRenderer : RiveObject
 {
-    public RiveRenderer(nint handle) : base(handle)
+    public RiveRenderer(nint handle, bool ownsHandle = true) : base(handle, ownsHandle)
     {
     }
 

@@ -32,6 +32,8 @@ public sealed partial class RiveRenderer : RendererBase
 
     RiveRenderContextD3D11? riveRenderContext;
     RiveRenderTargetD3D11? riveRenderTarget;
+    RiveDeferredHost? riveDeferredHost;
+    bool useGpuScripting;
 
     Interop.RiveRenderer? riveRenderer;
     RiveContext? riveContext;
@@ -78,6 +80,7 @@ public sealed partial class RiveRenderer : RendererBase
         [Pin(Visibility = Model.PinVisibility.Optional)] Optional<RectangleF> frame,
         [Pin(Visibility = Model.PinVisibility.Optional)] Optional<RectangleF> content,
         [Pin(Visibility = Model.PinVisibility.Optional)] [DefaultValue(1f)] float scaleFactor, 
+        [Pin(Visibility = Model.PinVisibility.Optional)] bool gpuScripting,
         bool reload)
     {
         riveFit = fit;
@@ -100,17 +103,27 @@ public sealed partial class RiveRenderer : RendererBase
         }
 
         // Load file
-        if (reload || file != riveFilePath)
+        if (reload || file != riveFilePath || gpuScripting != useGpuScripting)
         {
             riveFilePath = file;
+            useGpuScripting = gpuScripting;
 
             DisposeRiveContext();
+            DisposeAndSetNull(ref riveDeferredHost);
+
+            // Files with GPU scripts must be imported through, and drawn by, a deferred recording host
+            if (gpuScripting && riveRenderContext != null)
+            {
+                riveDeferredHost = RiveDeferredHost.TryCreate(riveRenderContext);
+                if (riveDeferredHost is null)
+                    logger.LogWarning("GPU scripting is not available in this build of the Rive runtime.");
+            }
 
             var filePath = file?.ToString();
             if (!string.IsNullOrEmpty(filePath))
             {
                 ScriptLog.Attach(logger);
-                var riveFile = riveRenderContext?.LoadFile(file);
+                var riveFile = riveDeferredHost?.LoadFile(filePath) ?? riveRenderContext?.LoadFile(file);
                 if (riveFile != null)
                     riveContext = new RiveContext(nodeContext, riveFile);
             }
@@ -227,7 +240,13 @@ public sealed partial class RiveRenderer : RendererBase
             RenderTargetHeight = (uint)renderTarget.Height,
             LoadAction = LoadAction.PreserveRenderTarget,
         };
-        riveRenderContext.BeginFrame(in frameDescriptor);
+        // Deferred: record the scene, replay it at the end. Otherwise draw straight into the open frame.
+        var renderer = riveDeferredHost?.BeginFrame(renderTarget.Width, renderTarget.Height);
+        if (renderer is null)
+        {
+            riveRenderContext.BeginFrame(in frameDescriptor);
+            renderer = riveRenderer!;
+        }
 
         alignmentMat = Methods.rive_ComputeAlignment(
             riveFit.ToNative(),
@@ -236,10 +255,10 @@ public sealed partial class RiveRenderer : RendererBase
             content: riveContent.ToNative(riveScene.Bounds), 
             scaleFactor: riveScaleFactor);
 
-        riveRenderer!.Save();
-        riveRenderer.Transform(in alignmentMat);
-        riveScene.Draw(riveRenderer);
-        riveRenderer.Restore();
+        renderer.Save();
+        renderer.Transform(in alignmentMat);
+        riveScene.Draw(renderer);
+        renderer.Restore();
 
         var size = new Int2(renderTarget.Width, renderTarget.Height);
         if (riveRenderTarget is null || lastSize != size)
@@ -250,7 +269,15 @@ public sealed partial class RiveRenderer : RendererBase
         }
         riveRenderTarget.SetTargetTexture(nativeRenderTarget.NativePointer);
 
-        riveRenderContext.Flush(riveRenderTarget);
+        if (riveDeferredHost != null)
+        {
+            var (frame, safeFrame) = riveRenderContext.NextFrame();
+            riveDeferredHost.EndFrame(riveRenderTarget, frame, safeFrame);
+        }
+        else
+        {
+            riveRenderContext.Flush(riveRenderTarget);
+        }
 
         // Release render target texture
         riveRenderTarget.SetTargetTexture(default);
@@ -298,6 +325,8 @@ public sealed partial class RiveRenderer : RendererBase
 
     private void DisposeRiveRenderResources()
     {
+        // Everything imported through the host is gone by now (see DisposeRiveContext)
+        DisposeAndSetNull(ref riveDeferredHost);
         DisposeAndSetNull(ref riveRenderer);
         DisposeAndSetNull(ref riveRenderTarget);
         DisposeAndSetNull(ref riveRenderContext);

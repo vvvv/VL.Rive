@@ -34,6 +34,7 @@ RenderImage*=nint
 Font*=nint
 AudioSource*=nint
 RenderContext*=nint
+DeferredHostD3D11*=nint
 RenderTarget*=nint
 Renderer*=nint
 Artboard*=nint

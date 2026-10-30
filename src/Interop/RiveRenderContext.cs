@@ -38,9 +38,15 @@ internal abstract class RiveRenderContext : RiveObject
 
     public void Flush(RiveRenderTarget renderTarget)
     {
+        var (frame, safeFrame) = NextFrame();
+        rive_RenderContext_Flush(handle, renderTarget.DangerousGetHandle(), frame, safeFrame);
+    }
+
+    /// <summary>Starts the next frame: its number, and the number up to which resources may be recycled.</summary>
+    public (ulong Frame, ulong SafeFrame) NextFrame()
+    {
         frameNumber++;
-        var safeFrameNumber = frameNumber > FramesInFlight ? frameNumber - FramesInFlight : 0;
-        rive_RenderContext_Flush(handle, renderTarget.DangerousGetHandle(), frameNumber, safeFrameNumber);
+        return (frameNumber, frameNumber > FramesInFlight ? frameNumber - FramesInFlight : 0);
     }
 
     protected override bool ReleaseHandle()

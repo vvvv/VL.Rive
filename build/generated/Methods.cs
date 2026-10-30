@@ -65,6 +65,24 @@ namespace VL.Rive.Interop
         public static extern void rive_RenderTarget_Destroy([NativeTypeName("rive::gpu::RenderTarget *")] nint self);
 
         [DllImport("rive_interop", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        [return: NativeTypeName("DeferredHostD3D11*")]
+        public static extern nint rive_Deferred_Create([NativeTypeName("rive::gpu::RenderContext *")] nint renderContext);
+
+        [DllImport("rive_interop", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern void rive_Deferred_Destroy([NativeTypeName("DeferredHostD3D11*")] nint host);
+
+        [DllImport("rive_interop", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        [return: NativeTypeName("rive::Factory *")]
+        public static extern nint rive_Deferred_Factory([NativeTypeName("DeferredHostD3D11*")] nint host);
+
+        [DllImport("rive_interop", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        [return: NativeTypeName("rive::Renderer *")]
+        public static extern nint rive_Deferred_BeginFrame([NativeTypeName("DeferredHostD3D11*")] nint host, [NativeTypeName("uint32_t")] uint width, [NativeTypeName("uint32_t")] uint height);
+
+        [DllImport("rive_interop", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern void rive_Deferred_EndFrame([NativeTypeName("DeferredHostD3D11*")] nint host, [NativeTypeName("rive::gpu::RenderTarget *")] nint renderTarget, [NativeTypeName("uint64_t")] ulong currentFrameNumber, [NativeTypeName("uint64_t")] ulong safeFrameNumber);
+
+        [DllImport("rive_interop", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         [return: NativeTypeName("rive::Renderer *")]
         public static extern nint rive_Renderer_Create([NativeTypeName("rive::gpu::RenderContext *")] nint renderContext);
 

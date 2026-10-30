@@ -17,6 +17,8 @@
 using namespace rive;
 using namespace rive::gpu;
 
+struct DeferredHostD3D11; // see RiveSharpInterop.cpp
+
 extern "C"
 {
 	// Math
@@ -113,6 +115,17 @@ extern "C"
 	// RenderTarget
 	__declspec(dllexport) void rive_RenderTarget_D3D11_SetTargetTexture(RenderTarget* self, ID3D11Texture2D* texture);
 	__declspec(dllexport) void rive_RenderTarget_Destroy(RenderTarget* self);
+
+	// Deferred recording host (GPU scripting): files imported through its factory record their drawing, and
+	// scripts' GPU passes, into a session that is replayed against the render context at the end of each frame.
+	// Returns null when the runtime was built without the Ore GPU layer.
+	__declspec(dllexport) DeferredHostD3D11* rive_Deferred_Create(RenderContext* renderContext);
+	__declspec(dllexport) void rive_Deferred_Destroy(DeferredHostD3D11* host);
+	__declspec(dllexport) Factory* rive_Deferred_Factory(DeferredHostD3D11* host);
+	// Opens a recording frame and returns the renderer to draw the scene into (owned by the host).
+	__declspec(dllexport) Renderer* rive_Deferred_BeginFrame(DeferredHostD3D11* host, uint32_t width, uint32_t height);
+	// Replays the recorded frame into renderTarget (whose texture must be set) and flushes it.
+	__declspec(dllexport) void rive_Deferred_EndFrame(DeferredHostD3D11* host, RenderTarget* renderTarget, uint64_t currentFrameNumber, uint64_t safeFrameNumber);
 
 	// Renderer
 	__declspec(dllexport) Renderer* rive_Renderer_Create(RenderContext* renderContext);
