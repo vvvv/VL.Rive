@@ -23,9 +23,11 @@ internal sealed class RiveViewModelProperty : IVLPropertyInfo
 
     public override string ToString() => riveProperty.Name;
 
-    IVLTypeInfo IVLPropertyInfo.DeclaringType => viewModel;
+    public string Name => riveProperty.Name;
 
-    string IVLPropertyInfo.Name => riveProperty.Name;
+    public RivePropertyInfo RiveProperty => riveProperty;
+
+    IVLTypeInfo IVLPropertyInfo.DeclaringType => viewModel;
 
     string IVLPropertyInfo.NameForTextualCode => riveProperty.Name;
 

@@ -114,7 +114,17 @@ internal unsafe class RiveFile : RiveObject
                         var nativeProperty = props[j];
                         try
                         {
-                            var property = new RivePropertyInfo(SpanExtensions.AsString(nativeProperty.name), (RiveDataType)nativeProperty.type, nativeProperty.viewModelReferenceId);
+                            var type = (RiveDataType)nativeProperty.type;
+                            if (type == RiveDataType.SymbolListIndex)
+                                continue;
+
+                            var name = SpanExtensions.AsString(nativeProperty.name);
+
+                            // Skip properties with slashes in their names - Rive treats these as paths and will not be able to resolve them correctly
+                            if (name.Contains('/'))
+                                continue;
+
+                            var property = new RivePropertyInfo(name, type, nativeProperty.viewModelReferenceId);
                             builder.Add(property);
                         }
                         finally

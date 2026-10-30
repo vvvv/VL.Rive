@@ -1,4 +1,5 @@
-﻿using VL.Core;
+﻿using System.Collections.Immutable;
+using VL.Core;
 using VL.Lib.Collections;
 using VL.Rive.Interop;
 
@@ -16,7 +17,8 @@ internal sealed class RiveViewModelType : IVLTypeInfo
         this.riveContext = riveContext;
         this.handle = handle;
         this.viewModel = viewModel;
-        this.properties = viewModel.Properties.Select(p => new RiveViewModelProperty(this.riveContext, this, p)).ToSpread<IVLPropertyInfo>();
+        Properties = viewModel.Properties.Select(p => new RiveViewModelProperty(this.riveContext, this, p)).ToImmutableArray();
+        this.properties = Properties.ToSpread<IVLPropertyInfo>();
     }
 
     public RiveViewModel CreateInstance()
@@ -32,6 +34,8 @@ internal sealed class RiveViewModelType : IVLTypeInfo
     }
 
     public override string ToString() => self.Name;
+
+    internal ImmutableArray<RiveViewModelProperty> Properties { get; }
 
     IVLTypeInfo self => this;
 

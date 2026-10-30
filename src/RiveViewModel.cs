@@ -100,55 +100,37 @@ public unsafe class RiveViewModel : IVLObject, INotifyPropertyChanged, IRiveValu
 
     Dictionary<string, IRiveValue> CreateProperties()
     {
-        var count = rive_ViewModelInstanceRuntime_PropertyCount(handle);
-        var nativeProperties = stackalloc RivePropertyData[count];
-        rive_ViewModelInstanceRuntime_Properties(handle, nativeProperties);
-        var properties = new Dictionary<string, IRiveValue>(count);
-        for (int i = 0; i < count; i++)
+        var properties = new Dictionary<string, IRiveValue>(Type.Properties.Length);
+        foreach (var p in Type.Properties)
         {
-            var rivePropertyData = nativeProperties[i];
-            try
-            {
-                var name = Interop.SpanExtensions.AsString(rivePropertyData.name);
-
-                // Skip properties with slashes in their names - Rive treats these as paths and will not be able to resolve them correctly
-                if (name.Contains('/'))
-                    continue;
-
-                var property = CreateProperty(handle, rivePropertyData);
-                if (property is null)
-                    continue;
-
-                properties.Add(name, property);
-            }
-            finally
-            {
-                NativeMemory.Free(rivePropertyData.name); // Free the native string memory
-            }
+            var runtimeProperty = CreateProperty(handle, p);
+            if (runtimeProperty != null)
+                properties.Add(p.Name, runtimeProperty);
         }
         return properties;
     }
 
-    IRiveValue? CreateProperty(nint viewModel, RivePropertyData property)
+    IRiveValue? CreateProperty(nint viewModel, RiveViewModelProperty property)
     {
-        var type = (RiveDataType)property.type;
+        using var name = new MarshaledString(property.Name);
+        var type = property.RiveProperty.Type;
         if (type == RiveDataType.ViewModel)
         {
-            var viewModelHandle = rive_ViewModelInstanceRuntime_PropertyViewModel(handle, property.name);
+            var viewModelHandle = rive_ViewModelInstanceRuntime_PropertyViewModel(handle, name);
             if (viewModelHandle != default)
                 return new RiveViewModel(riveContext, viewModelHandle);
         }
         else if (type == RiveDataType.List)
         {
-            var listHandle = rive_ViewModelInstanceRuntime_PropertyList(handle, property.name);
+            var listHandle = rive_ViewModelInstanceRuntime_PropertyList(handle, name);
             if (listHandle != default)
                 return new RiveList(riveContext, listHandle);
         }
         else
         {
-            var nativeHandle = rive_ViewModelInstanceRuntime_Property(handle, property.name);
+            var nativeHandle = rive_ViewModelInstanceRuntime_Property(handle, name);
             if (nativeHandle != default)
-                return RiveValue.Create(riveContext, nativeHandle, (RiveDataType)property.type);
+                return RiveValue.Create(riveContext, nativeHandle, type);
         }
         return null;
     }
