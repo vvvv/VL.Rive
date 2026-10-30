@@ -1,3 +1,4 @@
+using System.Runtime.InteropServices;
 using VL.Rive.Interop;
 using static VL.Rive.Interop.Methods;
 using SpanExtensions = VL.Rive.Interop.SpanExtensions;
@@ -10,7 +11,19 @@ internal sealed class RiveEnumValue : RiveValue<string?>
 
     public override unsafe string? TypedValue
     {
-        get => SpanExtensions.AsString(rive_ViewModelInstanceEnumRuntime_Value(handle));
+        get
+        {
+            // Native side returns a copy that we own
+            var ptr = rive_ViewModelInstanceEnumRuntime_Value(handle);
+            try
+            {
+                return SpanExtensions.AsString(ptr);
+            }
+            finally
+            {
+                NativeMemory.Free(ptr);
+            }
+        }
         set
         {
             if (value is null)

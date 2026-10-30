@@ -654,7 +654,8 @@ extern "C"
     // Enum
     const char* rive_ViewModelInstanceEnumRuntime_Value(ViewModelInstanceEnumRuntime* value)
     {
-        return value->value().c_str();
+        // value() returns by value: hand out a copy that the caller frees
+        return _strdup(value->value().c_str());
     }
 
     void rive_ViewModelInstanceEnumRuntime_SetValue(ViewModelInstanceEnumRuntime* value, const char* v)
@@ -689,7 +690,8 @@ extern "C"
 
     const char* rive_ViewModelInstanceEnumRuntime_EnumType(ViewModelInstanceEnumRuntime* value)
     {
-        return value->enumType().c_str();
+        // enumType() returns by value: hand out a copy that the caller frees
+        return _strdup(value->enumType().c_str());
     }
 
     // Trigger
