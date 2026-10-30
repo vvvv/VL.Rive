@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "isRoot": true,
+  "tools": {
+    "fallout.globaltool": {
+      "version": "10.4.0",
+      "commands": [
+        "fallout"
+      ],
+      "rollForward": false
+    }
+  }
+}

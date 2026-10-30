@@ -9,7 +9,7 @@
 #
 #     - To trigger manual generation invoke:
 #
-#         nuke --generate-configuration GitHubActions_main --host GitHubActions
+#         fallout --generate-configuration GitHubActions_main --host GitHubActions
 #
 # </auto-generated>
 # ------------------------------------------------------------------------------
@@ -23,18 +23,24 @@ jobs:
     name: windows-latest
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           submodules: recursive
           lfs: true
-      - name: 'Cache: .nuke/temp, ~/.nuget/packages'
-        uses: actions/cache@v4
+      - name: 'Cache: .fallout/temp, ~/.nuget/packages'
+        uses: actions/cache@v6
         with:
           path: |
-            .nuke/temp
+            .fallout/temp
             ~/.nuget/packages
           key: ${{ runner.os }}-${{ hashFiles('**/global.json', '**/*.csproj', '**/Directory.Packages.props') }}
+      - name: 'Setup: .NET SDK'
+        uses: actions/setup-dotnet@v6
+        with:
+          global-json-file: global.json
+      - name: 'Restore: dotnet tools'
+        run: dotnet tool restore
       - name: 'Run: PushToGithub'
-        run: ./build.cmd PushToGithub
+        run: dotnet fallout PushToGithub
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -1,14 +1,14 @@
-using Nuke.Common;
-using Nuke.Common.CI;
-using Nuke.Common.CI.GitHubActions;
-using Nuke.Common.Execution;
-using Nuke.Common.IO;
-using Nuke.Common.ProjectModel;
-using Nuke.Common.Tooling;
-using Nuke.Common.Tools.DotNet;
-using Nuke.Common.Tools.MSBuild;
-using Nuke.Common.Tools.VSWhere;
-using Nuke.Common.Utilities.Collections;
+using Fallout.Common;
+using Fallout.Common.CI;
+using Fallout.Common.CI.GitHubActions;
+using Fallout.Common.Execution;
+using Fallout.Common.IO;
+using Fallout.Solutions;
+using Fallout.Common.Tooling;
+using Fallout.Common.Tools.DotNet;
+using Fallout.Common.Tools.MSBuild;
+using Fallout.Common.Tools.VSWhere;
+using Fallout.Common.Utilities.Collections;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -18,8 +18,8 @@ using System.Net;
 using System.Net.Http;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
-using static Nuke.Common.EnvironmentInfo;
-using static Nuke.Common.IO.PathConstruction;
+using static Fallout.Common.EnvironmentInfo;
+using static Fallout.Common.IO.PathConstruction;
 using static System.Net.WebRequestMethods;
 
 [GitHubActions(
@@ -39,7 +39,7 @@ using static System.Net.WebRequestMethods;
     Submodules = GitHubActionsSubmodules.Recursive,
     InvokedTargets = [nameof(PushToNugetOrg)],
     ImportSecrets = [nameof(VvvvOrgNugetKey)])]
-class Build : NukeBuild
+class Build : FalloutBuild
 {
     /// Support plugins are available for:
     ///   - JetBrains ReSharper        https://nuke.build/resharper
