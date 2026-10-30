@@ -16,6 +16,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using static Nuke.Common.EnvironmentInfo;
 using static Nuke.Common.IO.PathConstruction;
@@ -82,6 +83,11 @@ class Build : NukeBuild
     AbsolutePath RiveManagedProject => RootDirectory / "src" / "VL.Rive.csproj";
     AbsolutePath PackageOutputDirectory => RootDirectory / "lib";
 
+    // Local builds produce the native runtime of the machine they run on; Pack builds both
+    // Local builds produce the native runtime matching the architecture of the dotnet running the build (a native
+    // ARM64 dotnet on an ARM64 machine). Pack builds both; BuildRiveNativeArm64 can always be requested explicitly.
+    static bool HostIsArm64 => RuntimeInformation.ProcessArchitecture == Architecture.Arm64;
+
     // Latest Visual Studio 2026 (18.x) installation
     AbsolutePath VisualStudioInstallPath => _vsInstallPath ??= FindVisualStudioInstallPath();
     AbsolutePath _vsInstallPath;
@@ -117,7 +123,7 @@ class Build : NukeBuild
         });
 
     Target Compile => _ => _
-        .DependsOn(Restore, BuildRiveNative, BuildRiveManaged)
+        .DependsOn(Restore, BuildRiveManaged)
         .Executes(() =>
         {
         });
@@ -269,7 +275,7 @@ class Build : NukeBuild
 
     Target BuildRiveManaged => _ => _
         .Unlisted()
-        .DependsOn(GenerateInteropCode, BuildRiveNative)
+        .DependsOn(GenerateInteropCode, HostIsArm64 ? BuildRiveNativeArm64 : BuildRiveNative)
         .Executes(() =>
         {
             DotNetTasks.DotNetBuild(s => s
@@ -277,7 +283,7 @@ class Build : NukeBuild
         });
 
     Target Pack => _ => _
-        .DependsOn(Compile, BuildRiveNativeArm64)
+        .DependsOn(Compile, BuildRiveNative, BuildRiveNativeArm64)
         .Executes(() =>
         {
             DotNetTasks.DotNetPack(s => s
