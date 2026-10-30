@@ -4,7 +4,7 @@
       "commandName": "Executable",
       "executablePath": "C:\\Program Files\\vvvv\\vvvv_gamma_7.0-win-x64\\vvvv.exe",
       "commandLineArgs": "--package-repositories C:\\Users\\elias\\source\\repos --editable-packages VL.Rive",
-      "nativeDebugging": false
+      "nativeDebugging": true
     }
   }
 }
