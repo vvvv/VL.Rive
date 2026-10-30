@@ -29,24 +29,13 @@ public unsafe class RiveViewModel : IVLObject, INotifyPropertyChanged, IRiveValu
 
     internal int ViewModelId => (int)rive_ViewModelInstance_ViewModelId(InstanceHandle);
 
-    public T? GetValue<T>(string propertyName) => GetRiveValueTyped<T>(propertyName).TypedValue;
-    public void SetValue<T>(string propertyName, T value) => GetRiveValueTyped<T>(propertyName).TypedValue = value;
-    public object? GetObject(string propertyName) => GetRiveValue(propertyName).Value;
-    public void SetObject(string propertyName, object value) => GetRiveValue(propertyName).Value = value;
+    internal object? GetObject(string propertyName) => GetRiveValue(propertyName).Value;
+    internal void SetObject(string propertyName, object value) => GetRiveValue(propertyName).Value = value;
 
     private IRiveValue GetRiveValue(string propertyName)
     {
         if (!properties.TryGetValue(propertyName, out var riveValue))
             throw new ArgumentException($"Property '{propertyName}' not found in {Type}.", nameof(propertyName));
-        return riveValue;
-    }
-
-    private IRiveValue<T> GetRiveValueTyped<T>(string propertyName)
-    {
-        if (!properties.TryGetValue(propertyName, out var value))
-            throw new ArgumentException($"Property '{propertyName}' not found in {Type}.", nameof(propertyName));
-        if (value is not IRiveValue<T> riveValue)
-            throw new InvalidOperationException($"Property '{propertyName}' is not of type {typeof(T).Name}.");
         return riveValue;
     }
 
