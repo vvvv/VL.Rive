@@ -1,10 +1,11 @@
---libraryPath
+--library-path
 rive_interop
 --config
-multi-file 
-generate-helper-types
-latest-codegen
-strip-enum-member-type-name
+file=multi
+codegen=latest
+--generate
+helper-types
+enum-member-type-name=false
 --language
 c++
 -std
@@ -23,6 +24,7 @@ _CRT_USE_BUILTIN_OFFSETOF
 --with-access-specifier
 *=Internal
 -r
+RenderContext::FrameDescriptor=FrameDescriptor
 ID3D11Device*=nint
 ID3D11DeviceContext*=nint
 ID3D11Texture2D*=nint
