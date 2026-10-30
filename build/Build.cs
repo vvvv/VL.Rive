@@ -17,7 +17,6 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Serilog;
 using static Nuke.Common.EnvironmentInfo;
 using static Nuke.Common.IO.PathConstruction;
 using static System.Net.WebRequestMethods;
@@ -52,9 +51,6 @@ class Build : NukeBuild
     [Parameter("Configuration to build - Default is 'Debug' (local) or 'Release' (server)")]
     readonly Configuration Configuration = IsLocalBuild ? Configuration.Debug : Configuration.Release;
 
-    [Parameter("Build the native runtime for Windows on ARM64 (runtimes/win-arm64) instead of x64")]
-    readonly bool Arm64;
-
     [Parameter]
     [Secret]
     readonly string VvvvOrgNugetKey;
@@ -80,30 +76,29 @@ class Build : NukeBuild
     AbsolutePath Python3Exe => Python3Directory / "python3.exe";
     AbsolutePath RiveBuildDirectory => RootDirectory / "submodules" / "rive-runtime" / "build";
     // ARM64 gets its own folder: objects and static libs of the two architectures must not mix
-    string PremakeOutputName => Arm64 ? "debug-arm64" : "debug";
-    AbsolutePath PremakeOutputDirectory => BuildDirectory / "out" / PremakeOutputName;
-    // premake's vs2022 action writes rive.sln, vs2026 writes rive.slnx
-    AbsolutePath RiveNativeSolution => (PremakeOutputDirectory / "rive.slnx").FileExists() ? PremakeOutputDirectory / "rive.slnx" : PremakeOutputDirectory / "rive.sln";
+    static string PremakeOutputName(bool arm64) => arm64 ? "debug-arm64" : "debug";
+    AbsolutePath PremakeOutputDirectory(bool arm64) => BuildDirectory / "out" / PremakeOutputName(arm64);
+    AbsolutePath RiveNativeSolution(bool arm64) => PremakeOutputDirectory(arm64) / "rive.slnx";
     AbsolutePath RiveManagedProject => RootDirectory / "src" / "VL.Rive.csproj";
     AbsolutePath PackageOutputDirectory => RootDirectory / "lib";
 
-    // Latest Visual Studio 2022 (17.x) or 2026 (18.x) installation
-    AbsolutePath VisualStudioInstallPath => _vsInstallPath ??= FindVisualStudio("installationPath");
+    // Latest Visual Studio 2026 (18.x) installation
+    AbsolutePath VisualStudioInstallPath => _vsInstallPath ??= FindVisualStudioInstallPath();
     AbsolutePath _vsInstallPath;
 
-    static string FindVisualStudio(string property)
+    static string FindVisualStudioInstallPath()
     {
         var value = VSWhereTasks.VSWhere(s => s
-            .SetVersion("[17.0,19.0)")
+            .SetVersion("[18.0,19.0)")
             .EnableLatest()
             .EnableUTF8()
-            .SetProperty(property))
+            .SetProperty("installationPath"))
             .Output
             .FirstOrDefault()
             .Text;
 
         if (string.IsNullOrEmpty(value))
-            throw new Exception("Visual Studio installation not found.");
+            throw new Exception("Visual Studio 2026 installation not found.");
 
         return value;
     }
@@ -112,7 +107,8 @@ class Build : NukeBuild
         .Before(Restore)
         .Executes(() =>
         {
-            PremakeOutputDirectory.CreateOrCleanDirectory();
+            PremakeOutputDirectory(arm64: false).CreateOrCleanDirectory();
+            PremakeOutputDirectory(arm64: true).CreateOrCleanDirectory();
         });
 
     Target Restore => _ => _
@@ -192,55 +188,64 @@ class Build : NukeBuild
             PythonExe.Copy(Python3Exe, ExistsPolicy.FileOverwrite);
         });
 
+    void GenerateSolution(bool arm64)
+    {
+        var vsInstallPath = VisualStudioInstallPath;
+
+        var vcvarsPath = vsInstallPath / "VC" / "Auxiliary" / "Build" / "vcvarsall.bat";
+        if (!vcvarsPath.FileExists())
+            throw new Exception($"vcvarsall.bat not found at: {vcvarsPath}");
+
+        var env = Environment.GetEnvironmentVariables();
+        env["Path"] = string.Join(
+            Path.PathSeparator,
+            RiveBuildDirectory,
+            Python3Directory,
+            W64DevKitDirectory,
+            env["Path"]
+        );
+
+        var environmentVariables = env.Cast<System.Collections.DictionaryEntry>()
+            .ToDictionary(entry => (string)entry.Key, entry => (string)entry.Value);
+
+        var premakeArgs = $"vs2026 --with_rive_text --with_rive_layout --with_rive_scripting --out=out/{PremakeOutputName(arm64)}";
+        var cmd = $@"/c """"{vcvarsPath}"" x64 && ""{Premake5Exe}"" {premakeArgs}""";
+
+        ProcessTasks.StartProcess("cmd.exe", cmd, workingDirectory: BuildDirectory, environmentVariables: environmentVariables)
+            .AssertWaitForExit()
+            .AssertZeroExitCode();
+    }
+
+    void BuildNative(bool arm64)
+    {
+        MSBuildTasks.MSBuild(s => s
+            .SetProcessToolPath(VisualStudioInstallPath / "MSBuild" / "Current" / "Bin" / "MSBuild.exe")
+            .SetSolutionFile(RiveNativeSolution(arm64))
+            .SetProperty("Platform", arm64 ? "ARM64" : "x64")
+            // rive only enables /MP for premake's vs2022 action: compile files in parallel for vs2026 too
+            .SetProcessAdditionalArguments("/m", "/p:UseMultiToolTask=true")
+            .SetVerbosity(MSBuildVerbosity.Quiet));
+    }
+
     Target GenerateInteropSolution => _ => _
         .Unlisted()
         .DependsOn(ExtractPremake5, ExtractPython3, ExtractW64DevKit)
-        .Executes(() =>
-        {
-            var vsInstallPath = VisualStudioInstallPath;
+        .Executes(() => GenerateSolution(arm64: false));
 
-            var vcvarsPath = vsInstallPath / "VC" / "Auxiliary" / "Build" / "vcvarsall.bat";
-            if (!vcvarsPath.FileExists())
-                throw new Exception($"vcvarsall.bat not found at: {vcvarsPath}");
-
-            var env = Environment.GetEnvironmentVariables();
-            env["Path"] = string.Join(
-                Path.PathSeparator,
-                RiveBuildDirectory,
-                Python3Directory,
-                W64DevKitDirectory,
-                env["Path"]
-            );
-
-            var environmentVariables = env.Cast<System.Collections.DictionaryEntry>()
-                .ToDictionary(entry => (string)entry.Key, entry => (string)entry.Value);
-
-            // VS 2026 is 18.x, VS 2022 is 17.x
-            var vsVersion = FindVisualStudio("installationVersion");
-            var vsAction = vsVersion.StartsWith("18.") ? "vs2026" : "vs2022";
-            Log.Information("Using Visual Studio {Version} at {Path} ({Action})", vsVersion, vsInstallPath, vsAction);
-
-            var premakeArgs = $"{vsAction} --with_rive_text --with_rive_layout --with_rive_scripting --out=out/{PremakeOutputName}";
-            var cmd = $@"/c """"{vcvarsPath}"" x64 && ""{Premake5Exe}"" {premakeArgs}""";
-
-            ProcessTasks.StartProcess("cmd.exe", cmd, workingDirectory: BuildDirectory, environmentVariables: environmentVariables)
-                .AssertWaitForExit()
-                .AssertZeroExitCode();
-        });
+    Target GenerateInteropSolutionArm64 => _ => _
+        .Unlisted()
+        .DependsOn(ExtractPremake5, ExtractPython3, ExtractW64DevKit)
+        .Executes(() => GenerateSolution(arm64: true));
 
     Target BuildRiveNative => _ => _
         .Unlisted()
         .DependsOn(GenerateInteropSolution)
-        .Executes(() =>
-        {
-            MSBuildTasks.MSBuild(s => s
-                .SetProcessToolPath(VisualStudioInstallPath / "MSBuild" / "Current" / "Bin" / "MSBuild.exe")
-                .SetSolutionFile(RiveNativeSolution)
-                .SetProperty("Platform", Arm64 ? "ARM64" : "x64")
-                // rive only enables /MP for the vs2022 premake action: compile files in parallel for vs2026 too
-                .SetProcessAdditionalArguments("/m", "/p:UseMultiToolTask=true")
-                .SetVerbosity(MSBuildVerbosity.Quiet));
-        });
+        .Executes(() => BuildNative(arm64: false));
+
+    // Cross-compiles the native runtime for Windows on ARM64 (runtimes/win-arm64). Part of Pack, not of Compile.
+    Target BuildRiveNativeArm64 => _ => _
+        .DependsOn(GenerateInteropSolutionArm64)
+        .Executes(() => BuildNative(arm64: true));
 
     Target InstallClangSharpPInvokeGenerator => _ => _
         .Unlisted()
@@ -272,7 +277,7 @@ class Build : NukeBuild
         });
 
     Target Pack => _ => _
-        .DependsOn(Compile)
+        .DependsOn(Compile, BuildRiveNativeArm64)
         .Executes(() =>
         {
             DotNetTasks.DotNetPack(s => s
