@@ -38,7 +38,7 @@ internal sealed class RiveViewModelProperty : IVLPropertyInfo
         RiveDataType.Boolean => typeRegistry.GetTypeInfo(typeof(bool)),
         RiveDataType.Color => typeRegistry.GetTypeInfo(typeof(Color4)),
         RiveDataType.Trigger => typeRegistry.GetTypeInfo(typeof(Unit)),
-        RiveDataType.ViewModel => riveContext.ViewModels[riveProperty.ViewModelReferenceId],
+        RiveDataType.ViewModel => typeRegistry.GetTypeInfo(typeof(RiveViewModel)),
         RiveDataType.List => typeRegistry.GetTypeInfo(typeof(RiveList)),
         _ => typeRegistry.GetTypeInfo(typeof(object))
     };
