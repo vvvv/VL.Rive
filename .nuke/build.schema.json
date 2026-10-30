@@ -26,6 +26,7 @@
       "enum": [
         "BuildRiveManaged",
         "BuildRiveNative",
+        "BuildRiveNativeArm64",
         "Clean",
         "Compile",
         "Download7Zip",
@@ -37,6 +38,7 @@
         "ExtractW64DevKit",
         "GenerateInteropCode",
         "GenerateInteropSolution",
+        "GenerateInteropSolutionArm64",
         "InstallClangSharpPInvokeGenerator",
         "Pack",
         "PushToGithub",
@@ -115,10 +117,6 @@
   "allOf": [
     {
       "properties": {
-        "Arm64": {
-          "type": "boolean",
-          "description": "Build the native runtime for Windows on ARM64 (runtimes/win-arm64) instead of x64"
-        },
         "Configuration": {
           "type": "string",
           "description": "Configuration to build - Default is 'Debug' (local) or 'Release' (server)",
