@@ -52,6 +52,9 @@ class Build : NukeBuild
     [Parameter("Configuration to build - Default is 'Debug' (local) or 'Release' (server)")]
     readonly Configuration Configuration = IsLocalBuild ? Configuration.Debug : Configuration.Release;
 
+    [Parameter("Build the native runtime for Windows on ARM64 (runtimes/win-arm64) instead of x64")]
+    readonly bool Arm64;
+
     [Parameter]
     [Secret]
     readonly string VvvvOrgNugetKey;
@@ -76,7 +79,9 @@ class Build : NukeBuild
     AbsolutePath PythonExe => Python3Directory / "python.exe";
     AbsolutePath Python3Exe => Python3Directory / "python3.exe";
     AbsolutePath RiveBuildDirectory => RootDirectory / "submodules" / "rive-runtime" / "build";
-    AbsolutePath PremakeOutputDirectory => BuildDirectory / "out" / "debug";
+    // ARM64 gets its own folder: objects and static libs of the two architectures must not mix
+    string PremakeOutputName => Arm64 ? "debug-arm64" : "debug";
+    AbsolutePath PremakeOutputDirectory => BuildDirectory / "out" / PremakeOutputName;
     // premake's vs2022 action writes rive.sln, vs2026 writes rive.slnx
     AbsolutePath RiveNativeSolution => (PremakeOutputDirectory / "rive.slnx").FileExists() ? PremakeOutputDirectory / "rive.slnx" : PremakeOutputDirectory / "rive.sln";
     AbsolutePath RiveManagedProject => RootDirectory / "src" / "VL.Rive.csproj";
@@ -215,7 +220,7 @@ class Build : NukeBuild
             var vsAction = vsVersion.StartsWith("18.") ? "vs2026" : "vs2022";
             Log.Information("Using Visual Studio {Version} at {Path} ({Action})", vsVersion, vsInstallPath, vsAction);
 
-            var premakeArgs = $"{vsAction} --with_rive_text --with_rive_layout --with_rive_scripting";
+            var premakeArgs = $"{vsAction} --with_rive_text --with_rive_layout --with_rive_scripting --out=out/{PremakeOutputName}";
             var cmd = $@"/c """"{vcvarsPath}"" x64 && ""{Premake5Exe}"" {premakeArgs}""";
 
             ProcessTasks.StartProcess("cmd.exe", cmd, workingDirectory: BuildDirectory, environmentVariables: environmentVariables)
@@ -231,7 +236,7 @@ class Build : NukeBuild
             MSBuildTasks.MSBuild(s => s
                 .SetProcessToolPath(VisualStudioInstallPath / "MSBuild" / "Current" / "Bin" / "MSBuild.exe")
                 .SetSolutionFile(RiveNativeSolution)
-                .SetTargetPlatform(MSBuildTargetPlatform.x64)
+                .SetProperty("Platform", Arm64 ? "ARM64" : "x64")
                 // rive only enables /MP for the vs2022 premake action: compile files in parallel for vs2026 too
                 .SetProcessAdditionalArguments("/m", "/p:UseMultiToolTask=true")
                 .SetVerbosity(MSBuildVerbosity.Quiet));

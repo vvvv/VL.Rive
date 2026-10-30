@@ -11,6 +11,29 @@ dofile(RIVE_RUNTIME_DIR .. '/decoders/premake5_v2.lua')
 -- TODO: Rework this whole script so we can build for multiple platforms at once
 --build_shaders(RIVE_RENDERER_DIR .. '/src/shaders', RIVE_RENDERER_DIR .. '/pls/generated'))
 
+-- Windows on ARM64: rive does not support it upstream (build scripts pin architecture('x64') for
+-- system:windows). Add an ARM64 platform and override the pin from here. These workspace-level
+-- blocks come after the pinning ones, so they win; select it with MSBuild /p:Platform=ARM64.
+workspace("rive")
+  platforms({ "x64", "ARM64" })
+  filter({ "system:windows", "platforms:ARM64" })
+    architecture("ARM64")
+  filter({})
+
+-- These projects pin architecture('x64') themselves (project scope beats the workspace block above)
+for _, name in ipairs({ "rive", "rive_pls_renderer" }) do
+  project(name)
+    filter({ "system:windows", "platforms:ARM64" })
+      architecture("ARM64")
+    filter({})
+end
+
+-- libwebp adds x86-only SSE flags for every windows clang build
+project("libwebp")
+  filter({ "system:windows", "platforms:ARM64" })
+    removebuildoptions({ "-mssse3", "-msse4.1" })
+  filter({})
+
 project("rive_interop")
 do
   dependson("rive")
@@ -50,11 +73,11 @@ do
 
   filter("platforms:x64")
     architecture("x64")
-    targetdir("runtimes/win-x64/native")
+    targetdir(REPO_ROOT_DIR .. "/runtimes/win-x64/native")
 
   filter("platforms:ARM64")
     architecture("ARM64")
-    targetdir("runtimes/win-arm64/native")
+    targetdir(REPO_ROOT_DIR .. "/runtimes/win-arm64/native")
 
   filter({})
 end
