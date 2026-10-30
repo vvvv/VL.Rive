@@ -15,3 +15,6 @@ bin/
 /build/out/
 /runtimes/
 /.fallout/temp
+
+# CodeAlta session data (plans, tasks)
+/.alta/
