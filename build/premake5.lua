@@ -4,9 +4,14 @@ RIVE_RUNTIME_DIR = REPO_ROOT_DIR .. "/submodules/rive-runtime"
 RIVE_RENDERER_DIR = REPO_ROOT_DIR .. "/submodules/rive-runtime/renderer"
 premake.path = premake.path .. ";" .. RIVE_RUNTIME_DIR .. "/build"
 
+-- rive's scripts still use deprecated premake API (flags {...}) because they have to work with the premake
+-- version rive pins (beta7), which lacks the replacements. We can't fix that here, so keep its warnings
+-- out of the build log while loading them; our own code below is still checked.
+premake.api.deprecations("off")
 dofile(RIVE_RUNTIME_DIR .. "/premake5_v2.lua")
 dofile(RIVE_RUNTIME_DIR .. "/renderer/premake5_pls_renderer.lua")
 dofile(RIVE_RUNTIME_DIR .. '/decoders/premake5_v2.lua')
+premake.api.deprecations("on")
 
 -- TODO: Rework this whole script so we can build for multiple platforms at once
 --build_shaders(RIVE_RENDERER_DIR .. '/src/shaders', RIVE_RENDERER_DIR .. '/pls/generated'))
