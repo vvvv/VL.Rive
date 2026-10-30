@@ -9,7 +9,7 @@
 #
 #     - To trigger manual generation invoke:
 #
-#         nuke --generate-configuration GitHubActions_nuget.org --host GitHubActions
+#         fallout --generate-configuration GitHubActions_nuget.org --host GitHubActions
 #
 # </auto-generated>
 # ------------------------------------------------------------------------------
@@ -23,18 +23,24 @@ jobs:
     name: windows-latest
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           submodules: recursive
           lfs: true
-      - name: 'Cache: .nuke/temp, ~/.nuget/packages'
-        uses: actions/cache@v4
+      - name: 'Cache: .fallout/temp, ~/.nuget/packages'
+        uses: actions/cache@v6
         with:
           path: |
-            .nuke/temp
+            .fallout/temp
             ~/.nuget/packages
           key: ${{ runner.os }}-${{ hashFiles('**/global.json', '**/*.csproj', '**/Directory.Packages.props') }}
+      - name: 'Setup: .NET SDK'
+        uses: actions/setup-dotnet@v6
+        with:
+          global-json-file: global.json
+      - name: 'Restore: dotnet tools'
+        run: dotnet tool restore
       - name: 'Run: PushToNugetOrg'
-        run: ./build.cmd PushToNugetOrg
+        run: dotnet fallout PushToNugetOrg
         env:
           VvvvOrgNugetKey: ${{ secrets.VVVV_ORG_NUGET_KEY }}
