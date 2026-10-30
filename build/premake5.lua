@@ -32,6 +32,9 @@ do
       'rive_yoga',
   })
 
+  -- Luau VM, needed because rive is built with --with_rive_scripting (script assets in .riv files)
+  links({ 'luau_vm' })
+
   links({ 'zlib', 'libpng' })
   links({ 'libjpeg' })
 

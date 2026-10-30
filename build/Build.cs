@@ -208,7 +208,7 @@ class Build : NukeBuild
             var vsAction = vsVersion.StartsWith("18.") ? "vs2026" : "vs2022";
             Log.Information("Using Visual Studio {Version} at {Path} ({Action})", vsVersion, vsInstallPath, vsAction);
 
-            var premakeArgs = $"{vsAction} --with_rive_text --with_rive_layout";
+            var premakeArgs = $"{vsAction} --with_rive_text --with_rive_layout --with_rive_scripting";
             var cmd = $@"/c """"{vcvarsPath}"" x64 && ""{Premake5Exe}"" {premakeArgs}""";
 
             ProcessTasks.StartProcess("cmd.exe", cmd, workingDirectory: BuildDirectory, environmentVariables: environmentVariables)
