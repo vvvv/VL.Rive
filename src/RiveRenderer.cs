@@ -33,7 +33,6 @@ public sealed partial class RiveRenderer : RendererBase
     RiveRenderContextD3D11? riveRenderContext;
     RiveRenderTargetD3D11? riveRenderTarget;
     RiveDeferredHost? riveDeferredHost;
-    bool useGpuScripting;
 
     Interop.RiveRenderer? riveRenderer;
     RiveContext? riveContext;
@@ -80,7 +79,6 @@ public sealed partial class RiveRenderer : RendererBase
         [Pin(Visibility = Model.PinVisibility.Optional)] Optional<RectangleF> frame,
         [Pin(Visibility = Model.PinVisibility.Optional)] Optional<RectangleF> content,
         [Pin(Visibility = Model.PinVisibility.Optional)] [DefaultValue(1f)] float scaleFactor, 
-        [Pin(Visibility = Model.PinVisibility.Optional)] bool gpuScripting,
         bool reload)
     {
         riveFit = fit;
@@ -94,6 +92,7 @@ public sealed partial class RiveRenderer : RendererBase
         if (riveRenderContext?.DevicePointer != nativeDevice?.NativePointer)
         {
             DisposeRiveResources();
+            reload = true;
 
             if (nativeDevice != null)
             {
@@ -103,16 +102,16 @@ public sealed partial class RiveRenderer : RendererBase
         }
 
         // Load file
-        if (reload || file != riveFilePath || gpuScripting != useGpuScripting)
+        if (reload || file != riveFilePath)
         {
             riveFilePath = file;
-            useGpuScripting = gpuScripting;
 
             DisposeRiveContext();
             DisposeAndSetNull(ref riveDeferredHost);
 
-            // Files with GPU scripts must be imported through, and drawn by, a deferred recording host
-            if (gpuScripting && riveRenderContext != null)
+            // Files are imported through, and drawn by, a deferred recording host: only that can run the GPU
+            // scripts of a file. Without it (a runtime built without the GPU layer) we draw immediately.
+            if (riveRenderContext != null)
             {
                 riveDeferredHost = RiveDeferredHost.TryCreate(riveRenderContext);
                 if (riveDeferredHost is null)
