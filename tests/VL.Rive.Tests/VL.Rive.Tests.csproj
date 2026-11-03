@@ -6,6 +6,8 @@
     <Nullable>enable</Nullable>
     <IsPackable>false</IsPackable>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <!-- Run on a newer runtime if the one this targets is not installed (e.g. a CI agent) -->
+    <RollForward>Major</RollForward>
   </PropertyGroup>
 
   <ItemGroup>

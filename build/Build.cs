@@ -292,7 +292,7 @@ class Build : FalloutBuild
         });
 
     Target Pack => _ => _
-        .DependsOn(Compile, BuildRiveNative, BuildRiveNativeArm64)
+        .DependsOn(Compile, Test, BuildRiveNative, BuildRiveNativeArm64)
         .Executes(() =>
         {
             DotNetTasks.DotNetPack(s => s
