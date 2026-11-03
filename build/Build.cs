@@ -282,6 +282,15 @@ class Build : FalloutBuild
                 .SetProjectFile(RiveManagedProject));
         });
 
+    // Headless tests of the Rive interop and view model layer: no vvvv, no GPU
+    Target Test => _ => _
+        .DependsOn(Compile)
+        .Executes(() =>
+        {
+            DotNetTasks.DotNetTest(s => s
+                .SetProjectFile(RootDirectory / "tests" / "VL.Rive.Tests" / "VL.Rive.Tests.csproj"));
+        });
+
     Target Pack => _ => _
         .DependsOn(Compile, BuildRiveNative, BuildRiveNativeArm64)
         .Executes(() =>

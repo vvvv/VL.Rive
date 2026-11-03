@@ -7,9 +7,15 @@ namespace VL.Rive.Internal;
 
 internal sealed class RiveContext : IDisposable
 {
-    public RiveContext(NodeContext nodeContext, RiveFile riveFile)
+    private readonly NodeContext? nodeContext;
+
+    /// <param name="nodeContext">
+    /// The VL node context, needed only where VL asks for type information or the host (<see cref="NodeContext"/>).
+    /// Null in tests, which exercise the Rive side without a VL app host.
+    /// </param>
+    public RiveContext(NodeContext? nodeContext, RiveFile riveFile)
     {
-        NodeContext = nodeContext;
+        this.nodeContext = nodeContext;
         RiveFile = riveFile;
         ViewModels = CreateViewModels();
 
@@ -27,7 +33,7 @@ internal sealed class RiveContext : IDisposable
         }
     }
 
-    public NodeContext NodeContext { get; }
+    public NodeContext NodeContext => nodeContext ?? throw new InvalidOperationException("This Rive context was created without a VL node context.");
     public RiveFile RiveFile { get; }
     public nint FactoryHandle => RiveFile.FactoryHandle;
     public TypeRegistry TypeRegistry => NodeContext.AppHost.TypeRegistry;
