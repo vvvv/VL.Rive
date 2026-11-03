@@ -24,17 +24,14 @@ static void (*g_scriptLogCallback)(int level, const char* message, size_t length
 // Records a file's drawing, including what its scripts do on the GPU, into a deferred session and replays it
 // against the render context once per frame. The plain render context cannot host GPU scripts: a script's
 // render pass cannot nest inside the open screen frame, so upstream's own hosts all go through a session.
-struct DeferredHostD3D11 final : public cmd::HostFrameSink
+struct DeferredHostD3D11
 {
     DeferredHostD3D11(RenderContext* renderContext, ore::Context* ore)
-        : cmd::HostFrameSink(/*clear*/ false, /*color*/ 0)
-        , m_renderContext(renderContext)
+        : m_renderContext(renderContext)
         , m_session(ore::ReplayCaps::from(*ore))
     {
         m_session.bindRenderContext(renderContext);
         m_host.bindSession(&m_session);
-        // D3D11 flushes without an external command buffer
-        m_useExternalCommandBuffer = false;
     }
 
     Factory* sessionFactory() { return static_cast<Factory*>(&m_session); }
@@ -56,47 +53,64 @@ struct DeferredHostD3D11 final : public cmd::HostFrameSink
         m_renderTarget = renderTarget;
         m_frame = frame;
         m_safeFrame = safeFrame;
-        m_host.replayInline(*this, [this]() {
+
+        // A sink is a per frame object: it remembers the screen renderer it opened, so one that outlived the
+        // frame would hand the next replay a dangling renderer.
+        Sink sink(*this);
+        m_host.replayInline(sink, [this]() {
             RenderContext::FlushResources resources;
             resources.renderTarget = m_renderTarget;
             resources.currentFrameNumber = m_frame;
             resources.safeFrameNumber = m_safeFrame;
             m_renderContext->flush(resources);
         });
-        m_screen.reset();
         m_renderTarget = nullptr;
     }
 
-    // cmd::HostFrameSink
-    RenderContext* renderContext() override { return m_renderContext; }
-
-    Renderer* beginScreen(uint64_t, bool clear, uint32_t color) override
-    {
-        RenderContext::FrameDescriptor descriptor;
-        descriptor.renderTargetWidth = m_width;
-        descriptor.renderTargetHeight = m_height;
-        descriptor.loadAction = clear ? LoadAction::clear : LoadAction::preserveRenderTarget;
-        descriptor.clearColor = color;
-        m_renderContext->beginFrame(descriptor);
-        m_screen = std::make_unique<RiveRenderer>(m_renderContext);
-        return m_screen.get();
-    }
-
-    RenderTarget* targetRenderTarget() override { return m_renderTarget; }
-
-    RenderContext::FlushResources canvasFlushResources() override
-    {
-        RenderContext::FlushResources resources;
-        resources.currentFrameNumber = m_frame;
-        resources.safeFrameNumber = m_safeFrame;
-        return resources;
-    }
-
 private:
+    class Sink final : public cmd::HostFrameSink
+    {
+    public:
+        explicit Sink(DeferredHostD3D11& host)
+            : cmd::HostFrameSink(/*clear*/ false, /*color*/ 0)
+            , m_owner(host)
+        {
+            // D3D11 flushes without an external command buffer
+            m_useExternalCommandBuffer = false;
+        }
+
+        RenderContext* renderContext() override { return m_owner.m_renderContext; }
+
+        Renderer* beginScreen(uint64_t, bool clear, uint32_t color) override
+        {
+            RenderContext::FrameDescriptor descriptor;
+            descriptor.renderTargetWidth = m_owner.m_width;
+            descriptor.renderTargetHeight = m_owner.m_height;
+            descriptor.loadAction = clear ? LoadAction::clear : LoadAction::preserveRenderTarget;
+            descriptor.clearColor = color;
+            m_owner.m_renderContext->beginFrame(descriptor);
+            m_screen = std::make_unique<RiveRenderer>(m_owner.m_renderContext);
+            return m_screen.get();
+        }
+
+        RenderTarget* targetRenderTarget() override { return m_owner.m_renderTarget; }
+
+        RenderContext::FlushResources canvasFlushResources() override
+        {
+            RenderContext::FlushResources resources;
+            resources.currentFrameNumber = m_owner.m_frame;
+            resources.safeFrameNumber = m_owner.m_safeFrame;
+            return resources;
+        }
+
+    private:
+        DeferredHostD3D11& m_owner;
+        std::unique_ptr<RiveRenderer> m_screen;
+    };
+
     RenderContext* m_renderContext;
     cmd::DeferredSession m_session;
     cmd::DeferredInlineHost m_host;
-    std::unique_ptr<RiveRenderer> m_screen;
     RenderTarget* m_renderTarget = nullptr;
     uint32_t m_width = 0;
     uint32_t m_height = 0;
