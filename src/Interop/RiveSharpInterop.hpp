@@ -277,8 +277,15 @@ extern "C"
 	__declspec(dllexport) void rive_ViewModelInstanceRuntime_Properties(ViewModelInstanceRuntime* runtime, RivePropertyData* properties_out);
 
 	// Returns the underlying ViewModelInstance pointer from a ViewModelInstanceRuntime.
-	// The returned pointer is valid as long as the ViewModelInstanceRuntime is alive.
+	// The returned pointer is borrowed: valid as long as the ViewModelInstanceRuntime is alive.
 	__declspec(dllexport) ViewModelInstance* rive_ViewModelInstanceRuntime_Instance(ViewModelInstanceRuntime* runtime);
+
+	// Drops the reference of a ViewModelInstanceRuntime returned by CreateInstance, CreateDefaultInstance,
+	// PropertyViewModel or ViewModelInstanceListRuntime_At. Each of those hands the caller one reference.
+	__declspec(dllexport) void rive_ViewModelInstanceRuntime_Release(ViewModelInstanceRuntime* runtime);
+
+	// Makes the nested view model property at path refer to value. False if there is no such property or the type differs.
+	__declspec(dllexport) bool rive_ViewModelInstanceRuntime_ReplaceViewModel(ViewModelInstanceRuntime* runtime, const char* path, ViewModelInstanceRuntime* value);
 
 	// ViewModelInstance
 	__declspec(dllexport) uint32_t rive_ViewModelInstance_ViewModelId(ViewModelInstance* instance);

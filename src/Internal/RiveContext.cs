@@ -33,6 +33,39 @@ internal sealed class RiveContext : IDisposable
         }
     }
 
+    private readonly Dictionary<nint, WeakReference<RiveViewModel>> viewModels = new();
+
+    /// <summary>
+    /// Gives the one view model object for a native instance. Takes over the native reference the caller holds:
+    /// it goes to a new object, or is released when the instance already has one.
+    /// </summary>
+    public RiveViewModel WrapViewModel(nint ownedHandle)
+    {
+        var identity = Methods.rive_ViewModelInstanceRuntime_Instance(ownedHandle);
+        lock (viewModels)
+        {
+            if (viewModels.TryGetValue(identity, out var weak) && weak.TryGetTarget(out var existing) && !existing.IsDisposed)
+            {
+                Methods.rive_ViewModelInstanceRuntime_Release(ownedHandle);
+                return existing;
+            }
+
+            var viewModel = new RiveViewModel(this, ownedHandle);
+            viewModels[identity] = new WeakReference<RiveViewModel>(viewModel);
+            return viewModel;
+        }
+    }
+
+    public void ForgetViewModel(nint identity, RiveViewModel viewModel)
+    {
+        lock (viewModels)
+        {
+            // Not when the instance has a newer object by now
+            if (viewModels.TryGetValue(identity, out var weak) && (!weak.TryGetTarget(out var current) || ReferenceEquals(current, viewModel)))
+                viewModels.Remove(identity);
+        }
+    }
+
     public NodeContext NodeContext => nodeContext ?? throw new InvalidOperationException("This Rive context was created without a VL node context.");
     public RiveFile RiveFile { get; }
     public nint FactoryHandle => RiveFile.FactoryHandle;

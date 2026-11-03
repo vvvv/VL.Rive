@@ -343,6 +343,13 @@ namespace VL.Rive.Interop
         public static extern nint rive_ViewModelInstanceRuntime_Instance([NativeTypeName("rive::ViewModelInstanceRuntime *")] nint runtime);
 
         [DllImport("rive_interop", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern void rive_ViewModelInstanceRuntime_Release([NativeTypeName("rive::ViewModelInstanceRuntime *")] nint runtime);
+
+        [DllImport("rive_interop", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        [return: NativeTypeName("bool")]
+        public static extern byte rive_ViewModelInstanceRuntime_ReplaceViewModel([NativeTypeName("rive::ViewModelInstanceRuntime *")] nint runtime, [NativeTypeName("const char *")] sbyte* path, [NativeTypeName("rive::ViewModelInstanceRuntime *")] nint value);
+
+        [DllImport("rive_interop", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         [return: NativeTypeName("uint32_t")]
         public static extern uint rive_ViewModelInstance_ViewModelId([NativeTypeName("rive::ViewModelInstance *")] nint instance);
 

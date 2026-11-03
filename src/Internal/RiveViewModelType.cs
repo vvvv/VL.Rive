@@ -24,13 +24,13 @@ internal sealed class RiveViewModelType : IVLTypeInfo
     public RiveViewModel CreateInstance()
     {
         var instanceHandle = Methods.rive_ViewModelRuntime_CreateInstance(handle);
-        return new RiveViewModel(riveContext, instanceHandle);
+        return riveContext.WrapViewModel(instanceHandle);
     }
 
     public RiveViewModel CreateDefaultInstance()
     {
         var instanceHandle = Methods.rive_ViewModelRuntime_CreateDefaultInstance(handle);
-        return new RiveViewModel(riveContext, instanceHandle);
+        return riveContext.WrapViewModel(instanceHandle);
     }
 
     public override string ToString() => self.Name;
