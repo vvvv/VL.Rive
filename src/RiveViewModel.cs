@@ -78,7 +78,12 @@ public unsafe class RiveViewModel : IVLObject, INotifyPropertyChanged, IRiveValu
     object? IRiveValue.Value
     {
         get => this;
-        set => throw new NotImplementedException();
+        set
+        {
+            // ByPath nodes like to write the same instance back - let's allow that, but throw for anything else
+            if (value != this)
+                throw new NotImplementedException();
+        }
     }
 
     RiveViewModel? IRiveValue<RiveViewModel>.TypedValue 
