@@ -117,6 +117,9 @@ public unsafe class RiveViewModel : IVLObject, INotifyPropertyChanged, IRiveValu
 
     internal void AcknowledgeChanges()
     {
+        if (IsDisposed)
+            return;
+
         foreach (var (name, property) in properties)
         {
             if (property is RiveValue riveValue && riveValue.HasChanged)

@@ -72,8 +72,21 @@ internal sealed class RiveContext : IDisposable
     public TypeRegistry TypeRegistry => NodeContext.AppHost.TypeRegistry;
     public ImmutableArray<RiveViewModelType> ViewModels { get; }
 
+    public RiveViewModelType? FindViewModel(string name) => ViewModels.FirstOrDefault(type => type.Name == name);
+
     public void Dispose()
     {
+        // The instances belong to the file: dispose them while it is still there, so that using one later
+        // throws instead of touching a file that is gone
+        List<RiveViewModel> instances;
+        lock (viewModels)
+        {
+            instances = viewModels.Values.Select(weak => weak.TryGetTarget(out var viewModel) ? viewModel : null).OfType<RiveViewModel>().ToList();
+            viewModels.Clear();
+        }
+        foreach (var instance in instances)
+            instance.Dispose();
+
         RiveFile.Dispose();
     }
 }

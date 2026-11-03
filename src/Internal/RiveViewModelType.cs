@@ -35,6 +35,8 @@ internal sealed class RiveViewModelType : IVLTypeInfo
 
     public override string ToString() => self.Name;
 
+    internal string Name => viewModel.Name;
+
     internal ImmutableArray<RiveViewModelProperty> Properties { get; }
 
     IVLTypeInfo self => this;

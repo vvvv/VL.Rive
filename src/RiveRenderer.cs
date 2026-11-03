@@ -36,6 +36,7 @@ public sealed partial class RiveRenderer : RendererBase
 
     Interop.RiveRenderer? riveRenderer;
     RiveContext? riveContext;
+    int fileVersion;
     Path? riveFilePath;
     RiveArtboardInstance? riveArtboard;
     RiveScene? riveScene;
@@ -186,6 +187,12 @@ public sealed partial class RiveRenderer : RendererBase
     [Smell(SymbolSmell.Internal)]
     public RiveViewModel? ViewModel => riveViewModelInstance;
 
+    /// <summary>The file this renderer has loaded, null if there is none (yet).</summary>
+    internal RiveContext? RiveContext => riveContext;
+
+    /// <summary>Changes every time the loaded file changes or goes away, and with it everything created from it.</summary>
+    internal int FileVersion => fileVersion;
+
     public string DumpFileAsJson()
     {
         var riveFile = riveContext?.RiveFile;
@@ -320,6 +327,8 @@ public sealed partial class RiveRenderer : RendererBase
         DisposeAndSetNull(ref riveScene);
         DisposeAndSetNull(ref riveArtboard);
         DisposeAndSetNull(ref riveContext);
+        riveViewModelInstance = null; // disposed with the context
+        fileVersion++;
     }
 
     private void DisposeRiveRenderResources()
