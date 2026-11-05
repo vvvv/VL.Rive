@@ -23,9 +23,9 @@ public sealed class RiveViewModelNode : IDisposable
     private RiveViewModel? viewModel;
 
     /// <param name="renderer">The renderer that has loaded the file the view model is taken from</param>
-    /// <param name="name">The name of the view model, the editor offers the ones in the file</param>
+    /// <param name="name">The name of the view model, the editor offers the ones in the file and shows it as the label of the node</param>
     /// <param name="viewModel">The instance, null while the renderer has no file or no name is given</param>
-    public void Update(RiveRenderer? renderer, [ChoiceProvider(typeof(RiveViewModelChoiceProvider))] string? name, out RiveViewModel? viewModel)
+    public void Update(RiveRenderer? renderer, [NodeLabel, ChoiceProvider(typeof(RiveViewModelChoiceProvider))] string? name, out RiveViewModel? viewModel)
     {
         var version = renderer?.FileVersion ?? 0;
         if (!ReferenceEquals(renderer, this.renderer) || version != fileVersion || name != this.name)

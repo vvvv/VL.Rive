@@ -17,6 +17,7 @@ public class ChoiceProviderTests
         var update = typeof(RiveViewModelNode).GetMethod(nameof(RiveViewModelNode.Update))!;
         var name = update.GetParameters().Single(p => p.GetCustomAttribute<ChoiceProviderAttribute>() != null);
         Assert.That(name.Name, Is.EqualTo("name"));
+        Assert.That(name.GetCustomAttribute<NodeLabelAttribute>(), Is.Not.Null, "the chosen name is the label of the node");
         Assert.That(name.GetCustomAttribute<ChoiceProviderAttribute>()!.ProviderType, Is.EqualTo(typeof(RiveViewModelChoiceProvider)));
 
         // The editor matches the pins the provider reads by name, so the node must have one
