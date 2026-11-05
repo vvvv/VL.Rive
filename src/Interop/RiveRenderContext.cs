@@ -1,4 +1,4 @@
-﻿using System.Runtime.CompilerServices;
+using System.Runtime.CompilerServices;
 using VL.Rive.Internal;
 using static VL.Rive.Interop.Methods;
 
@@ -10,7 +10,7 @@ internal abstract class RiveRenderContext : RiveObject
     {
     }
 
-    public unsafe RiveFile LoadFile(string path) => Utils.LoadFile(path, handle);
+    public unsafe NativeRiveFile LoadFile(string path) => Utils.LoadFile(path, handle);
 
     public RiveRenderer CreateRenderer()
     {

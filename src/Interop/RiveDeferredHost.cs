@@ -23,7 +23,7 @@ internal sealed class RiveDeferredHost : RiveObject
         return handle == default ? null : new RiveDeferredHost(handle);
     }
 
-    public RiveFile LoadFile(string path) => Utils.LoadFile(path, rive_Deferred_Factory(handle));
+    public NativeRiveFile LoadFile(string path) => Utils.LoadFile(path, rive_Deferred_Factory(handle));
 
     /// <summary>The renderer to draw the scene into. Owned by the host, valid until <see cref="EndFrame"/>.</summary>
     public RiveRenderer BeginFrame(int width, int height)

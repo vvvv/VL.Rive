@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using SharpDX.Direct3D11;
 using Stride.Core.Mathematics;
@@ -24,48 +24,27 @@ namespace VL.Rive;
 
 [ProcessNode(HasStateOutput = true, FragmentSelection = FragmentSelection.Explicit)]
 [Smell(SymbolSmell.Advanced)]
-public sealed partial class RiveRenderer : RendererBase
+public sealed class RiveRenderer : RendererBase
 {
     readonly NodeContext nodeContext;
-    readonly AppHost appHost;
     readonly ILogger logger;
-
-    RiveRenderContextD3D11? riveRenderContext;
-    RiveRenderTargetD3D11? riveRenderTarget;
-    RiveDeferredHost? riveDeferredHost;
-
-    Interop.RiveRenderer? riveRenderer;
-    RiveContext? riveContext;
-    int fileVersion;
-    Path? riveFilePath;
-    RiveArtboardInstance? riveArtboard;
-    RiveScene? riveScene;
-    RiveViewModel? riveViewModelInstance;
-    IFrameClock frameClock;
+    readonly RiveSceneDrawer drawer;
+    readonly ArtboardSlot artboardSlot = new();
+    readonly RiveSceneSlot slot;
     readonly IGraphicsDeviceService graphicsDeviceService;
-    Int2 lastSize;
-    RiveMat2D alignmentMat;
 
-    readonly SerialDisposable inputSubscription = new SerialDisposable();
-    IInputSource? lastInputSource;
-
-    string? artboardName;
-    string? sceneName;
-    RiveFit riveFit;
-    RiveAlignment riveAlignment;
-    Optional<RectangleF> riveFrame;
-    Optional<RectangleF> riveContent;
-    float riveScaleFactor;
+    RiveFile? riveFile;
+    Path? riveFilePath;
 
     [Fragment]
     [Smell(SymbolSmell.Internal)]
     public RiveRenderer([Pin(Visibility = Model.PinVisibility.Hidden)] NodeContext nodeContext)
     {
         this.nodeContext = nodeContext;
-        appHost = nodeContext.AppHost;
         logger = nodeContext.GetLogger();
-        frameClock = appHost.Services.GetRequiredService<IFrameClock>();
-        graphicsDeviceService = appHost.Services.GetRequiredService<Game>().Services.GetService<IGraphicsDeviceService>()
+        drawer = new RiveSceneDrawer(logger);
+        slot = new RiveSceneSlot(nodeContext);
+        graphicsDeviceService = nodeContext.AppHost.Services.GetRequiredService<Game>().Services.GetService<IGraphicsDeviceService>()
             ?? throw new InvalidOperationException("No IGraphicsDeviceService available.");
     }
 
@@ -82,263 +61,67 @@ public sealed partial class RiveRenderer : RendererBase
         [Pin(Visibility = Model.PinVisibility.Optional)] [DefaultValue(1f)] float scaleFactor, 
         bool reload)
     {
-        riveFit = fit;
-        riveAlignment = alignment;
-        riveFrame = frame;
-        riveContent = content;
-        riveScaleFactor = scaleFactor;
+        drawer.Fit = fit;
+        drawer.Alignment = alignment;
+        drawer.Frame = frame;
+        drawer.Content = content;
+        drawer.ScaleFactor = scaleFactor;
 
         // Native device can change - check on each update
         var nativeDevice = SharpDXInterop.GetNativeDevice(graphicsDeviceService.GraphicsDevice) as Device;
-        if (riveRenderContext?.DevicePointer != nativeDevice?.NativePointer)
-        {
-            DisposeRiveResources();
-            reload = true;
-
-            if (nativeDevice != null)
-            {
-                riveRenderContext = RiveRenderContextD3D11.Create(nativeDevice.NativePointer, nativeDevice.ImmediateContext.NativePointer);
-                riveRenderer = riveRenderContext.CreateRenderer();
-            }
-        }
-
-        // Load file
-        if (reload || file != riveFilePath)
+        var filePath = file?.ToString();
+        if (reload || file != riveFilePath || (riveFile != null && riveFile.DevicePointer != nativeDevice?.NativePointer))
         {
             riveFilePath = file;
+            DisposeFile();
 
-            DisposeRiveContext();
-            DisposeAndSetNull(ref riveDeferredHost);
-
-            // Files are imported through, and drawn by, a deferred recording host: only that can run the GPU
-            // scripts of a file. Without it (a runtime built without the GPU layer) we draw immediately.
-            if (riveRenderContext != null)
-            {
-                riveDeferredHost = RiveDeferredHost.TryCreate(riveRenderContext);
-                if (riveDeferredHost is null)
-                    logger.LogWarning("GPU scripting is not available in this build of the Rive runtime.");
-            }
-
-            var filePath = file?.ToString();
-            if (!string.IsNullOrEmpty(filePath))
-            {
-                ScriptLog.Attach(logger);
-                var riveFile = riveDeferredHost?.LoadFile(filePath) ?? riveRenderContext?.LoadFile(file);
-                if (riveFile != null)
-                    riveContext = new RiveContext(nodeContext, riveFile);
-            }
+            if (nativeDevice != null && !string.IsNullOrEmpty(filePath))
+                riveFile = RiveFile.Create(nodeContext, logger, nativeDevice.NativePointer, nativeDevice.ImmediateContext.NativePointer, filePath);
         }
 
-        // Load artboard and view model instance
-        if (riveArtboard is null || artboardName != this.artboardName)
-        {
-            this.artboardName = artboardName;
-
-            DisposeAndSetNull(ref riveArtboard);
-            DisposeAndSetNull(ref riveScene);
-            riveViewModelInstance = null;
-
-            var riveFile = riveContext?.RiveFile;
-            if (string.IsNullOrEmpty(artboardName))
-                riveArtboard = riveFile?.GetArtboardDefault();
-            else
-            {
-                riveArtboard = riveFile?.GetArtboard(artboardName);
-                if (riveArtboard is null)
-                    throw new ArgumentException($"Rive artboard '{artboardName}' not found in file '{file}'.");
-            }
-
-            if (riveArtboard != null)
-            {
-                var viewModelRuntime = riveContext!.ViewModels.ElementAtOrDefault(riveArtboard.ViewModelId);
-                riveViewModelInstance = viewModelRuntime?.CreateDefaultInstance();
-            }
-        }
-
-        // Load scene
-        if (riveScene is null || sceneName != this.sceneName)
-        {
-            this.sceneName = sceneName;
-
-            DisposeAndSetNull(ref riveScene);
-
-            if (string.IsNullOrEmpty(sceneName))
-                riveScene = riveArtboard?.GetDefaultScene();
-            else
-            {
-                riveScene = riveArtboard?.GetScene(sceneName);
-                if (riveScene is null)
-                    throw new ArgumentException($"Rive scene '{sceneName}' not found in artboard '{artboardName}' of file '{file}'.");
-            }
-
-            if (riveViewModelInstance != null)
-                riveScene?.BindViewModelInstance(riveViewModelInstance);
-        }
-
-        if (riveScene is null)
-            return;
-
-        riveScene.AdvanceAndApply((float)frameClock.TimeDifference);
-
-        riveViewModelInstance?.AcknowledgeChanges();
+        drawer.Scene = slot.Update(artboardSlot.Update(riveFile, artboardName), sceneName, null);
     }
 
     [Fragment(IsDefault = true)]
     [Smell(SymbolSmell.Internal)]
-    public RiveViewModel? ViewModel => riveViewModelInstance;
-
-    /// <summary>The file this renderer has loaded, null if there is none (yet).</summary>
-    internal RiveContext? RiveContext => riveContext;
-
-    /// <summary>Changes every time the loaded file changes or goes away, and with it everything created from it.</summary>
-    internal int FileVersion => fileVersion;
+    public RiveViewModel? ViewModel => slot.BoundViewModel;
 
     public string DumpFileAsJson()
     {
-        var riveFile = riveContext?.RiveFile;
-        if (riveFile is null)
+        if (riveFile is null || riveFile.IsDisposed)
             return string.Empty;
 
         var sb = new System.Text.StringBuilder();
-        riveFile.WriteRiveFileAsJson(sb);
+        riveFile.Context.RiveFile.WriteRiveFileAsJson(sb);
         return sb.ToString();
     }
 
     public RectangleF GetArtboardBounds()
     {
-        if (riveArtboard is null)
+        var artboard = slot.Instance;
+        if (artboard is null)
             return RectangleF.Empty;
-        var bounds = riveArtboard.Bounds;
+        var bounds = artboard.Bounds;
         return new RectangleF(bounds.minX, bounds.minY, bounds.maxX - bounds.minX, bounds.maxY - bounds.minY);
     }
 
-    protected override unsafe void DrawCore(RenderDrawContext context)
-    {
-        if (riveRenderContext is null || riveScene is null)
-            return;
-
-        // Subscribe to input events - in case we have many sinks we assume that there's only one input source active
-        var inputSource = context.RenderContext.Tags.Get(InputExtensions.WindowInputSource);
-        if (inputSource != lastInputSource)
-        {
-            lastInputSource = inputSource;
-            inputSubscription.Disposable = SubscribeToInputSource(inputSource, context);
-        }
-
-        var renderTarget = context.CommandList.RenderTarget;
-        if (renderTarget is null)
-            return;
-
-        var nativeRenderTarget = SharpDXInterop.GetNativeResource(renderTarget) as Texture2D;
-        if (nativeRenderTarget is null)
-            return;
-
-        if (!IsSupportedByRive(nativeRenderTarget.Description.Format))
-        {
-            logger.LogError($"The render target format '{renderTarget.Format}' is not supported by Rive. In case you render to a texture set its format to RGBA_Typeless and its view to RGBA_Srgb.");
-            return;
-        }
-
-
-        var frameDescriptor = new FrameDescriptor
-        {
-            RenderTargetWidth = (uint)renderTarget.Width,
-            RenderTargetHeight = (uint)renderTarget.Height,
-            LoadAction = LoadAction.PreserveRenderTarget,
-        };
-        // Deferred: record the scene, replay it at the end. Otherwise draw straight into the open frame.
-        var renderer = riveDeferredHost?.BeginFrame(renderTarget.Width, renderTarget.Height);
-        if (renderer is null)
-        {
-            riveRenderContext.BeginFrame(in frameDescriptor);
-            renderer = riveRenderer!;
-        }
-
-        alignmentMat = Methods.rive_ComputeAlignment(
-            riveFit.ToNative(),
-            riveAlignment.ToNative(),
-            frame: riveFrame.ToNative(new RiveAABB(0, 0, renderTarget.Width, renderTarget.Height)),
-            content: riveContent.ToNative(riveScene.Bounds), 
-            scaleFactor: riveScaleFactor);
-
-        renderer.Save();
-        renderer.Transform(in alignmentMat);
-        riveScene.Draw(renderer);
-        renderer.Restore();
-
-        var size = new Int2(renderTarget.Width, renderTarget.Height);
-        if (riveRenderTarget is null || lastSize != size)
-        {
-            lastSize = size;
-            DisposeAndSetNull(ref riveRenderTarget);
-            riveRenderTarget = riveRenderContext.MakeRenderTarget(size.X, size.Y);
-        }
-        riveRenderTarget.SetTargetTexture(nativeRenderTarget.NativePointer);
-
-        if (riveDeferredHost != null)
-        {
-            var (frame, safeFrame) = riveRenderContext.NextFrame();
-            riveDeferredHost.EndFrame(riveRenderTarget, frame, safeFrame);
-        }
-        else
-        {
-            riveRenderContext.Flush(riveRenderTarget);
-        }
-
-        // Release render target texture
-        riveRenderTarget.SetTargetTexture(default);
-
-        // Restore Stride's pipeline state
-        // TODO: Turn this into an official API in Stride
-        context.CommandList.RestorePipelineState();
-
-        // See submodules\rive-runtime\renderer\src\d3d11\render_context_d3d_impl.cpp
-        static bool IsSupportedByRive(PixelFormat format)
-        {
-            switch (format)
-            {
-                case PixelFormat.B8G8R8A8_UNorm:
-                case PixelFormat.B8G8R8A8_Typeless:
-                case PixelFormat.R8G8B8A8_UNorm:
-                case PixelFormat.R8G8B8A8_Typeless:
-                    return true;
-            }
-            return false;
-        }
-    }
+    protected override void DrawCore(RenderDrawContext context) => drawer.Draw(context);
 
     protected override void Destroy()
     {
-        inputSubscription.Dispose();
-
-        DisposeRiveResources();
+        drawer.Dispose();
+        slot.Dispose();
+        DisposeFile();
 
         base.Destroy();
     }
 
-    private void DisposeRiveResources()
+    private void DisposeFile()
     {
-        DisposeRiveContext();
-        DisposeRiveRenderResources();
+        // The slot's artboard goes away with the file, forget it before
+        slot.Update(null, null, null);
+        artboardSlot.Update(null, null);
+        drawer.Scene = null;
+        Interlocked.Exchange(ref riveFile, null)?.Dispose();
     }
-
-    private void DisposeRiveContext()
-    {
-        DisposeAndSetNull(ref riveScene);
-        DisposeAndSetNull(ref riveArtboard);
-        DisposeAndSetNull(ref riveContext);
-        riveViewModelInstance = null; // disposed with the context
-        fileVersion++;
-    }
-
-    private void DisposeRiveRenderResources()
-    {
-        // Everything imported through the host is gone by now (see DisposeRiveContext)
-        DisposeAndSetNull(ref riveDeferredHost);
-        DisposeAndSetNull(ref riveRenderer);
-        DisposeAndSetNull(ref riveRenderTarget);
-        DisposeAndSetNull(ref riveRenderContext);
-    }
-
-    static void DisposeAndSetNull<T>(ref T? resource) where T : class, IDisposable => Interlocked.Exchange(ref resource, null)?.Dispose();
 }

@@ -12,7 +12,7 @@ namespace VL.Rive.Tests;
 public class ChoiceProviderTests
 {
     [Test]
-    public void TheNodeOffersTheChoicesOnItsNamePinAndTheProviderReadsTheRendererPin()
+    public void TheNodeOffersTheChoicesOnItsNamePinAndTheProviderReadsTheFilePin()
     {
         var update = typeof(RiveViewModelNode).GetMethod(nameof(RiveViewModelNode.Update))!;
         var name = update.GetParameters().Single(p => p.GetCustomAttribute<ChoiceProviderAttribute>() != null);
@@ -26,6 +26,23 @@ public class ChoiceProviderTests
     }
 
     [Test]
+    public void EveryNodeHasThePinsItsChoiceProvidersRead()
+    {
+        var updates = typeof(RiveFile).Assembly.GetTypes()
+            .Where(t => t.GetCustomAttribute<ProcessNodeAttribute>() != null)
+            .SelectMany(t => t.GetMethods().Where(m => m.Name == "Update"))
+            .Where(m => m.GetParameters().Any(p => p.GetCustomAttribute<ChoiceProviderAttribute>() != null))
+            .ToList();
+        Assert.That(updates.Select(m => m.DeclaringType!.Name), Is.SupersetOf(new[] { nameof(RiveViewModelNode), nameof(RiveArtboardNode), nameof(RiveSceneNode) }));
+
+        // The editor matches the pins a provider reads by name, so the node must have them
+        foreach (var update in updates)
+            foreach (var parameter in update.GetParameters().Where(p => p.GetCustomAttribute<ChoiceProviderAttribute>() != null))
+                foreach (var pin in ChoiceProviderRequiresAttribute.GetInputPins(parameter.GetCustomAttribute<ChoiceProviderAttribute>()!.ProviderType))
+                    Assert.That(update.GetParameters().Select(p => p.Name), Has.One.EqualTo(pin).IgnoreCase, $"input {pin} of {update.DeclaringType!.Name}");
+    }
+
+    [Test]
     public void EveryViewModelOfTheFileIsAChoice()
     {
         using var factory = new RiveFactory();
@@ -35,6 +52,37 @@ public class ChoiceProviderTests
 
         Assert.That(choices.Select(c => c.Value), Is.EqualTo(context.ViewModels.Select(t => t.Name)));
         Assert.That(choices, Is.Not.Empty);
+    }
+
+    [Test]
+    public void EveryArtboardOfTheFileIsAChoice()
+    {
+        using var factory = new RiveFactory();
+        using var context = new RiveContext(nodeContext: null, factory.LoadFile(Path.Combine(AppContext.BaseDirectory, "assets", "data-binding-demo.riv")));
+
+        var choices = RiveArtboardChoiceProvider.GetChoices(context)!;
+
+        Assert.That(choices.Select(c => c.Value), Is.EqualTo(context.RiveFile.Artboards.Select(a => a.Name)));
+        Assert.That(choices, Is.Not.Empty);
+    }
+
+    [Test]
+    public void ThereAreNoArtboardOrSceneChoicesWithoutAFile()
+    {
+        Assert.That(RiveArtboardChoiceProvider.GetChoices(null), Is.Null);
+        Assert.That(RiveSceneChoiceProvider.GetChoices(null), Is.Null);
+    }
+
+    [Test]
+    public void EveryStateMachineAndAnimationOfTheArtboardIsAChoice()
+    {
+        using var factory = new RiveFactory();
+        using var context = new RiveContext(nodeContext: null, factory.LoadFile(Path.Combine(AppContext.BaseDirectory, "assets", "data-binding-demo.riv")));
+        var info = context.RiveFile.Artboards.First();
+
+        var choices = RiveSceneChoiceProvider.GetChoices(info)!;
+
+        Assert.That(choices.Select(c => c.Value), Is.EquivalentTo(info.StateMachines.Select(s => s.Name).Concat(info.Animations.Select(a => a.Name)).Distinct()));
     }
 
     [Test]
@@ -52,15 +100,15 @@ public class ChoiceProviderTests
     }
 
     [Test]
-    public async Task ThereAreNoChoicesForSomethingThatIsNotARenderer()
+    public async Task ThereAreNoChoicesForSomethingThatIsNotAFile()
     {
-        var choices = await new RiveViewModelChoiceProvider().GetChoicesAsync(new FakeContext(isRunning: true, input: "not a renderer"), CancellationToken.None);
+        var choices = await new RiveViewModelChoiceProvider().GetChoicesAsync(new FakeContext(isRunning: true, input: "not a file"), CancellationToken.None);
 
         Assert.That(choices, Is.Null);
     }
 
     [Test]
-    public async Task ThereAreNoChoicesIfTheRendererNeverRuns()
+    public async Task ThereAreNoChoicesIfTheFileNeverComes()
     {
         var provider = new RiveViewModelChoiceProvider { Timeout = TimeSpan.FromMilliseconds(50) };
 
@@ -80,7 +128,7 @@ public class ChoiceProviderTests
 
         public Task<T> ReadInputAsync<T>(string pinName, Func<object?, T> read, CancellationToken cancellationToken = default)
         {
-            Assert.That(pinName, Is.EqualTo("Renderer").IgnoreCase);
+            Assert.That(pinName, Is.EqualTo("File").IgnoreCase);
             if (!neverReads)
                 return Task.FromResult(read(input));
 

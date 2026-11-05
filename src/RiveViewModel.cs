@@ -1,4 +1,4 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 using System.Runtime.InteropServices;
 using VL.Core;
 using VL.Core.Import;
@@ -21,6 +21,7 @@ public unsafe class RiveViewModel : IVLObject, INotifyPropertyChanged, IRiveValu
     private readonly nint handle;
     private readonly nint identity;
     private readonly Dictionary<string, IRiveValue> properties;
+    private readonly string typeName;
     private int disposed;
 
     /// <param name="handle">A native ViewModelInstanceRuntime. This view model takes over the reference the caller holds.</param>
@@ -30,12 +31,15 @@ public unsafe class RiveViewModel : IVLObject, INotifyPropertyChanged, IRiveValu
         this.handle = handle;
         this.identity = rive_ViewModelInstanceRuntime_Instance(handle);
         this.properties = CreateProperties();
+        this.typeName = Type.Name;
     }
 
     ~RiveViewModel() => Release();
 
+    void IDisposable.Dispose() => Dispose();
+
     /// <summary>Releases the native instance. Not needed for correctness, the finalizer does it as well.</summary>
-    public void Dispose()
+    internal void Dispose()
     {
         Release();
         GC.SuppressFinalize(this);
@@ -145,6 +149,8 @@ public unsafe class RiveViewModel : IVLObject, INotifyPropertyChanged, IRiveValu
     public event PropertyChangedEventHandler? PropertyChanged;
 
     internal RiveViewModelType Type => riveContext.ViewModels[ViewModelId];
+
+    public override string ToString() => IsDisposed ? $"{typeName} (disposed)" : typeName;
 
     AppHost IVLObject.AppHost => riveContext.NodeContext.AppHost;
 

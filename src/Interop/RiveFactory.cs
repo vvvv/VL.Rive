@@ -1,4 +1,4 @@
-﻿using VL.Rive.Internal;
+using VL.Rive.Internal;
 using static VL.Rive.Interop.Methods;
 
 namespace VL.Rive.Interop;
@@ -18,7 +18,7 @@ internal class RiveFactory : RiveObject
         return handle;
     }
 
-    public unsafe RiveFile LoadFile(string path)
+    public unsafe NativeRiveFile LoadFile(string path)
     {
         ObjectDisposedException.ThrowIf(IsClosed, this);
         return Utils.LoadFile(path, handle);

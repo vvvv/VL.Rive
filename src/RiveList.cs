@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using VL.Core;
 using VL.Core.Import;
 using VL.Rive.Internal;
@@ -178,6 +178,8 @@ public sealed class RiveList : IReadOnlyList<RiveViewModel>, IList<RiveViewModel
     }
 
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+    public override string ToString() => owner.IsDisposed ? "List (disposed)" : $"List ({Count} items)";
 
     bool ICollection<RiveViewModel>.Remove(RiveViewModel item)
     {

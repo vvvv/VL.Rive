@@ -1,4 +1,4 @@
-﻿using CommunityToolkit.HighPerformance.Buffers;
+using CommunityToolkit.HighPerformance.Buffers;
 using System.Collections.Immutable;
 using System.Text;
 using VL.Rive.Interop;
@@ -9,7 +9,7 @@ namespace VL.Rive.Internal;
 
 internal static class Utils
 {
-    internal static unsafe RiveFile LoadFile(string path, nint factory)
+    internal static unsafe NativeRiveFile LoadFile(string path, nint factory)
     {
         // TODO: Check how it reacts if load fails
         using var fileStream = File.OpenRead(path);
@@ -18,11 +18,11 @@ internal static class Utils
         fixed (byte* p = bytes.Span)
         {
             RiveImportResult importResult;
-            var riveFileHandle = rive_File_Import(p, bytes.Length, factory, &importResult);
-            if (riveFileHandle == default)
+            var RiveFile = rive_File_Import(p, bytes.Length, factory, &importResult);
+            if (RiveFile == default)
                 throw new FileLoadException($"Failed to load Rive file: {importResult}", path);
 
-            return new RiveFile(riveFileHandle, factory);
+            return new NativeRiveFile(RiveFile, factory);
         }
     }
 
@@ -36,7 +36,7 @@ internal static class Utils
         return sb.ToString();
     }
 
-    internal static void WriteRiveFileAsJson(this RiveFile file, StringBuilder sb)
+    internal static void WriteRiveFileAsJson(this NativeRiveFile file, StringBuilder sb)
     {
         sb.AppendLine("{");
 

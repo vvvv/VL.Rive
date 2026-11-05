@@ -1,4 +1,4 @@
-﻿using System.Collections.Immutable;
+using System.Collections.Immutable;
 using System.Runtime.InteropServices;
 using VL.Core;
 using VL.Rive.Interop;
@@ -13,7 +13,7 @@ internal sealed class RiveContext : IDisposable
     /// The VL node context, needed only where VL asks for type information or the host (<see cref="NodeContext"/>).
     /// Null in tests, which exercise the Rive side without a VL app host.
     /// </param>
-    public RiveContext(NodeContext? nodeContext, RiveFile riveFile)
+    public RiveContext(NodeContext? nodeContext, NativeRiveFile riveFile)
     {
         this.nodeContext = nodeContext;
         RiveFile = riveFile;
@@ -67,7 +67,7 @@ internal sealed class RiveContext : IDisposable
     }
 
     public NodeContext NodeContext => nodeContext ?? throw new InvalidOperationException("This Rive context was created without a VL node context.");
-    public RiveFile RiveFile { get; }
+    public NativeRiveFile RiveFile { get; }
     public nint FactoryHandle => RiveFile.FactoryHandle;
     public TypeRegistry TypeRegistry => NodeContext.AppHost.TypeRegistry;
     public ImmutableArray<RiveViewModelType> ViewModels { get; }

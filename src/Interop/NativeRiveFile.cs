@@ -1,16 +1,16 @@
-﻿using System.Collections.Immutable;
+using System.Collections.Immutable;
 using System.Runtime.InteropServices;
 using static VL.Rive.Interop.Methods;
 
 namespace VL.Rive.Interop;
 
-internal unsafe class RiveFile : RiveObject
+internal unsafe class NativeRiveFile : RiveObject
 {
     private ImmutableArray<RiveArtboardInfo> artboards;
     private ImmutableArray<RiveViewModelInfo> viewModels;
     private readonly nint factoryHandle;
 
-    public RiveFile(nint handle, nint factoryHandle) : base(handle) 
+    public NativeRiveFile(nint handle, nint factoryHandle) : base(handle) 
     {
         this.factoryHandle = factoryHandle;
     }
@@ -145,21 +145,21 @@ internal unsafe class RiveFile : RiveObject
         }
     }
 
-    public RiveArtboardInstance GetArtboardDefault()
+    public NativeRiveArtboardInstance GetArtboardDefault()
     {
         var artboardHandle = rive_File_GetArtboardDefault(handle);
         if (artboardHandle == nint.Zero)
             throw new InvalidOperationException("Failed to get default artboard from Rive file.");
-        return new RiveArtboardInstance(artboardHandle);
+        return new NativeRiveArtboardInstance(artboardHandle);
     }
 
-    public unsafe RiveArtboardInstance? GetArtboard(string name)
+    public unsafe NativeRiveArtboardInstance? GetArtboard(string name)
     {
         using var marshaledName = new MarshaledString(name);
         var artboardHandle = rive_File_ArtboardByName(handle, marshaledName.Value);
         if (artboardHandle == nint.Zero)
             return null;
-        return new RiveArtboardInstance(artboardHandle);
+        return new NativeRiveArtboardInstance(artboardHandle);
     }
 
     public nint CreateViewModelRuntime(string name)

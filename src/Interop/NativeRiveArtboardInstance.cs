@@ -1,0 +1,58 @@
+using static VL.Rive.Interop.Methods;
+
+namespace VL.Rive.Interop;
+
+internal class NativeRiveArtboardInstance : RiveObject
+{
+    public NativeRiveArtboardInstance(nint handle) : base(handle) { }
+
+    public RiveAABB Bounds
+    {
+        get
+        {
+            ObjectDisposedException.ThrowIf(IsClosed, this);
+            return rive_Artboard_Bounds(handle);
+        }
+    }
+
+    public unsafe string Name
+    {
+        get
+        {
+            ObjectDisposedException.ThrowIf(IsClosed, this);
+            return SpanExtensions.AsString(rive_Artboard_Name(handle));
+        }
+    }
+
+    public int ViewModelId => (int)rive_Artboard_ViewModelId(handle);
+
+    public NativeRiveScene? GetDefaultScene()
+    {
+        var sceneHandle = rive_ArtboardInstance_DefaultScene(handle);
+        if (sceneHandle == nint.Zero)
+            return null;
+        return new NativeRiveScene(sceneHandle);
+    }
+
+    public unsafe NativeRiveScene? GetScene(string name)
+    {
+        using var marshaledName = new MarshaledString(name);
+        var sceneHandle = rive_ArtboardInstance_SceneByName(handle, marshaledName.Value);
+        if (sceneHandle == nint.Zero)
+            return null;
+        return new NativeRiveScene(sceneHandle);
+    }
+
+    protected override bool ReleaseHandle()
+    {
+        rive_ArtboardInstance_Destroy(handle);
+        return true;
+    }
+
+        /// <summary>Binds the instance to the artboard, replacing the one it has. Null unbinds.</summary>
+    public void BindViewModelInstance(RiveViewModel? riveViewModelInstance)
+    {
+        ObjectDisposedException.ThrowIf(IsClosed, this);
+        rive_Artboard_BindViewModelInstance(handle, riveViewModelInstance?.InstanceHandle ?? nint.Zero);
+    }
+}

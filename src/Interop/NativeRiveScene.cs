@@ -1,11 +1,11 @@
-﻿using System.Runtime.InteropServices;
+using System.Runtime.InteropServices;
 using static VL.Rive.Interop.Methods;
 
 namespace VL.Rive.Interop;
 
-internal class RiveScene : RiveObject
+internal class NativeRiveScene : RiveObject
 {
-    public unsafe RiveScene(nint handle) : base(handle) 
+    public unsafe NativeRiveScene(nint handle) : base(handle) 
     {
         var namePtr = rive_Scene_Name(handle);
         Name = SpanExtensions.AsString(namePtr);
@@ -65,9 +65,10 @@ internal class RiveScene : RiveObject
         return true;
     }
 
-    internal void BindViewModelInstance(RiveViewModel riveViewModelInstance)
+    /// <summary>Binds the instance to the scene, replacing the one it has. Null unbinds.</summary>
+    internal void BindViewModelInstance(RiveViewModel? riveViewModelInstance)
     {
         ObjectDisposedException.ThrowIf(IsClosed, this);
-        rive_Scene_BindViewModelInstance(handle, riveViewModelInstance.InstanceHandle);
+        rive_Scene_BindViewModelInstance(handle, riveViewModelInstance?.InstanceHandle ?? nint.Zero);
     }
 }
