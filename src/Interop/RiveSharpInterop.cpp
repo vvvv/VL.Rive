@@ -188,7 +188,7 @@ extern "C"
     {
         if (image != nullptr)
         {
-            rcp<RenderImage>(image); // Wrap in rcp and let it go out of scope to decrement ref count
+            rcp<RenderImage> adopted(image); // Adopt the reference we handed out; letting the rcp go out of scope drops it
         }
     }
 
@@ -196,7 +196,7 @@ extern "C"
     {
         if (font != nullptr)
         {
-            rcp<Font>(font); // Wrap in rcp and let it go out of scope to decrement ref count
+            rcp<Font> adopted(font); // Adopt the reference we handed out; letting the rcp go out of scope drops it
         }
     }
 
@@ -204,7 +204,7 @@ extern "C"
     {
         if (audioSource != nullptr)
         {
-            rcp<AudioSource>(audioSource); // Wrap in rcp and let it go out of scope to decrement ref count
+            rcp<AudioSource> adopted(audioSource); // Adopt the reference we handed out; letting the rcp go out of scope drops it
         }
     }
 
@@ -212,7 +212,7 @@ extern "C"
     {
         if (artboard != nullptr)
         {
-            rcp<BindableArtboard>(artboard); // Wrap in rcp and let it go out of scope to decrement ref count
+            rcp<BindableArtboard> adopted(artboard); // Adopt the reference we handed out; letting the rcp go out of scope drops it
         }
     }
 
@@ -555,7 +555,7 @@ extern "C"
 
     void rive_Artboard_BindViewModelInstance(Artboard* artboard, ViewModelInstance* viewModelInstance)
     {
-        artboard->bindViewModelInstance(rcp<ViewModelInstance>(viewModelInstance));
+        artboard->bindViewModelInstance(ref_rcp(viewModelInstance));
     }
 
     // Scene
@@ -617,7 +617,7 @@ extern "C"
 
     void rive_Scene_BindViewModelInstance(Scene* scene, ViewModelInstance* viewModelInstance)
     {
-        scene->bindViewModelInstance(rcp<ViewModelInstance>(viewModelInstance));
+        scene->bindViewModelInstance(ref_rcp(viewModelInstance));
     }
 
     RiveHitResult rive_Scene_PointerDown(Scene* scene, float x, float y, int pointerId)
@@ -679,6 +679,26 @@ extern "C"
     ViewModelInstanceRuntime* rive_ViewModelRuntime_CreateDefaultInstance(ViewModelRuntime* runtime)
     {
         return runtime->createDefaultInstance().release();
+    }
+
+    int rive_ViewModelRuntime_InstanceCount(ViewModelRuntime* runtime)
+    {
+        return (int)runtime->instanceCount();
+    }
+
+    const char* rive_ViewModelRuntime_InstanceNameAt(ViewModelRuntime* runtime, int index)
+    {
+        auto names = runtime->instanceNames();
+        if (index < 0 || (size_t)index >= names.size())
+            return nullptr;
+        return _strdup(names[(size_t)index].c_str());
+    }
+
+    ViewModelInstanceRuntime* rive_ViewModelRuntime_CreateInstanceFromIndex(ViewModelRuntime* runtime, int index)
+    {
+        if (index < 0 || (size_t)index >= runtime->instanceCount())
+            return nullptr;
+        return runtime->createInstanceFromIndex((size_t)index).release();
     }
 
     const char* rive_ViewModelInstanceRuntime_Name(ViewModelInstanceRuntime* runtime)
@@ -759,7 +779,20 @@ extern "C"
 
     ViewModelInstance* rive_ViewModelInstanceRuntime_Instance(ViewModelInstanceRuntime* runtime)
     {
-        return runtime->instance().release();
+        // Borrowed: valid while the runtime is alive. Callers that keep it (binding) take their own reference.
+        return runtime->instance().get();
+    }
+
+    void rive_ViewModelInstanceRuntime_Release(ViewModelInstanceRuntime* runtime)
+    {
+        // Adopt the reference we handed out; letting the rcp go out of scope drops it
+        // (a named variable: "rcp<T>(x);" alone would declare an empty variable called x)
+        rcp<ViewModelInstanceRuntime> adopted(runtime);
+    }
+
+    bool rive_ViewModelInstanceRuntime_ReplaceViewModel(ViewModelInstanceRuntime* runtime, const char* path, ViewModelInstanceRuntime* value)
+    {
+        return runtime->replaceViewModel(std::string(path), value);
     }
 
     uint32_t rive_ViewModelInstance_ViewModelId(ViewModelInstance* instance)
@@ -920,6 +953,6 @@ extern "C"
     // Artboard
     void rive_ViewModelInstanceArtboardRuntime_SetValue(ViewModelInstanceArtboardRuntime* value, BindableArtboard* bindableArtboard)
     {
-        value->value(rcp<BindableArtboard>(bindableArtboard));
+        value->value(ref_rcp(bindableArtboard)); // takes its own reference: the caller still releases theirs
     }
 }

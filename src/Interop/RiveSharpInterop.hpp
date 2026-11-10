@@ -233,6 +233,16 @@ extern "C"
 	__declspec(dllexport) ViewModelInstanceRuntime* rive_ViewModelRuntime_CreateInstance(ViewModelRuntime* runtime);
 	__declspec(dllexport) ViewModelInstanceRuntime* rive_ViewModelRuntime_CreateDefaultInstance(ViewModelRuntime* runtime);
 
+	// Returns the number of instances the view model has in the file (the ones defined in the editor)
+	__declspec(dllexport) int rive_ViewModelRuntime_InstanceCount(ViewModelRuntime* runtime);
+
+	// Returns a copy of the name of the instance at the index (free it), null if the index is out of range
+	__declspec(dllexport) const char* rive_ViewModelRuntime_InstanceNameAt(ViewModelRuntime* runtime, int index);
+
+	// Creates a new ViewModelInstanceRuntime that is a copy of the instance at the index (returns nullptr if the index is out of range).
+	// By index, because instances can have no name or the same one.
+	__declspec(dllexport) ViewModelInstanceRuntime* rive_ViewModelRuntime_CreateInstanceFromIndex(ViewModelRuntime* runtime, int index);
+
 	// ViewModelInstanceRuntime C-API
 	// Returns the name of the ViewModelInstanceRuntime (pointer valid as long as the object is alive)
 	__declspec(dllexport) const char* rive_ViewModelInstanceRuntime_Name(ViewModelInstanceRuntime* runtime);
@@ -277,8 +287,15 @@ extern "C"
 	__declspec(dllexport) void rive_ViewModelInstanceRuntime_Properties(ViewModelInstanceRuntime* runtime, RivePropertyData* properties_out);
 
 	// Returns the underlying ViewModelInstance pointer from a ViewModelInstanceRuntime.
-	// The returned pointer is valid as long as the ViewModelInstanceRuntime is alive.
+	// The returned pointer is borrowed: valid as long as the ViewModelInstanceRuntime is alive.
 	__declspec(dllexport) ViewModelInstance* rive_ViewModelInstanceRuntime_Instance(ViewModelInstanceRuntime* runtime);
+
+	// Drops the reference of a ViewModelInstanceRuntime returned by CreateInstance, CreateDefaultInstance,
+	// PropertyViewModel or ViewModelInstanceListRuntime_At. Each of those hands the caller one reference.
+	__declspec(dllexport) void rive_ViewModelInstanceRuntime_Release(ViewModelInstanceRuntime* runtime);
+
+	// Makes the nested view model property at path refer to value. False if there is no such property or the type differs.
+	__declspec(dllexport) bool rive_ViewModelInstanceRuntime_ReplaceViewModel(ViewModelInstanceRuntime* runtime, const char* path, ViewModelInstanceRuntime* value);
 
 	// ViewModelInstance
 	__declspec(dllexport) uint32_t rive_ViewModelInstance_ViewModelId(ViewModelInstance* instance);

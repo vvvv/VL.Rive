@@ -39,7 +39,7 @@ partial class RiveRenderer
             if (e.Device.Source != inputSource)
                 return;
 
-            if (riveScene is null)
+            if (riveScene is null || riveScene.IsClosed)
                 return;
 
             var inverseViewTrasform = alignmentMat.InvertOrIdentity();

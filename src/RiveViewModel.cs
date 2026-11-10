@@ -8,29 +8,109 @@ using static VL.Rive.Interop.Methods;
 
 namespace VL.Rive;
 
+/// <summary>
+/// An instance of a Rive view model. It owns one reference to the native instance, which it releases when disposed
+/// or - for instances nobody disposes, such as those created in a patch - when it is finalized. An instance that is
+/// an item of a <see cref="RiveList"/> or bound to a scene is kept alive natively by the list or the scene for as
+/// long as it is used there, whatever happens to this object.
+/// </summary>
 [Smell(SymbolSmell.Advanced)]
-public unsafe class RiveViewModel : IVLObject, INotifyPropertyChanged, IRiveValue<RiveViewModel>
+public unsafe class RiveViewModel : IVLObject, INotifyPropertyChanged, IRiveValue<RiveViewModel>, IDisposable
 {
     private readonly RiveContext riveContext;
     private readonly nint handle;
+    private readonly nint identity;
     private readonly Dictionary<string, IRiveValue> properties;
+    private readonly string typeName;
+    private int disposed;
 
+    /// <param name="handle">A native ViewModelInstanceRuntime. This view model takes over the reference the caller holds.</param>
     internal RiveViewModel(RiveContext riveContext, nint handle)
     {
         this.riveContext = riveContext;
         this.handle = handle;
+        this.identity = rive_ViewModelInstanceRuntime_Instance(handle);
         this.properties = CreateProperties();
+        this.typeName = Type.Name;
     }
 
-    // Pointer to RiveViewModelInstance
-    internal nint InstanceHandle => rive_ViewModelInstanceRuntime_Instance(handle);
+    ~RiveViewModel() => Release();
 
-    internal nint Handle => handle;
+    void IDisposable.Dispose() => Dispose();
+
+    /// <summary>Releases the native instance. Not needed for correctness, the finalizer does it as well.</summary>
+    internal void Dispose()
+    {
+        Release();
+        GC.SuppressFinalize(this);
+    }
+
+    private void Release()
+    {
+        if (Interlocked.Exchange(ref disposed, 1) != 0)
+            return;
+
+        riveContext.ForgetViewModel(identity, this);
+        rive_ViewModelInstanceRuntime_Release(handle);
+    }
+
+    internal bool IsDisposed => Volatile.Read(ref disposed) != 0;
+
+    internal void ThrowIfDisposed() => ObjectDisposedException.ThrowIf(IsDisposed, this);
+
+    // Pointer to RiveViewModelInstance, borrowed from the native instance
+    internal nint InstanceHandle
+    {
+        get
+        {
+            ThrowIfDisposed();
+            return identity;
+        }
+    }
+
+    // Identifies the native instance for as long as this object exists, even when it is disposed
+    internal nint Identity => identity;
+
+    internal nint Handle
+    {
+        get
+        {
+            ThrowIfDisposed();
+            return handle;
+        }
+    }
 
     internal int ViewModelId => (int)rive_ViewModelInstance_ViewModelId(InstanceHandle);
 
-    internal object? GetObject(string propertyName) => GetRiveValue(propertyName).Value;
-    internal void SetObject(string propertyName, object value) => GetRiveValue(propertyName).Value = value;
+    internal object? GetObject(string propertyName)
+    {
+        ThrowIfDisposed();
+        return GetRiveValue(propertyName).Value;
+    }
+
+    internal void SetObject(string propertyName, object value)
+    {
+        ThrowIfDisposed();
+        var current = GetRiveValue(propertyName);
+
+        // A nested view model is replaced on the instance that holds it - the nested object cannot do that itself
+        if (current is RiveViewModel && value is RiveViewModel replacement)
+        {
+            if (!ReferenceEquals(current, replacement))
+                ReplaceViewModel(propertyName, replacement);
+            return;
+        }
+
+        current.Value = value;
+    }
+
+    private void ReplaceViewModel(string propertyName, RiveViewModel replacement)
+    {
+        using var name = new MarshaledString(propertyName);
+        if (rive_ViewModelInstanceRuntime_ReplaceViewModel(handle, name, replacement.Handle) == 0)
+            throw new ArgumentException($"Cannot assign the view model instance to '{propertyName}', it is not of the type the property expects.", nameof(replacement));
+        properties[propertyName] = replacement;
+    }
 
     private IRiveValue GetRiveValue(string propertyName)
     {
@@ -41,6 +121,9 @@ public unsafe class RiveViewModel : IVLObject, INotifyPropertyChanged, IRiveValu
 
     internal void AcknowledgeChanges()
     {
+        if (IsDisposed)
+            return;
+
         foreach (var (name, property) in properties)
         {
             if (property is RiveValue riveValue && riveValue.HasChanged)
@@ -67,6 +150,8 @@ public unsafe class RiveViewModel : IVLObject, INotifyPropertyChanged, IRiveValu
 
     internal RiveViewModelType Type => riveContext.ViewModels[ViewModelId];
 
+    public override string ToString() => IsDisposed ? $"{typeName} (disposed)" : typeName;
+
     AppHost IVLObject.AppHost => riveContext.NodeContext.AppHost;
 
     NodeContext IVLObject.Context => riveContext.NodeContext;
@@ -78,18 +163,21 @@ public unsafe class RiveViewModel : IVLObject, INotifyPropertyChanged, IRiveValu
     object? IRiveValue.Value
     {
         get => this;
-        set
-        {
-            // ByPath nodes like to write the same instance back - let's allow that, but throw for anything else
-            if (value != this)
-                throw new NotImplementedException();
-        }
+        set => AssignFromParent(value);
     }
 
-    RiveViewModel? IRiveValue<RiveViewModel>.TypedValue 
+    // ByPath nodes like to write the same instance back - let's allow that. Replacing it is done on the parent
+    // instance (see SetObject), where the property lives.
+    private void AssignFromParent(object? value)
+    {
+        if (!ReferenceEquals(value, this))
+            throw new InvalidOperationException("A view model instance can only be replaced through the property of the instance that holds it.");
+    }
+
+    RiveViewModel? IRiveValue<RiveViewModel>.TypedValue
     {
         get => this;
-        set => throw new NotImplementedException(); 
+        set => AssignFromParent(value);
     }
 
     IVLObject IVLObject.With(IReadOnlyDictionary<string, object> values)
@@ -123,13 +211,13 @@ public unsafe class RiveViewModel : IVLObject, INotifyPropertyChanged, IRiveValu
         {
             var viewModelHandle = rive_ViewModelInstanceRuntime_PropertyViewModel(handle, name);
             if (viewModelHandle != default)
-                return new RiveViewModel(riveContext, viewModelHandle);
+                return riveContext.WrapViewModel(viewModelHandle);
         }
         else if (type == RiveDataType.List)
         {
             var listHandle = rive_ViewModelInstanceRuntime_PropertyList(handle, name);
             if (listHandle != default)
-                return new RiveList(riveContext, listHandle);
+                return new RiveList(riveContext, this, listHandle);
         }
         else
         {

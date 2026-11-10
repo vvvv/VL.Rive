@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <IsPackable>false</IsPackable>
@@ -15,8 +15,8 @@
     <PackageReference Include="NUnit" Version="3.14.0" />
     <PackageReference Include="NUnit3TestAdapter" Version="4.*" />
     <!-- VL.Rive references these privately, so tests need them to run. No VL app host or test framework needed. -->
-    <PackageReference Include="VL.Core" Version="2025.7.4" />
-    <PackageReference Include="VL.Stride.Runtime" Version="2025.7.4" />
+    <PackageReference Include="VL.Core" Version="2026.8.0-0296-g8e308ce467" />
+    <PackageReference Include="VL.Stride.Runtime" Version="2026.8.0-0296-g8e308ce467" />
   </ItemGroup>
 
   <ItemGroup>

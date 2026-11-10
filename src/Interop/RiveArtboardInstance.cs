@@ -15,6 +15,15 @@ internal class RiveArtboardInstance : RiveObject
         }
     }
 
+    public unsafe string Name
+    {
+        get
+        {
+            ObjectDisposedException.ThrowIf(IsClosed, this);
+            return SpanExtensions.AsString(rive_Artboard_Name(handle));
+        }
+    }
+
     public int ViewModelId => (int)rive_Artboard_ViewModelId(handle);
 
     public RiveScene? GetDefaultScene()
@@ -40,8 +49,10 @@ internal class RiveArtboardInstance : RiveObject
         return true;
     }
 
-    public void BindViewModelInstance(RiveViewModel riveViewModelInstance)
+        /// <summary>Binds the instance to the artboard, replacing the one it has. Null unbinds.</summary>
+    public void BindViewModelInstance(RiveViewModel? riveViewModelInstance)
     {
-        rive_Artboard_BindViewModelInstance(handle, riveViewModelInstance.InstanceHandle);
+        ObjectDisposedException.ThrowIf(IsClosed, this);
+        rive_Artboard_BindViewModelInstance(handle, riveViewModelInstance?.InstanceHandle ?? nint.Zero);
     }
 }

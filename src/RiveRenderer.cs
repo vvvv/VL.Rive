@@ -2,7 +2,6 @@
 using Microsoft.Extensions.Logging;
 using SharpDX.Direct3D11;
 using Stride.Core.Mathematics;
-using Stride.Engine;
 using Stride.Graphics;
 using Stride.Input;
 using Stride.Rendering;
@@ -11,17 +10,27 @@ using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using VL.Core;
 using VL.Core.Import;
+using VL.Lang;
 using VL.Lib.Animation;
 using VL.Lib.Collections;
 using VL.Rive;
 using VL.Rive.Internal;
 using VL.Rive.Interop;
 using VL.Stride.Input;
-using Path = VL.Lib.IO.Path;
+using MessageSeverity = VL.Lang.MessageSeverity;
 using PixelFormat = SharpDX.DXGI.Format;
 
 namespace VL.Rive;
 
+/// <summary>
+/// Draws a scene (a state machine or an animation) of an artboard of a Rive file, binds a view model instance to it,
+/// and passes pointer input on to it.
+/// </summary>
+/// <remarks>
+/// The renderer makes an instance of the artboard of its own, so it has a state and a view model of its own, and
+/// advances the scene once per frame. Renderers of the same file draw one after the other with the render context of
+/// the file.
+/// </remarks>
 [ProcessNode(HasStateOutput = true, FragmentSelection = FragmentSelection.Explicit)]
 [Smell(SymbolSmell.Advanced)]
 public sealed partial class RiveRenderer : RendererBase
@@ -30,22 +39,20 @@ public sealed partial class RiveRenderer : RendererBase
     readonly AppHost appHost;
     readonly ILogger logger;
 
-    RiveRenderContextD3D11? riveRenderContext;
     RiveRenderTargetD3D11? riveRenderTarget;
-    RiveDeferredHost? riveDeferredHost;
 
-    Interop.RiveRenderer? riveRenderer;
     RiveContext? riveContext;
-    Path? riveFilePath;
     RiveArtboardInstance? riveArtboard;
     RiveScene? riveScene;
     RiveViewModel? riveViewModelInstance;
+    RiveViewModel? riveDefaultViewModelInstance;
     IFrameClock frameClock;
-    readonly IGraphicsDeviceService graphicsDeviceService;
     Int2 lastSize;
     RiveMat2D alignmentMat;
 
     readonly SerialDisposable inputSubscription = new SerialDisposable();
+    readonly SerialDisposable viewModelWarning = new SerialDisposable();
+    readonly SerialDisposable lookupWarning = new SerialDisposable();
     IInputSource? lastInputSource;
 
     string? artboardName;
@@ -64,22 +71,24 @@ public sealed partial class RiveRenderer : RendererBase
         appHost = nodeContext.AppHost;
         logger = nodeContext.GetLogger();
         frameClock = appHost.Services.GetRequiredService<IFrameClock>();
-        graphicsDeviceService = appHost.Services.GetRequiredService<Game>().Services.GetService<IGraphicsDeviceService>()
-            ?? throw new InvalidOperationException("No IGraphicsDeviceService available.");
     }
 
+    /// <param name="file">The file to draw</param>
+    /// <param name="artboardName">The artboard, the default one if empty. The editor offers the ones in the file.</param>
+    /// <param name="sceneName">The state machine or animation, the default one if empty. The editor offers the ones of the artboard.</param>
+    /// <param name="viewModel">The view model instance to bind. Another one replaces the first. With none, an instance of the view model of the artboard is bound, it comes out of the renderer.</param>
     [Fragment]
     [Smell(SymbolSmell.Internal)]
     public void Update(
-        Path? file, 
-        string? artboardName, 
-        string? sceneName, 
+        RiveContext? file,
+        [ChoiceProvider(typeof(RiveArtboardChoiceProvider))] string? artboardName,
+        [ChoiceProvider(typeof(RiveSceneChoiceProvider))] string? sceneName,
+        RiveViewModel? viewModel,
         [Pin(Visibility = Model.PinVisibility.Optional)] RiveFit fit,
         [Pin(Visibility = Model.PinVisibility.Optional)] RiveAlignment alignment,
         [Pin(Visibility = Model.PinVisibility.Optional)] Optional<RectangleF> frame,
         [Pin(Visibility = Model.PinVisibility.Optional)] Optional<RectangleF> content,
-        [Pin(Visibility = Model.PinVisibility.Optional)] [DefaultValue(1f)] float scaleFactor, 
-        bool reload)
+        [Pin(Visibility = Model.PinVisibility.Optional)] [DefaultValue(1f)] float scaleFactor)
     {
         riveFit = fit;
         riveAlignment = alignment;
@@ -87,55 +96,26 @@ public sealed partial class RiveRenderer : RendererBase
         riveContent = content;
         riveScaleFactor = scaleFactor;
 
-        // Native device can change - check on each update
-        var nativeDevice = SharpDXInterop.GetNativeDevice(graphicsDeviceService.GraphicsDevice) as Device;
-        if (riveRenderContext?.DevicePointer != nativeDevice?.NativePointer)
-        {
-            DisposeRiveResources();
-            reload = true;
-
-            if (nativeDevice != null)
-            {
-                riveRenderContext = RiveRenderContextD3D11.Create(nativeDevice.NativePointer, nativeDevice.ImmediateContext.NativePointer);
-                riveRenderer = riveRenderContext.CreateRenderer();
-            }
-        }
+        // A file that is gone counts as none
+        if (file is { IsDisposed: true })
+            file = null;
 
         // Load file
-        if (reload || file != riveFilePath)
+        var newFile = !ReferenceEquals(file, riveContext);
+        if (newFile)
         {
-            riveFilePath = file;
-
-            DisposeRiveContext();
-            DisposeAndSetNull(ref riveDeferredHost);
-
-            // Files are imported through, and drawn by, a deferred recording host: only that can run the GPU
-            // scripts of a file. Without it (a runtime built without the GPU layer) we draw immediately.
-            if (riveRenderContext != null)
-            {
-                riveDeferredHost = RiveDeferredHost.TryCreate(riveRenderContext);
-                if (riveDeferredHost is null)
-                    logger.LogWarning("GPU scripting is not available in this build of the Rive runtime.");
-            }
-
-            var filePath = file?.ToString();
-            if (!string.IsNullOrEmpty(filePath))
-            {
-                ScriptLog.Attach(logger);
-                var riveFile = riveDeferredHost?.LoadFile(filePath) ?? riveRenderContext?.LoadFile(file);
-                if (riveFile != null)
-                    riveContext = new RiveContext(nodeContext, riveFile);
-            }
+            // Before the new one is remembered: what was made from the old one is let go of there
+            DisposeRiveResources();
+            riveContext = file;
         }
 
-        // Load artboard and view model instance
-        if (riveArtboard is null || artboardName != this.artboardName)
+        // Load artboard
+        var newArtboard = newFile || artboardName != this.artboardName;
+        if (newArtboard)
         {
             this.artboardName = artboardName;
 
-            DisposeAndSetNull(ref riveArtboard);
-            DisposeAndSetNull(ref riveScene);
-            riveViewModelInstance = null;
+            DisposeRiveContext();
 
             var riveFile = riveContext?.RiveFile;
             if (string.IsNullOrEmpty(artboardName))
@@ -143,35 +123,72 @@ public sealed partial class RiveRenderer : RendererBase
             else
             {
                 riveArtboard = riveFile?.GetArtboard(artboardName);
-                if (riveArtboard is null)
-                    throw new ArgumentException($"Rive artboard '{artboardName}' not found in file '{file}'.");
+                if (riveArtboard is null && riveContext != null)
+                {
+                    // Shown on the node until the file or the name changes
+                    lookupWarning.Disposable = nodeContext.AddPersistentMessage(MessageSeverity.Warning,
+                        $"Rive artboard '{artboardName}' not found in file '{riveContext.FilePath}'.");
+                }
             }
 
+            // The artboard goes away with the file
             if (riveArtboard != null)
+                riveContext!.Track(riveArtboard);
+        }
+
+        // Bind view model instance
+        if (riveArtboard != null)
+        {
+            // None, or a disposed one, means the one the artboard is made for
+            if (viewModel != null && viewModel.IsDisposed)
+                viewModel = null;
+            if (viewModel is null)
             {
-                var viewModelRuntime = riveContext!.ViewModels.ElementAtOrDefault(riveArtboard.ViewModelId);
-                riveViewModelInstance = viewModelRuntime?.CreateDefaultInstance();
+                riveDefaultViewModelInstance ??= riveContext!.ViewModels.ElementAtOrDefault(riveArtboard.ViewModelId)?.CreateDefaultInstance();
+                viewModel = riveDefaultViewModelInstance;
+            }
+
+            // Bind when the instance changes: another one replaces the first. Only the artboard is bound, the state
+            // machines made from it share its data context and an animation has nothing to bind.
+            if (!ReferenceEquals(viewModel, riveViewModelInstance))
+            {
+                // Shown on the node for as long as this instance is bound
+                viewModelWarning.Disposable = viewModel != null && viewModel.ViewModelId != riveArtboard.ViewModelId
+                    ? nodeContext.AddPersistentMessage(MessageSeverity.Warning, MismatchMessage(
+                        riveArtboard.Name,
+                        riveContext!.ViewModels.ElementAtOrDefault(riveArtboard.ViewModelId)?.Name,
+                        viewModel.ToString()))
+                    : null;
+
+                riveArtboard.BindViewModelInstance(viewModel);
+                riveViewModelInstance = viewModel;
             }
         }
 
-        // Load scene
-        if (riveScene is null || sceneName != this.sceneName)
+        // Load scene, after the artboard is bound: a state machine made from a bound artboard shares its data context
+        if (newArtboard || sceneName != this.sceneName)
         {
             this.sceneName = sceneName;
 
-            DisposeAndSetNull(ref riveScene);
+            ReleaseAndSetNull(ref riveScene);
+            if (riveArtboard != null)
+                lookupWarning.Disposable = null;
 
             if (string.IsNullOrEmpty(sceneName))
                 riveScene = riveArtboard?.GetDefaultScene();
             else
             {
                 riveScene = riveArtboard?.GetScene(sceneName);
-                if (riveScene is null)
-                    throw new ArgumentException($"Rive scene '{sceneName}' not found in artboard '{artboardName}' of file '{file}'.");
+                if (riveScene is null && riveArtboard != null)
+                {
+                    lookupWarning.Disposable = nodeContext.AddPersistentMessage(MessageSeverity.Warning,
+                        $"Rive scene '{sceneName}' not found in artboard '{riveArtboard.Name}' of file '{riveContext!.FilePath}'.");
+                }
             }
 
-            if (riveViewModelInstance != null)
-                riveScene?.BindViewModelInstance(riveViewModelInstance);
+            // The scene goes away with the file, before the artboard it is made from
+            if (riveScene != null)
+                riveContext!.Track(riveScene);
         }
 
         if (riveScene is null)
@@ -179,16 +196,19 @@ public sealed partial class RiveRenderer : RendererBase
 
         riveScene.AdvanceAndApply((float)frameClock.TimeDifference);
 
-        riveViewModelInstance?.AcknowledgeChanges();
+        // Tells whoever listens what the scene changed in this frame: the bound instance, but also the items of its
+        // lists and nested instances, which nobody else tells about
+        riveContext!.AcknowledgeChanges();
     }
 
+    /// <summary>The view model instance that is bound: the one that came in, or the default one of the artboard.</summary>
     [Fragment(IsDefault = true)]
     [Smell(SymbolSmell.Internal)]
-    public RiveViewModel? ViewModel => riveViewModelInstance;
+    public RiveViewModel? ViewModel => riveViewModelInstance is { IsDisposed: false } ? riveViewModelInstance : null;
 
     public string DumpFileAsJson()
     {
-        var riveFile = riveContext?.RiveFile;
+        var riveFile = riveContext is { IsDisposed: false } ? riveContext.RiveFile : null;
         if (riveFile is null)
             return string.Empty;
 
@@ -199,7 +219,7 @@ public sealed partial class RiveRenderer : RendererBase
 
     public RectangleF GetArtboardBounds()
     {
-        if (riveArtboard is null)
+        if (riveArtboard is null || riveArtboard.IsClosed)
             return RectangleF.Empty;
         var bounds = riveArtboard.Bounds;
         return new RectangleF(bounds.minX, bounds.minY, bounds.maxX - bounds.minX, bounds.maxY - bounds.minY);
@@ -207,8 +227,11 @@ public sealed partial class RiveRenderer : RendererBase
 
     protected override unsafe void DrawCore(RenderDrawContext context)
     {
-        if (riveRenderContext is null || riveScene is null)
+        if (riveContext is null || riveContext.IsDisposed || riveScene is null || riveScene.IsClosed)
             return;
+
+        var riveRenderContext = riveContext.RenderContext;
+        var riveDeferredHost = riveContext.DeferredHost;
 
         // Subscribe to input events - in case we have many sinks we assume that there's only one input source active
         var inputSource = context.RenderContext.Tags.Get(InputExtensions.WindowInputSource);
@@ -244,7 +267,7 @@ public sealed partial class RiveRenderer : RendererBase
         if (renderer is null)
         {
             riveRenderContext.BeginFrame(in frameDescriptor);
-            renderer = riveRenderer!;
+            renderer = riveContext.ImmediateRenderer;
         }
 
         alignmentMat = Methods.rive_ComputeAlignment(
@@ -263,8 +286,8 @@ public sealed partial class RiveRenderer : RendererBase
         if (riveRenderTarget is null || lastSize != size)
         {
             lastSize = size;
-            DisposeAndSetNull(ref riveRenderTarget);
-            riveRenderTarget = riveRenderContext.MakeRenderTarget(size.X, size.Y);
+            ReleaseAndSetNull(ref riveRenderTarget);
+            riveRenderTarget = riveContext.MakeRenderTarget(size.X, size.Y);
         }
         riveRenderTarget.SetTargetTexture(nativeRenderTarget.NativePointer);
 
@@ -303,6 +326,8 @@ public sealed partial class RiveRenderer : RendererBase
     protected override void Destroy()
     {
         inputSubscription.Dispose();
+        viewModelWarning.Dispose();
+        lookupWarning.Dispose();
 
         DisposeRiveResources();
 
@@ -317,19 +342,34 @@ public sealed partial class RiveRenderer : RendererBase
 
     private void DisposeRiveContext()
     {
-        DisposeAndSetNull(ref riveScene);
-        DisposeAndSetNull(ref riveArtboard);
-        DisposeAndSetNull(ref riveContext);
+        viewModelWarning.Disposable = null;
+        lookupWarning.Disposable = null;
+        riveViewModelInstance = null;
+        DisposeAndSetNull(ref riveDefaultViewModelInstance);
+        ReleaseAndSetNull(ref riveScene); // before the artboard it is made from
+        ReleaseAndSetNull(ref riveArtboard);
     }
 
     private void DisposeRiveRenderResources()
     {
-        // Everything imported through the host is gone by now (see DisposeRiveContext)
-        DisposeAndSetNull(ref riveDeferredHost);
-        DisposeAndSetNull(ref riveRenderer);
-        DisposeAndSetNull(ref riveRenderTarget);
-        DisposeAndSetNull(ref riveRenderContext);
+        ReleaseAndSetNull(ref riveRenderTarget);
     }
 
     static void DisposeAndSetNull<T>(ref T? resource) where T : class, IDisposable => Interlocked.Exchange(ref resource, null)?.Dispose();
+
+    // Made through the file, which disposes it when it goes away: the file may be gone by now, and then the resource with it
+    void ReleaseAndSetNull<T>(ref T? resource) where T : class, IDisposable
+    {
+        if (Interlocked.Exchange(ref resource, null) is { } released)
+        {
+            released.Dispose();
+            riveContext?.Untrack(released);
+        }
+    }
+
+    /// <summary>Tells which view model the artboard is made for (null if it has none) and which one the instance is of.</summary>
+    internal static string MismatchMessage(string artboardName, string? expectedViewModel, string actualViewModel)
+        => expectedViewModel is null
+            ? $"The artboard '{artboardName}' has no view model, so it will not show the values of the view model instance '{actualViewModel}'."
+            : $"The artboard '{artboardName}' shows an instance of the view model '{expectedViewModel}', but the instance is of the view model '{actualViewModel}', so the artboard will not show its values.";
 }
