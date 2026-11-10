@@ -1,9 +1,10 @@
 ﻿using System.Collections.Immutable;
 using System.Runtime.InteropServices;
 using VL.Core;
+using VL.Rive.Internal;
 using VL.Rive.Interop;
 
-namespace VL.Rive.Internal;
+namespace VL.Rive;
 
 internal sealed class RiveContext : IDisposable
 {
