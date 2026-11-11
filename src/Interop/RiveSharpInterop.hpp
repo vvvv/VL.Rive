@@ -204,6 +204,7 @@ extern "C"
 
     // Advances and applies the scene, returns true if draw() should be called
     __declspec(dllexport) bool rive_Scene_AdvanceAndApply(Scene* scene, float elapsedSeconds);
+__declspec(dllexport) bool rive_Scene_SeekNormalized(Scene* scene, float position);
 
     // Binds a ViewModelInstance to the scene
     __declspec(dllexport) void rive_Scene_BindViewModelInstance(Scene* scene, ViewModelInstance* viewModelInstance);

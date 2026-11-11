@@ -1,5 +1,7 @@
 #include "RiveSharpInterop.hpp"
 #include "rive/static_scene.hpp"
+#include "rive/animation/linear_animation_instance.hpp"
+#include <algorithm>
 #include "rive/generated/viewmodel/viewmodel_property_viewmodel_base.hpp";
 #include "utils/no_op_factory.hpp"
 #include "rive/logging_scripting_context.hpp"
@@ -613,6 +615,25 @@ extern "C"
     bool rive_Scene_AdvanceAndApply(Scene* scene, float elapsedSeconds)
     {
         return scene->advanceAndApply(elapsedSeconds);
+    }
+
+    // Sets the point in time of an animation (0 = start, 1 = end of its work area) and applies it.
+    // Returns false if the scene is not an animation with a duration (a state machine has no time to seek).
+    bool rive_Scene_SeekNormalized(Scene* scene, float position)
+    {
+        // RTTI is disabled, so no dynamic_cast. Of the three kinds of scene only an animation has a duration above 0:
+        // a state machine reports -1 and a static scene 0.
+        if (scene->durationSeconds() <= 0.0f)
+            return false;
+        auto animation = static_cast<LinearAnimationInstance*>(scene);
+
+        position = std::min(std::max(position, 0.0f), 1.0f);
+        const float duration = animation->durationSeconds();
+        // startTime is the end of the work area for an animation that plays backwards
+        const float start = animation->speed() >= 0 ? animation->startTime() : animation->startTime() - duration;
+        animation->time(start + position * duration);
+        animation->advanceAndApply(0.0f);
+        return true;
     }
 
     void rive_Scene_BindViewModelInstance(Scene* scene, ViewModelInstance* viewModelInstance)

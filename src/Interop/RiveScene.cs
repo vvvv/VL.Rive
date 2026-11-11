@@ -23,10 +23,27 @@ internal class RiveScene : RiveObject
         }
     }
 
+    /// <summary>The length of an animation, 0 for a static scene and -1 for a state machine.</summary>
+    public float DurationSeconds
+    {
+        get
+        {
+            ObjectDisposedException.ThrowIf(IsClosed, this);
+            return rive_Scene_DurationSeconds(handle);
+        }
+    }
+
     public void AdvanceAndApply(float elapsedSeconds)
     {
         ObjectDisposedException.ThrowIf(IsClosed, this);
         rive_Scene_AdvanceAndApply(handle, elapsedSeconds);
+    }
+
+    /// <summary>Sets the point in time of an animation, 0 is its start and 1 its end. False for a state machine, which has no time to seek.</summary>
+    public bool SeekNormalized(float position)
+    {
+        ObjectDisposedException.ThrowIf(IsClosed, this);
+        return rive_Scene_SeekNormalized(handle, position) != 0;
     }
 
     public void Draw(RiveRenderer renderer)

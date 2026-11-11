@@ -238,6 +238,10 @@ namespace VL.Rive.Interop
         public static extern byte rive_Scene_AdvanceAndApply([NativeTypeName("rive::Scene *")] nint scene, float elapsedSeconds);
 
         [DllImport("rive_interop", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        [return: NativeTypeName("bool")]
+        public static extern byte rive_Scene_SeekNormalized([NativeTypeName("rive::Scene *")] nint scene, float position);
+
+        [DllImport("rive_interop", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern void rive_Scene_BindViewModelInstance([NativeTypeName("rive::Scene *")] nint scene, [NativeTypeName("rive::ViewModelInstance *")] nint viewModelInstance);
 
         [DllImport("rive_interop", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]

@@ -54,6 +54,7 @@ public sealed partial class RiveRenderer : RendererBase
     readonly SerialDisposable inputSubscription = new SerialDisposable();
     readonly SerialDisposable viewModelWarning = new SerialDisposable();
     readonly SerialDisposable lookupWarning = new SerialDisposable();
+    readonly SerialDisposable seekWarning = new SerialDisposable();
     IInputSource? lastInputSource;
 
     string? artboardName;
@@ -77,6 +78,7 @@ public sealed partial class RiveRenderer : RendererBase
     /// <param name="file">The file to draw</param>
     /// <param name="artboardName">The artboard, the default one if empty. The editor offers the ones in the file.</param>
     /// <param name="sceneName">The state machine or animation, the default one if empty. The editor offers the ones of the artboard.</param>
+    /// <param name="position">Drives an animation by hand: 0 is its start, 1 its end. While set, the animation does not advance by itself. A state machine has no time to scrub, it keeps advancing.</param>
     /// <param name="viewModel">The view model instance to bind. Another one replaces the first. With none, an instance of the view model of the artboard is bound, it comes out of the renderer.</param>
     [Fragment]
     [Smell(SymbolSmell.Internal)]
@@ -89,7 +91,8 @@ public sealed partial class RiveRenderer : RendererBase
         [Pin(Visibility = Model.PinVisibility.Optional)] RiveAlignment alignment,
         [Pin(Visibility = Model.PinVisibility.Optional)] Optional<RectangleF> frame,
         [Pin(Visibility = Model.PinVisibility.Optional)] Optional<RectangleF> content,
-        [Pin(Visibility = Model.PinVisibility.Optional)] [DefaultValue(1f)] float scaleFactor)
+        [Pin(Visibility = Model.PinVisibility.Optional)] [DefaultValue(1f)] float scaleFactor,
+        [Pin(Visibility = Model.PinVisibility.Optional)] Optional<float> position)
     {
         riveFit = fit;
         riveAlignment = alignment;
@@ -195,7 +198,22 @@ public sealed partial class RiveRenderer : RendererBase
         if (riveScene is null)
             return;
 
-        riveScene.AdvanceAndApply((float)frameClock.TimeDifference);
+        if (position.HasValue && riveScene.SeekNormalized(position.Value))
+        {
+            seekWarning.Disposable = null;
+        }
+        else
+        {
+            if (position.HasValue && seekWarning.Disposable is null)
+            {
+                seekWarning.Disposable = nodeContext.AddPersistentMessage(MessageSeverity.Warning,
+                    $"Rive scene '{riveScene.Name}' is a state machine, it can't be scrubbed with Position.");
+            }
+            else if (!position.HasValue)
+                seekWarning.Disposable = null;
+
+            riveScene.AdvanceAndApply((float)frameClock.TimeDifference);
+        }
 
         // Tells whoever listens what the scene changed in this frame: the bound instance, but also the items of its
         // lists and nested instances, which nobody else tells about
@@ -328,6 +346,7 @@ public sealed partial class RiveRenderer : RendererBase
         inputSubscription.Dispose();
         viewModelWarning.Dispose();
         lookupWarning.Dispose();
+        seekWarning.Dispose();
 
         DisposeRiveResources();
 
