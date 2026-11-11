@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using SharpDX.Direct3D11;
 using Stride.Core.Mathematics;
 using Stride.Graphics;
 using Stride.Input;
@@ -12,13 +11,15 @@ using VL.Core;
 using VL.Core.Import;
 using VL.Lang;
 using VL.Lib.Animation;
+using VL.Lib.Basics.Video;
 using VL.Lib.Collections;
 using VL.Rive;
 using VL.Rive.Internal;
 using VL.Rive.Interop;
+using VL.Stride.Graphics;
 using VL.Stride.Input;
 using MessageSeverity = VL.Lang.MessageSeverity;
-using PixelFormat = SharpDX.DXGI.Format;
+using PixelFormat = Stride.Graphics.PixelFormat;
 
 namespace VL.Rive;
 
@@ -245,11 +246,10 @@ public sealed partial class RiveRenderer : RendererBase
         if (renderTarget is null)
             return;
 
-        var nativeRenderTarget = SharpDXInterop.GetNativeResource(renderTarget) as Texture2D;
-        if (nativeRenderTarget is null)
+        if (!renderTarget.TryGetNativeResourcePointer(GraphicsDeviceType.Direct3D11, out var nativeRenderTarget))
             return;
 
-        if (!IsSupportedByRive(nativeRenderTarget.Description.Format))
+        if (!IsSupportedByRive(renderTarget.Description.Format))
         {
             logger.LogError($"The render target format '{renderTarget.Format}' is not supported by Rive. In case you render to a texture set its format to RGBA_Typeless and its view to RGBA_Srgb.");
             return;
@@ -289,7 +289,7 @@ public sealed partial class RiveRenderer : RendererBase
             ReleaseAndSetNull(ref riveRenderTarget);
             riveRenderTarget = riveContext.MakeRenderTarget(size.X, size.Y);
         }
-        riveRenderTarget.SetTargetTexture(nativeRenderTarget.NativePointer);
+        riveRenderTarget.SetTargetTexture(nativeRenderTarget);
 
         if (riveDeferredHost != null)
         {

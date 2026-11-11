@@ -28,8 +28,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="VL.Core" Version="2026.8.0-0296-g8e308ce467" PrivateAssets="all" />
-    <PackageReference Include="VL.Stride.Runtime" Version="2026.8.0-0296-g8e308ce467" PrivateAssets="all" />
+    <PackageReference Include="VL.Core" Version="2026.8.0-0317-g4bf4984586" PrivateAssets="all" />
+    <PackageReference Include="VL.Stride.Runtime" Version="2026.8.0-0317-g4bf4984586" PrivateAssets="all" />
   </ItemGroup>
 
   <ItemGroup>

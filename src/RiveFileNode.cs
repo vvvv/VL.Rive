@@ -1,9 +1,10 @@
 using Microsoft.Extensions.Logging;
-using SharpDX.Direct3D11;
 using Stride.Engine;
 using Stride.Graphics;
 using VL.Core;
 using VL.Core.Import;
+using VL.Lib.Basics.Video;
+using VL.Stride.Graphics;
 using Path = VL.Lib.IO.Path;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -37,17 +38,18 @@ public sealed class RiveFileNode : IDisposable
     public void Update(Path? file, bool reload, out RiveContext? output)
     {
         // Native device can change - check on each update
-        var nativeDevice = SharpDXInterop.GetNativeDevice(graphicsDeviceService.GraphicsDevice) as Device;
+        var graphicsDevice = graphicsDeviceService.GraphicsDevice;
+        graphicsDevice.TryGetNativeDevicePointer(GraphicsDeviceType.Direct3D11, out var devicePointer);
 
-        if (reload || file != path || (riveContext != null && riveContext.DevicePointer != nativeDevice?.NativePointer))
+        if (reload || file != path || (riveContext != null && riveContext.DevicePointer != devicePointer))
         {
             // Remember first: a file that does not load is reported once, not every frame
             path = file;
             Release();
 
             var filePath = file?.ToString();
-            if (nativeDevice != null && !string.IsNullOrEmpty(filePath))
-                riveContext = RiveContext.Create(nodeContext, logger, nativeDevice.NativePointer, nativeDevice.ImmediateContext.NativePointer, filePath);
+            if (devicePointer != default && graphicsDevice.TryGetNativeDeviceContextPointer(GraphicsDeviceType.Direct3D11, out var deviceContextPointer) && !string.IsNullOrEmpty(filePath))
+                riveContext = RiveContext.Create(nodeContext, logger, devicePointer, deviceContextPointer, filePath);
         }
 
         output = riveContext;
