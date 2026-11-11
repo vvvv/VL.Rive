@@ -34,7 +34,7 @@ public sealed class RiveFileNode : IDisposable
     /// <param name="file">The .riv file</param>
     /// <param name="reload">Loads the file again</param>
     /// <param name="output">The loaded file, null while there is none. It is a new one every time the file is loaded again.</param>
-    public void Update(Path? file, [Pin(Visibility = Model.PinVisibility.Optional)] bool reload, out RiveContext? output)
+    public void Update(Path? file, bool reload, out RiveContext? output)
     {
         // Native device can change - check on each update
         var nativeDevice = SharpDXInterop.GetNativeDevice(graphicsDeviceService.GraphicsDevice) as Device;
