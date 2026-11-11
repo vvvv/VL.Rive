@@ -1,6 +1,6 @@
 ﻿namespace VL.Rive.Interop;
 
-using System.Numerics;
+using global::Stride.Core.Mathematics;
 using static Methods;
 
 partial struct RiveMat2D

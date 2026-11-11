@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Document xmlns:p="property" xmlns:r="reflection" Id="EWHWcwf3oBvPnhn254YyBa" LanguageVersion="2026.8.0-0278-g8b85ba4511" Version="0.128">
+<Document xmlns:p="property" xmlns:r="reflection" Id="EWHWcwf3oBvPnhn254YyBa" LanguageVersion="2026.8.0-0317-g4bf4984586" Version="0.128">
   <Patch Id="Rgz0iK0cdl5O6XLZAnSI2k">
     <Canvas Id="EtMz6eWyJpjMOVOROl6714" DefaultCategory="Rive" CanvasType="FullCategory">
       <!--
@@ -25,12 +25,12 @@
               <Pin Id="A16DzV3RoQ5L7nVlHCqUxA" Name="File" Kind="InputPin" />
               <Pin Id="FeoJCEJ2aGKPXbsblcf1yC" Name="Artboard Name" Kind="InputPin" />
               <Pin Id="DpVr0R0zojmPqwq3GOHxdS" Name="Scene Name" Kind="InputPin" />
+              <Pin Id="PdJsxfcre99Lt9DLB9rJtD" Name="View Model" Kind="InputPin" />
               <Pin Id="BikdgT6MGwxPw5Ww7jF3yR" Name="Fit" Kind="InputPin" />
               <Pin Id="RRCTalY7vnPMOIE1tb3S2v" Name="Alignment" Kind="InputPin" />
               <Pin Id="PP6JJV5QhbKPRBtfuNHNwe" Name="Frame" Kind="InputPin" />
               <Pin Id="KZCcIC9jlZnQWwsKOiUf2W" Name="Content" Kind="InputPin" />
               <Pin Id="UMp5w7vGDy8Lyt64uvwiiz" Name="Scale Factor" Kind="InputPin" />
-              <Pin Id="GzKLGV7gKlSMxYETl8FuaQ" Name="Reload" Kind="InputPin" />
               <Pin Id="GeR1YLFCrZpMmXXiFbSmAx" Name="View Model" Kind="OutputPin" />
             </Node>
             <Node Bounds="200,520,145,19" Id="CavnLlk7QEEND5PV9srJal">
@@ -171,7 +171,6 @@
             <Pin Id="C86iaoqOxgZL7Y3cVPfd0j" Name="Frame" Kind="InputPin" Visibility="Optional" />
             <Pin Id="VsevbHS8ttGNKpsbLpRUaD" Name="Content" Kind="InputPin" Visibility="Optional" />
             <Pin Id="SpFkQN9UpQuPzucuNs0U2n" Name="Scale Factor" Kind="InputPin" Visibility="Optional" />
-            <Pin Id="GmQfO1FeDnDLn36nGOoU3n" Name="Reload" Kind="InputPin" />
             <Pin Id="AkH6InzVu9kOV6QCZRarJm" Name="Size" Kind="InputPin" />
             <Pin Id="IZQUv7LY9QnOxpWYJnXxq5" Name="Clear Color" Kind="InputPin" />
             <Pin Id="Rt9R2gXqJ56QLxMHFjITJY" Name="Output" Kind="OutputPin" />
@@ -205,10 +204,10 @@
       </Node>
       <!--
 
-    ************************ RiveRenderer2 (Experimental) ************************
+    ************************ RiveRenderer (3D) ************************
 
 -->
-      <Node Name="RiveRenderer2 (Experimental)" Bounds="463,330" Id="IohHRECiR8tMIyYN3XsOHA">
+      <Node Name="RiveRenderer (3D)" Bounds="463,330" Id="IohHRECiR8tMIyYN3XsOHA">
         <p:NodeReference>
           <Choice Kind="ContainerDefinition" Name="Process" />
           <CategoryReference Kind="Category" Name="Primitive" />
@@ -229,7 +228,6 @@
               <Pin Id="PsftfvQLXo3NNg69NDcegu" Name="Frame" Kind="InputPin" IsHidden="true" />
               <Pin Id="JKChlbRRkYELMkXbSlXFX1" Name="Content" Kind="InputPin" IsHidden="true" />
               <Pin Id="O95l4enzYePN22sKbXnPb5" Name="Scale Factor" Kind="InputPin" IsHidden="true" />
-              <Pin Id="SnvpM8DyDGiQE5vO3TVMcJ" Name="Reload" Kind="InputPin" />
               <Pin Id="Oi6nbiZVs8vLbmHKVOYITm" Name="Size" Kind="InputPin" />
               <Pin Id="SIhxwnvj8H1MgQ8f40X8h6" Name="Clear Color" Kind="InputPin" DefaultValue="0, 0, 0, 0" />
               <Pin Id="AIlXSxoqJAULAV8RuSZYfT" Name="Output" Kind="OutputPin" />
@@ -256,9 +254,8 @@
                 <ControlPoint Id="NDeJ0b61prgOah2pP3iB4w" Bounds="337,1006" />
                 <ControlPoint Id="Mmwg8HssqheMT3kDrcFop6" Bounds="337,1157" />
                 <Node Bounds="324,1040,91,19" Id="QLLnb7cSyWdOUaX4q8Bkfy">
-                  <p:NodeReference LastCategoryFullName="CEF.WebBrowser" LastDependency="VL.CEF.vl">
+                  <p:NodeReference LastCategoryFullName="Rive.RiveRenderer" LastDependency="VL.Rive.dll">
                     <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
-                    <FullNameCategoryReference ID="CEF.WebBrowser" />
                     <Choice Kind="OperationCallFlag" Name="SendNotification" />
                   </p:NodeReference>
                   <Pin Id="PimHUWnT8DJQZxleNMwkEz" Name="Input" Kind="StateInputPin" />
@@ -856,7 +853,7 @@
               <Pin Id="QQaCqW8vTcoLrfC2Ew7ZJO" Name="Result" Kind="OutputPin" />
             </Node>
           </Canvas>
-          <ProcessDefinition Id="F6z98mEGTJAOc750tcPck7">
+          <ProcessDefinition Aspects="Experimental" Id="F6z98mEGTJAOc750tcPck7">
             <Fragment Id="DqT829aOlbSQLvgRSaOBlS" Patch="C1qbGwwApPBPSrweRtN61w" Enabled="true" />
             <Fragment Id="PnYItBpMhWmPDYcMYO0y9r" Patch="KtuzOKVDWEFPHMZV97Y3ph" Enabled="true" />
             <Fragment Id="HrsxiE770dUQNtNwQ2Cocp" Patch="PbdQbnVAgGpPiVfrw1KHM5" />
@@ -893,7 +890,6 @@
             <Pin Id="TDFFl2vEPd9L5w3NRAdSmG" Name="File" Kind="InputPin" />
             <Pin Id="UvhhsWK1GawLlzJoygtbEB" Name="Artboard Name" Kind="InputPin" />
             <Pin Id="B67k9sCGn1ePhLEtzSipSf" Name="Scene Name" Kind="InputPin" />
-            <Pin Id="JMBzHiWSzfjNiuxuh1MFGT" Name="Reload" Kind="InputPin" />
             <Pin Id="C3gzRlZrrNhPQ6gzEJcgcp" Name="Clear Color" Kind="InputPin" />
             <Pin Id="HqyTbXBO7BfMBS2qDiYjkQ" Name="View Model" Kind="OutputPin" />
           </Patch>
@@ -994,6 +990,6 @@
   <NugetDependency Id="Ko9OqCOVyY7Pz8mbJrOqb0" Location="VL.CoreLib" />
   <PlatformDependency Id="QNHAi9ws7YQOqw9dF0YnhW" Location="./lib/net8.0/VL.Rive.dll" IsForward="true" />
   <NugetDependency Id="VzhBgfuS1WsNJlIved5kb3" Location="VL.Stride" />
-  <PlatformDependency Id="AX74wpYpef2PU7lNkDBNGR" Location="../../../../../../Program Files/vvvv/vvvv_gamma_7.4-win-x64/packs/VL.Stride.Runtime/lib/net8.0/VL.Stride.Runtime.dll" />
-  <PlatformDependency Id="SG5pszR8nJoQO4DZYmg9ce" Location="../../../../../../Program Files/vvvv/vvvv_gamma_7.4-win-x64/Stride.Core.dll" />
+  <PlatformDependency Id="AX74wpYpef2PU7lNkDBNGR" Location="../../../../../Program Files/vvvv/vvvv_gamma_7.4-win-x64/packs/VL.Stride.Runtime/lib/net8.0/VL.Stride.Runtime.dll" />
+  <PlatformDependency Id="SG5pszR8nJoQO4DZYmg9ce" Location="../../../../../Program Files/vvvv/vvvv_gamma_7.4-win-x64/Stride.Core.dll" />
 </Document>

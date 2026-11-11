@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Document xmlns:p="property" xmlns:r="reflection" Id="IUcyMPgYoBPOOreSYGQM9a" LanguageVersion="2026.8.0-0278-g8b85ba4511" Version="0.128">
+<Document xmlns:p="property" xmlns:r="reflection" Id="IUcyMPgYoBPOOreSYGQM9a" LanguageVersion="2026.8.0-0317-g4bf4984586" Version="0.128">
   <NugetDependency Id="IXpvYU0bJ4lOHBFloTLTjW" Location="VL.CoreLib" />
   <Patch Id="NFjsKs2YB4bM7oG09u4OFJ">
     <Canvas Id="TrXH3OWIXRsNQKxRH5EEpq" DefaultCategory="Main" BordersChecked="false" CanvasType="FullCategory" />
@@ -18,7 +18,7 @@
           <Node Bounds="291,314,185,19" Id="OCdZkMJdNm6QdJzMjHaHZy">
             <p:NodeReference LastCategoryFullName="Rive" LastDependency="VL.Rive.vl">
               <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
-              <Choice Kind="ProcessAppFlag" Name="RiveRenderer2" />
+              <Choice Kind="ProcessAppFlag" Name="RiveRenderer (3D)" />
             </p:NodeReference>
             <p:HelpFocus p:Assembly="VL.Lang" p:Type="VL.Model.HelpPriority">High</p:HelpFocus>
             <Pin Id="LWb318yNGJHQDyHXkeCVCL" Name="Node Context" Kind="InputPin" IsHidden="true" />
@@ -32,7 +32,6 @@
             <Pin Id="Cj7mDXVGH2cLOJqMFNHwHd" Name="File" Kind="InputPin" />
             <Pin Id="T3JOSJDQ3ijQSfDblxmm1y" Name="Artboard Name" Kind="InputPin" />
             <Pin Id="CCZYkBM9lcvPfVBcXL8Tw8" Name="Scene Name" Kind="InputPin" />
-            <Pin Id="AEBHZIWCRQQP1ABeEYZhld" Name="Reload" Kind="InputPin" />
             <Pin Id="MVHgJxm8upIPt9x9tse6m3" Name="Clear Color" Kind="InputPin" />
           </Node>
           <Node Bounds="331,270,80,19" Id="DsKwmOpScVCNXX1IK1s7Qn">
@@ -69,7 +68,7 @@
               <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
               <Choice Kind="ProcessAppFlag" Name="SceneWindow" />
             </p:NodeReference>
-            <Pin Id="EX1vEOZIc0xO3Asfr3PxHP" Name="Bounds" Kind="InputPin" DefaultValue="1444, 69, 786, 432" IsHidden="true" />
+            <Pin Id="EX1vEOZIc0xO3Asfr3PxHP" Name="Bounds" Kind="InputPin" DefaultValue="1112, 102, 786, 432" IsHidden="true" />
             <Pin Id="MGKnEYXwslzLnYHjA0eDS2" Name="Bound to Document" Kind="InputPin" IsHidden="true" />
             <Pin Id="AqXf4a1jcmyOZDFUqp2s27" Name="Dialog If Document Changed" Kind="InputPin" IsHidden="true" />
             <Pin Id="SwKTuxYuvPBOj8sfJuvw00" Name="Save Bounds" Kind="InputPin" IsHidden="true" />
@@ -197,7 +196,7 @@
               <p:stringtype p:Assembly="VL.Core" p:Type="VL.Core.StringType">Comment</p:stringtype>
             </p:ValueBoxSettings>
           </Pad>
-          <Pad Id="HoD2Wp24EVeLGXIOgOiBYz" Bounds="624,383,190,42" ShowValueBox="true" isIOBox="true" Value="Note the Experimental status of the RiveRenderer2 node">
+          <Pad Id="HoD2Wp24EVeLGXIOgOiBYz" Bounds="624,383,190,42" ShowValueBox="true" isIOBox="true" Value="Note the Experimental status of the RiveRenderer (3D) node">
             <p:TypeAnnotation LastCategoryFullName="Primitive" LastDependency="VL.CoreLib.vl">
               <Choice Kind="TypeFlag" Name="String" />
             </p:TypeAnnotation>
@@ -211,38 +210,15 @@
               <Choice Kind="TypeFlag" Name="Path" />
             </p:TypeAnnotation>
           </Pad>
-          <Node Bounds="912,251,69,19" Id="VlEYTeFydIcM0CeRM0DJGc">
-            <p:NodeReference LastCategoryFullName="System.Help" LastDependency="VL.HelpAssets.vl">
+          <Node Bounds="226,200,51,19" Id="NU0HoPdlTPSMoMuEKieV69">
+            <p:NodeReference LastCategoryFullName="Rive" LastDependency="VL.Rive.vl">
               <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
-              <Choice Kind="ProcessAppFlag" Name="ModelAsset" />
+              <Choice Kind="ProcessAppFlag" Name="RiveFile" />
             </p:NodeReference>
-            <Pin Id="JSAnQW76SBpPRByPHMGB2h" Name="Node Context" Kind="InputPin" IsHidden="true" />
-            <Pin Id="Rkxt9x8d2YoQI0XLXhQy6i" Name="Asset" Kind="InputPin" DefaultValue="6-subset-cube.dae" />
-            <Pin Id="QdZQb0pKz1tOWd7oxSAdqy" Name="File Path" Kind="OutputPin" />
-          </Node>
-          <Node Bounds="912,291,85,19" Id="EI9TMm5LvjcMfkUWgArJSg">
-            <p:NodeReference LastCategoryFullName="Stride.Models" LastDependency="VL.Stride.vl">
-              <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
-              <Choice Kind="ProcessAppFlag" Name="ModelReader" />
-            </p:NodeReference>
-            <Pin Id="FyL4faPIW0iNS0of9bn3xD" Name="Node Context" Kind="InputPin" IsHidden="true" />
-            <Pin Id="MJfXmN9WvpcPbwPAQfqw1U" Name="Path" Kind="InputPin" />
-            <Pin Id="EXcgP3HlAVIOGec68oEQ31" Name="Import Scale" Kind="InputPin" />
-            <Pin Id="Q7GKkY1FScWPCA8GHgv7oU" Name="Pivot Position" Kind="InputPin" />
-            <Pin Id="RjNO5KhvQB0MG4ZyEwzC1L" Name="Merge Meshes" Kind="InputPin" />
-            <Pin Id="Gd2s71ec4NnNyhTOT3nWCT" Name="Reload" Kind="InputPin" />
-            <Pin Id="BGo3asq3CYGNwz7ktX4ahl" Name="Model" Kind="OutputPin" />
-          </Node>
-          <Node Bounds="912,331,66,19" Id="FxgAYNGrhuyMXdKzPqpuJg">
-            <p:NodeReference LastCategoryFullName="Stride.Models" LastDependency="VL.Stride.vl">
-              <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
-              <Choice Kind="ProcessAppFlag" Name="GetMeshes" />
-            </p:NodeReference>
-            <Pin Id="BsycUnSSVymOOmt5Ej94vv" Name="Node Context" Kind="InputPin" IsHidden="true" />
-            <Pin Id="D6rgcuOWOGlQAFNSSk8nHd" Name="Input" Kind="InputPin" />
-            <Pin Id="ScEk2PpfJMFNP8BGwuEXVM" Name="Output" Kind="OutputPin" />
-            <Pin Id="PtRVTrChq0LLfm1F3dfLpy" Name="First Mesh" Kind="OutputPin" />
-            <Pin Id="E802y9rw5FgL7mF9pv2nVy" Name="Meshes" Kind="OutputPin" />
+            <Pin Id="EeNiSiz3BrhNyiU7o7se2o" Name="Node Context" Kind="InputPin" IsHidden="true" />
+            <Pin Id="DuV17N58rZ7N4VdPx5wBuw" Name="File" Kind="InputPin" />
+            <Pin Id="FkJFBqmDQ67ObOy4KNYlC7" Name="Reload" Kind="InputPin" />
+            <Pin Id="EnGEiD8gcYuQSO468iQW9B" Name="Output" Kind="OutputPin" />
           </Node>
         </Canvas>
         <Patch Id="Vnymg3KwFcqPuuJT3crEKr" Name="Create" />
@@ -262,9 +238,8 @@
         <Link Id="MreC3sYd6vtP6eJfpd4idw" Ids="BUxaUELfUDIOB2nEht7uBn,N7VyFJWM4RxPJXC5F4gVPs" />
         <Link Id="P3IKiEkuGvEQbiQLJuKxk1" Ids="MMnwXOoxjHQPV8MB5yZ5Gs,OEWfbsDp9C1PGMgGW7UG9K" />
         <Link Id="TIKfrdj9xjiLGF1a9wMoeC" Ids="N6wBtHgtv16L0EZHeaD9WC,SGg9jqWZpUyLy1sZ0LolOl" />
-        <Link Id="KgrCrB8VTNXNtuugJpMcFY" Ids="MEiVbGQmyZeNfFIt95V1jR,Cj7mDXVGH2cLOJqMFNHwHd" />
-        <Link Id="UHVma6b8te5NCVAzEO3LTZ" Ids="QdZQb0pKz1tOWd7oxSAdqy,MJfXmN9WvpcPbwPAQfqw1U" />
-        <Link Id="PAOAInsbnGrQPX7KTHx4pZ" Ids="BGo3asq3CYGNwz7ktX4ahl,D6rgcuOWOGlQAFNSSk8nHd" />
+        <Link Id="KgrCrB8VTNXNtuugJpMcFY" Ids="MEiVbGQmyZeNfFIt95V1jR,DuV17N58rZ7N4VdPx5wBuw" />
+        <Link Id="J8sgf0yWUmOOXQpJhh93Tm" Ids="EnGEiD8gcYuQSO468iQW9B,Cj7mDXVGH2cLOJqMFNHwHd" />
       </Patch>
     </Node>
   </Patch>
