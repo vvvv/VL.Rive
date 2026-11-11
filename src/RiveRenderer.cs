@@ -323,8 +323,7 @@ public sealed partial class RiveRenderer : RendererBase
         riveRenderTarget.SetTargetTexture(default);
 
         // Restore Stride's pipeline state
-        // TODO: Turn this into an official API in Stride
-        context.CommandList.RestorePipelineState();
+        context.CommandList.RestoreCommandListState();
 
         // See submodules\rive-runtime\renderer\src\d3d11\render_context_d3d_impl.cpp
         static bool IsSupportedByRive(PixelFormat format)
