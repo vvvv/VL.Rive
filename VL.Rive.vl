@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Document xmlns:p="property" xmlns:r="reflection" Id="EWHWcwf3oBvPnhn254YyBa" LanguageVersion="2026.8.0-0317-g4bf4984586" Version="0.128">
+<Document xmlns:p="property" xmlns:r="reflection" Id="EWHWcwf3oBvPnhn254YyBa" LanguageVersion="2026.8.0-0325-ga92cfc5db3" Version="0.128">
   <Patch Id="Rgz0iK0cdl5O6XLZAnSI2k">
     <Canvas Id="EtMz6eWyJpjMOVOROl6714" DefaultCategory="Rive" CanvasType="FullCategory">
       <!--
@@ -22,7 +22,7 @@
               </p:NodeReference>
               <Pin Id="RBinflGqBS1OZvjpQrKrMm" Name="Output" Kind="StateOutputPin" />
               <Pin Id="GuNcWYiojN5MARcMnZrQ1H" Name="Node Context" Kind="InputPin" IsHidden="true" />
-              <Pin Id="A16DzV3RoQ5L7nVlHCqUxA" Name="File" Kind="InputPin" />
+              <Pin Id="EUJ0OnATCA3OS40K0hzBeN" Name="Input" Kind="InputPin" />
               <Pin Id="FeoJCEJ2aGKPXbsblcf1yC" Name="Artboard Name" Kind="InputPin" />
               <Pin Id="DpVr0R0zojmPqwq3GOHxdS" Name="Scene Name" Kind="InputPin" />
               <Pin Id="PdJsxfcre99Lt9DLB9rJtD" Name="View Model" Kind="InputPin" />
@@ -32,6 +32,7 @@
               <Pin Id="KZCcIC9jlZnQWwsKOiUf2W" Name="Content" Kind="InputPin" />
               <Pin Id="UMp5w7vGDy8Lyt64uvwiiz" Name="Scale Factor" Kind="InputPin" />
               <Pin Id="GeR1YLFCrZpMmXXiFbSmAx" Name="View Model" Kind="OutputPin" />
+              <Pin Id="HuuIWI89H1ELrU6UeLMBed" Name="Progress" Kind="InputPin" IsHidden="true" />
             </Node>
             <Node Bounds="200,520,145,19" Id="CavnLlk7QEEND5PV9srJal">
               <p:NodeReference LastCategoryFullName="Stride" LastDependency="VL.Stride.vl">
@@ -153,7 +154,7 @@
               <Pin Id="Hmp2FM328YLLvAvjynb0Hc" Name="Input" Kind="StateInputPin" />
               <Pin Id="B94rYDOBWxbL9uuhD0hPzU" Name="Output" Kind="StateOutputPin" />
             </Node>
-            <ControlPoint Id="G4GwPwGdwqnNQ2y48Ke6iZ" Bounds="429,171" />
+            <ControlPoint Id="G4GwPwGdwqnNQ2y48Ke6iZ" Bounds="428,181" />
             <ControlPoint Id="MiSqAgo2dtgLEsPNXf1XWO" Bounds="227,150" />
           </Canvas>
           <Link Id="MjCyxR3fmU9NVmooNhVqMy" Ids="RBinflGqBS1OZvjpQrKrMm,BUijS5hWOsuQJD84UoEInU" />
@@ -162,20 +163,21 @@
           <Link Id="J8YLUKrRJC5P2nMNk9dvXE" Ids="U5mJy1kMkvbPpGnVdEWuk8,Rt9R2gXqJ56QLxMHFjITJY" IsHidden="true" />
           <Link Id="DCCa24dGU9MMb3MVVYAkCh" Ids="QyH767Dhos6LROqKJHIamo,U5mJy1kMkvbPpGnVdEWuk8" />
           <Patch Id="PSn5UqbHSNmM0OjTXcJvkd" Name="Create" />
-          <Patch Id="RJr9eQxa2uSQL1JugongeJ" Name="Update" ManuallySortedPins="true">
-            <Pin Id="GGQl7ZweiSwMspEtgLNDLN" Name="File" Kind="InputPin" />
+          <Patch Id="RJr9eQxa2uSQL1JugongeJ" Name="Update">
+            <Pin Id="KbARuAjqPVbOzC4I7EUjiG" Name="Input" Kind="InputPin" />
             <Pin Id="HE3B3yqzhj8Oe6qyJbmjiE" Name="Artboard Name" Kind="InputPin" />
             <Pin Id="PKD3bqgSLwHOYmxqwx1iO0" Name="Scene Name" Kind="InputPin" />
+            <Pin Id="VnkOBytYCqAOhZfYUEFqhB" Name="View Model" Kind="InputPin" />
             <Pin Id="BidAkY64xwHLygnvcjBump" Name="Fit" Kind="InputPin" Visibility="Optional" />
             <Pin Id="KBDwx5YOyV4QVjjYW53P3w" Name="Alignment" Kind="InputPin" Visibility="Optional" />
             <Pin Id="C86iaoqOxgZL7Y3cVPfd0j" Name="Frame" Kind="InputPin" Visibility="Optional" />
             <Pin Id="VsevbHS8ttGNKpsbLpRUaD" Name="Content" Kind="InputPin" Visibility="Optional" />
             <Pin Id="SpFkQN9UpQuPzucuNs0U2n" Name="Scale Factor" Kind="InputPin" Visibility="Optional" />
-            <Pin Id="AkH6InzVu9kOV6QCZRarJm" Name="Size" Kind="InputPin" />
             <Pin Id="IZQUv7LY9QnOxpWYJnXxq5" Name="Clear Color" Kind="InputPin" />
             <Pin Id="Rt9R2gXqJ56QLxMHFjITJY" Name="Output" Kind="OutputPin" />
-            <Pin Id="UG60CJdwvoxNhCjNtrhDa9" Name="View Model" Kind="OutputPin" />
             <Pin Id="AAoKEecOkRILgtP8pYPB5S" Name="Rive" Kind="OutputPin" />
+            <Pin Id="AkH6InzVu9kOV6QCZRarJm" Name="Size" Kind="InputPin" />
+            <Pin Id="UG60CJdwvoxNhCjNtrhDa9" Name="View Model" Kind="OutputPin" />
           </Patch>
           <ProcessDefinition Id="RJ18v6U7dUNNPKs0itAIFh">
             <Fragment Id="RUKkLJW5PcLLf1eW4qnLmi" Patch="PSn5UqbHSNmM0OjTXcJvkd" Enabled="true" />
@@ -220,19 +222,20 @@
                 <Choice Kind="ProcessAppFlag" Name="RiveTexture" />
               </p:NodeReference>
               <Pin Id="BjJ3HGwhLTQMDzwzErOZAz" Name="Node Context" Kind="InputPin" IsHidden="true" />
-              <Pin Id="Ki6TsXmEYc6L2V0AjsuAER" Name="File" Kind="InputPin" />
+              <Pin Id="L49KS7CiDIaMk1ETBULLK9" Name="Input" Kind="InputPin" />
               <Pin Id="FWbpcdNAKnBPeAtSFrRj68" Name="Artboard Name" Kind="InputPin" />
               <Pin Id="DUbfle6epUUM09Nm9PGjmm" Name="Scene Name" Kind="InputPin" />
+              <Pin Id="SvKeF3jCyEIPVUzYaDfkFy" Name="View Model" Kind="InputPin" />
               <Pin Id="EjSBWg1916CNM3D61AW9Jy" Name="Fit" Kind="InputPin" />
               <Pin Id="HiiiWlQoJWuLjuCHkOzGwz" Name="Alignment" Kind="InputPin" />
               <Pin Id="PsftfvQLXo3NNg69NDcegu" Name="Frame" Kind="InputPin" />
               <Pin Id="JKChlbRRkYELMkXbSlXFX1" Name="Content" Kind="InputPin" />
               <Pin Id="O95l4enzYePN22sKbXnPb5" Name="Scale Factor" Kind="InputPin" />
-              <Pin Id="Oi6nbiZVs8vLbmHKVOYITm" Name="Size" Kind="InputPin" />
               <Pin Id="SIhxwnvj8H1MgQ8f40X8h6" Name="Clear Color" Kind="InputPin" DefaultValue="0, 0, 0, 0" />
               <Pin Id="AIlXSxoqJAULAV8RuSZYfT" Name="Output" Kind="OutputPin" />
-              <Pin Id="UBhzbkE4hKcMeZR46ZMenu" Name="View Model" Kind="OutputPin" />
               <Pin Id="HXqIxgrEpssQQ0Y4gliwhx" Name="Rive" Kind="OutputPin" />
+              <Pin Id="Oi6nbiZVs8vLbmHKVOYITm" Name="Size" Kind="InputPin" />
+              <Pin Id="UBhzbkE4hKcMeZR46ZMenu" Name="View Model" Kind="OutputPin" />
             </Node>
             <Node Bounds="312,998,125,166" Id="JJ9mtat0y26Ncy3wq1PtuU">
               <p:NodeReference LastCategoryFullName="Reactive" LastDependency="VL.CoreLib.vl">
@@ -877,7 +880,6 @@
           <Link Id="T33icWxAf7rPMrGMRrTj0q" Ids="P2uoBQHIXzbMTAWUY5ksV7,SuNq5emAn9FN2e868gZf8J" IsHidden="true" />
           <Patch Id="C1qbGwwApPBPSrweRtN61w" Name="Create" />
           <Patch Id="KtuzOKVDWEFPHMZV97Y3ph" Name="Update" ManuallySortedPins="true">
-            <Pin Id="TDFFl2vEPd9L5w3NRAdSmG" Name="File" Kind="InputPin" />
             <Pin Id="UvhhsWK1GawLlzJoygtbEB" Name="Artboard Name" Kind="InputPin" />
             <Pin Id="B67k9sCGn1ePhLEtzSipSf" Name="Scene Name" Kind="InputPin" />
             <Pin Id="GiVr3jy6tWLNyrq3E3nKy7" Name="Fit" Kind="InputPin" />
