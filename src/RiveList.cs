@@ -11,7 +11,6 @@ namespace VL.Rive;
 /// long as it is in the list, even if the object that was added is disposed or collected. The same item always comes
 /// back as the same object.
 /// </summary>
-[Smell(SymbolSmell.Advanced)]
 public sealed class RiveList : IReadOnlyList<RiveViewModel>, IList<RiveViewModel>, IRiveValue<RiveList>
 {
     private readonly RiveContext riveContext;

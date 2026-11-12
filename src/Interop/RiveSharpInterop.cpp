@@ -493,6 +493,19 @@ extern "C"
         }
     }
 
+    // Resizes the artboard, which lays out its content again (Fit.Layout). Rive expects this before advancing.
+    void rive_Artboard_SetSize(Artboard* artboard, float width, float height)
+    {
+        artboard->width(width);
+        artboard->height(height);
+    }
+
+    // Back to the size the artboard has in the file
+    void rive_Artboard_ResetSize(Artboard* artboard)
+    {
+        artboard->resetSize();
+    }
+
     RiveAABB rive_Artboard_Bounds(Artboard* artboard)
     {
         AABB bounds = artboard->bounds();

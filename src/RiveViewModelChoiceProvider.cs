@@ -6,9 +6,9 @@ using VL.Rive.Internal;
 namespace VL.Rive;
 
 /// <summary>
-/// Offers the view models of the Rive file that is linked to the <c>File</c> input of the node.
+/// Offers the view models of the Rive file that is linked to the <c>Input</c> input of the node.
 /// </summary>
-[ChoiceProviderRequires("File")]
+[ChoiceProviderRequires("Input")]
 [Smell(SymbolSmell.Hidden)]
 public sealed class RiveViewModelChoiceProvider : IChoiceProvider
 {
@@ -16,7 +16,7 @@ public sealed class RiveViewModelChoiceProvider : IChoiceProvider
     public TimeSpan Timeout { get; init; } = TimeSpan.FromSeconds(2);
 
     public Task<IReadOnlyList<ChoiceEntry>?> GetChoicesAsync(IChoiceContext context, CancellationToken cancellationToken)
-        => RiveChoices.ReadAsync(context, "File", input => GetChoices(RiveChoices.Alive(input)), Timeout, cancellationToken);
+        => RiveChoices.ReadAsync(context, "Input", input => GetChoices(RiveChoices.Alive(input)), Timeout, cancellationToken);
 
     // Null (a plain text input) while there is no file
     internal static IReadOnlyList<ChoiceEntry>? GetChoices(RiveContext? context)
@@ -25,7 +25,7 @@ public sealed class RiveViewModelChoiceProvider : IChoiceProvider
 
 /// <summary>
 /// Offers the instances that are defined in the file for the view model that is named by the <c>Name</c> input of the
-/// node, in the file that is linked to its <c>File</c> input. The first one is the default instance, and no name at all
+/// node, in the file that is linked to its <c>Input</c> input. The first one is the default instance, and no name at all
 /// makes an empty instance.
 /// </summary>
 [Smell(SymbolSmell.Hidden)]
@@ -33,7 +33,7 @@ public sealed class RiveViewModelChoiceProvider : IChoiceProvider
 public sealed class RiveViewModelInstanceChoiceProvider : IChoiceProvider
 {
     // The pins are found by the name they are shown with, a space between the words
-    private const string FilePin = "File";
+    private const string FilePin = "Input";
     private const string NamePin = "Name";
 
     public TimeSpan Timeout { get; init; } = TimeSpan.FromSeconds(2);
@@ -57,15 +57,15 @@ public sealed class RiveViewModelInstanceChoiceProvider : IChoiceProvider
                 .ToList();
 }
 
-/// <summary>Offers the artboards of the Rive file that is linked to the <c>File</c> input of the node.</summary>
-[ChoiceProviderRequires("File")]
+/// <summary>Offers the artboards of the Rive file that is linked to the <c>Input</c> input of the node.</summary>
+[ChoiceProviderRequires("Input")]
 [Smell(SymbolSmell.Hidden)]
 public sealed class RiveArtboardChoiceProvider : IChoiceProvider
 {
     public TimeSpan Timeout { get; init; } = TimeSpan.FromSeconds(2);
 
     public Task<IReadOnlyList<ChoiceEntry>?> GetChoicesAsync(IChoiceContext context, CancellationToken cancellationToken)
-        => RiveChoices.ReadAsync(context, "File", input => GetChoices(RiveChoices.Alive(input)), Timeout, cancellationToken);
+        => RiveChoices.ReadAsync(context, "Input", input => GetChoices(RiveChoices.Alive(input)), Timeout, cancellationToken);
 
     // The view model of an artboard is the hint behind its name
     internal static IReadOnlyList<ChoiceEntry>? GetChoices(RiveContext? context)
@@ -74,14 +74,14 @@ public sealed class RiveArtboardChoiceProvider : IChoiceProvider
 
 /// <summary>
 /// Offers the scenes (state machines and animations) of the artboard that is named by the <c>Artboard Name</c> input
-/// of the node, in the file that is linked to its <c>File</c> input.
+/// of the node, in the file that is linked to its <c>Input</c> input.
 /// </summary>
 [Smell(SymbolSmell.Hidden)]
 [ChoiceProviderRequires(FilePin, ArtboardNamePin)]
 public sealed class RiveSceneChoiceProvider : IChoiceProvider
 {
     // The pins are found by the name they are shown with, a space between the words
-    private const string FilePin = "File";
+    private const string FilePin = "Input";
     private const string ArtboardNamePin = "Artboard Name";
 
     public TimeSpan Timeout { get; init; } = TimeSpan.FromSeconds(2);

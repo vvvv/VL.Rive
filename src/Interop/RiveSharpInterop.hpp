@@ -188,6 +188,8 @@ extern "C"
     __declspec(dllexport) float rive_Scene_Height(Scene* scene);
 
     // Returns the bounds
+    __declspec(dllexport) void rive_Artboard_SetSize(Artboard* artboard, float width, float height);
+    __declspec(dllexport) void rive_Artboard_ResetSize(Artboard* artboard);
     __declspec(dllexport) RiveAABB rive_Scene_Bounds(Scene* scene);
 
     // Returns a pointer to the internal name string (valid as long as Scene is alive)

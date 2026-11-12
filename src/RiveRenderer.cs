@@ -50,6 +50,7 @@ public sealed partial class RiveRenderer : RendererBase
     IFrameClock frameClock;
     Int2 lastSize;
     RiveMat2D alignmentMat;
+    Vector2? layoutSize; // the size the artboard was resized to for Fit.Layout, null while it has its own
 
     readonly SerialDisposable inputSubscription = new SerialDisposable();
     readonly SerialDisposable viewModelWarning = new SerialDisposable();
@@ -75,24 +76,29 @@ public sealed partial class RiveRenderer : RendererBase
         frameClock = appHost.Services.GetRequiredService<IFrameClock>();
     }
 
-    /// <param name="file">The file to draw</param>
+    /// <param name="input">The file to draw</param>
     /// <param name="artboardName">The artboard, the default one if empty. The editor offers the ones in the file.</param>
     /// <param name="sceneName">The state machine or animation, the default one if empty. The editor offers the ones of the artboard.</param>
-    /// <param name="position">Drives an animation by hand: 0 is its start, 1 its end. While set, the animation does not advance by itself. A state machine has no time to scrub, it keeps advancing.</param>
+    /// <param name="fit">How the artboard is fitted into the frame</param>
+    /// <param name="alignment">Applies to all Fit modes except: Layout and Fill</param>
+    /// <param name="frame">The area to draw into, the whole render target if not set</param>
+    /// <param name="content">The part of the artboard to show, all of it if not set</param>
+    /// <param name="scaleFactor">Only works in Layout Fit mode</param>
+    /// <param name="progress">Progress for a linear animation from 0 to 1. While set, the animation does not advance by itself. A state machine has no time to scrub, it keeps advancing.</param>
     /// <param name="viewModel">The view model instance to bind. Another one replaces the first. With none, an instance of the view model of the artboard is bound, it comes out of the renderer.</param>
     [Fragment]
     [Smell(SymbolSmell.Internal)]
     public void Update(
-        RiveContext? file,
+        RiveContext? input,
         [ChoiceProvider(typeof(RiveArtboardChoiceProvider))] string? artboardName,
         [ChoiceProvider(typeof(RiveSceneChoiceProvider))] string? sceneName,
         RiveViewModel? viewModel,
-        [Pin(Visibility = Model.PinVisibility.Optional)] RiveFit fit,
+        RiveFit fit,
         [Pin(Visibility = Model.PinVisibility.Optional)] RiveAlignment alignment,
-        [Pin(Visibility = Model.PinVisibility.Optional)] Optional<RectangleF> frame,
-        [Pin(Visibility = Model.PinVisibility.Optional)] Optional<RectangleF> content,
+        [Pin(Visibility = Model.PinVisibility.Hidden)] Optional<RectangleF> frame,
+        [Pin(Visibility = Model.PinVisibility.Hidden)] Optional<RectangleF> content,
         [Pin(Visibility = Model.PinVisibility.Optional)] [DefaultValue(1f)] float scaleFactor,
-        [Pin(Visibility = Model.PinVisibility.Optional)] Optional<float> position)
+        [Pin(Visibility = Model.PinVisibility.Optional)] Optional<float> progress)
     {
         riveFit = fit;
         riveAlignment = alignment;
@@ -101,16 +107,16 @@ public sealed partial class RiveRenderer : RendererBase
         riveScaleFactor = scaleFactor;
 
         // A file that is gone counts as none
-        if (file is { IsDisposed: true })
-            file = null;
+        if (input is { IsDisposed: true })
+            input = null;
 
         // Load file
-        var newFile = !ReferenceEquals(file, riveContext);
+        var newFile = !ReferenceEquals(input, riveContext);
         if (newFile)
         {
             // Before the new one is remembered: what was made from the old one is let go of there
             DisposeRiveResources();
-            riveContext = file;
+            riveContext = input;
         }
 
         // Load artboard
@@ -198,18 +204,18 @@ public sealed partial class RiveRenderer : RendererBase
         if (riveScene is null)
             return;
 
-        if (position.HasValue && riveScene.SeekNormalized(position.Value))
+        if (progress.HasValue && riveScene.SeekNormalized(progress.Value))
         {
             seekWarning.Disposable = null;
         }
         else
         {
-            if (position.HasValue && seekWarning.Disposable is null)
+            if (progress.HasValue && seekWarning.Disposable is null)
             {
                 seekWarning.Disposable = nodeContext.AddPersistentMessage(MessageSeverity.Warning,
-                    $"Rive scene '{riveScene.Name}' is a state machine, it can't be scrubbed with Position.");
+                    $"Rive scene '{riveScene.Name}' is a state machine, it can't be scrubbed with Progress.");
             }
-            else if (!position.HasValue)
+            else if (!progress.HasValue)
                 seekWarning.Disposable = null;
 
             riveScene.AdvanceAndApply((float)frameClock.TimeDifference);
@@ -222,20 +228,10 @@ public sealed partial class RiveRenderer : RendererBase
 
     /// <summary>The view model instance that is bound: the one that came in, or the default one of the artboard.</summary>
     [Fragment(IsDefault = true)]
-    [Smell(SymbolSmell.Internal)]
+    [Smell(SymbolSmell.Hidden)]
     public RiveViewModel? ViewModel => riveViewModelInstance is { IsDisposed: false } ? riveViewModelInstance : null;
 
-    public string DumpFileAsJson()
-    {
-        var riveFile = riveContext is { IsDisposed: false } ? riveContext.RiveFile : null;
-        if (riveFile is null)
-            return string.Empty;
-
-        var sb = new System.Text.StringBuilder();
-        riveFile.WriteRiveFileAsJson(sb);
-        return sb.ToString();
-    }
-
+    [Smell(SymbolSmell.Internal)]
     public RectangleF GetArtboardBounds()
     {
         if (riveArtboard is null || riveArtboard.IsClosed)
@@ -288,10 +284,13 @@ public sealed partial class RiveRenderer : RendererBase
             renderer = riveContext.ImmediateRenderer;
         }
 
+        var riveFrameAabb = riveFrame.ToNative(new RiveAABB(0, 0, renderTarget.Width, renderTarget.Height));
+        ResizeArtboard(riveFrameAabb);
+
         alignmentMat = Methods.rive_ComputeAlignment(
             riveFit.ToNative(),
             riveAlignment.ToNative(),
-            frame: riveFrame.ToNative(new RiveAABB(0, 0, renderTarget.Width, renderTarget.Height)),
+            frame: riveFrameAabb,
             content: riveContent.ToNative(riveScene.Bounds), 
             scaleFactor: riveScaleFactor);
 
@@ -340,6 +339,33 @@ public sealed partial class RiveRenderer : RendererBase
         }
     }
 
+    // In Layout mode the artboard is resized to the frame (in units of the scale factor), so its layout fills it:
+    // https://rive.app/docs/runtimes/cpp/rendering-loop. Every other mode shows it at the size it has in the file.
+    private void ResizeArtboard(RiveAABB frame)
+    {
+        if (riveArtboard is null || riveArtboard.IsClosed || riveScene is null)
+            return;
+
+        if (riveFit == RiveFit.Layout)
+        {
+            var scale = riveScaleFactor > 0f ? riveScaleFactor : 1f;
+            var size = new Vector2((frame.maxX - frame.minX) / scale, (frame.maxY - frame.minY) / scale);
+            if (layoutSize != size)
+            {
+                layoutSize = size;
+                riveArtboard.SetSize(size.X, size.Y);
+                // Lays the content out again: the scene has to be advanced after a resize
+                riveScene.AdvanceAndApply(0f);
+            }
+        }
+        else if (layoutSize != null)
+        {
+            layoutSize = null;
+            riveArtboard.ResetSize();
+            riveScene.AdvanceAndApply(0f);
+        }
+    }
+
     protected override void Destroy()
     {
         inputSubscription.Dispose();
@@ -366,6 +392,7 @@ public sealed partial class RiveRenderer : RendererBase
         DisposeAndSetNull(ref riveDefaultViewModelInstance);
         ReleaseAndSetNull(ref riveScene); // before the artboard it is made from
         ReleaseAndSetNull(ref riveArtboard);
+        layoutSize = null;
     }
 
     private void DisposeRiveRenderResources()

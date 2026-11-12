@@ -23,6 +23,7 @@ public sealed class RiveFileNode : IDisposable
     private readonly IGraphicsDeviceService graphicsDeviceService;
     private RiveContext? riveContext;
     private Path? path;
+    private RiveFileContent? content;
 
     public RiveFileNode(NodeContext nodeContext)
     {
@@ -32,30 +33,36 @@ public sealed class RiveFileNode : IDisposable
             ?? throw new InvalidOperationException("No IGraphicsDeviceService available.");
     }
 
-    /// <param name="file">The .riv file</param>
+    /// <param name="filePath">The .riv file</param>
     /// <param name="reload">Loads the file again</param>
     /// <param name="output">The loaded file, null while there is none. It is a new one every time the file is loaded again.</param>
-    public void Update(Path? file, bool reload, out RiveContext? output)
+    /// <param name="content">What the file holds: its artboards (with their state machines and animations) and its view models</param>
+    public void Update(Path? filePath, bool reload, out RiveContext? output, [Smell(SymbolSmell.Advanced)] out RiveFileContent? content)
     {
         // Native device can change - check on each update
         var graphicsDevice = graphicsDeviceService.GraphicsDevice;
         graphicsDevice.TryGetNativeDevicePointer(GraphicsDeviceType.Direct3D11, out var devicePointer);
 
-        if (reload || file != path || (riveContext != null && riveContext.DevicePointer != devicePointer))
+        if (reload || filePath != path || (riveContext != null && riveContext.DevicePointer != devicePointer))
         {
             // Remember first: a file that does not load is reported once, not every frame
-            path = file;
+            path = filePath;
             Release();
 
-            var filePath = file?.ToString();
-            if (devicePointer != default && graphicsDevice.TryGetNativeDeviceContextPointer(GraphicsDeviceType.Direct3D11, out var deviceContextPointer) && !string.IsNullOrEmpty(filePath))
-                riveContext = RiveContext.Create(nodeContext, logger, devicePointer, deviceContextPointer, filePath);
+            var pathString = filePath?.ToString();
+            if (devicePointer != default && graphicsDevice.TryGetNativeDeviceContextPointer(GraphicsDeviceType.Direct3D11, out var deviceContextPointer) && !string.IsNullOrEmpty(pathString))
+                riveContext = RiveContext.Create(nodeContext, logger, devicePointer, deviceContextPointer, pathString);
         }
 
         output = riveContext;
+        content = riveContext is null ? null : this.content ??= RiveFileContent.From(riveContext.RiveFile);
     }
 
-    private void Release() => Interlocked.Exchange(ref riveContext, null)?.Dispose();
+    private void Release()
+    {
+        content = null;
+        Interlocked.Exchange(ref riveContext, null)?.Dispose();
+    }
 
     public void Dispose() => Release();
 }

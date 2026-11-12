@@ -43,6 +43,20 @@ internal class RiveArtboardInstance : RiveObject
         return new RiveScene(sceneHandle);
     }
 
+    /// <summary>Resizes the artboard so its layout fills the given size. Needed before advancing for Fit.Layout.</summary>
+    public void SetSize(float width, float height)
+    {
+        ObjectDisposedException.ThrowIf(IsClosed, this);
+        rive_Artboard_SetSize(handle, width, height);
+    }
+
+    /// <summary>Back to the size the artboard has in the file.</summary>
+    public void ResetSize()
+    {
+        ObjectDisposedException.ThrowIf(IsClosed, this);
+        rive_Artboard_ResetSize(handle);
+    }
+
     protected override bool ReleaseHandle()
     {
         rive_ArtboardInstance_Destroy(handle);

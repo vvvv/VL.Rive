@@ -193,7 +193,7 @@ public class ChoiceProviderTests
 
         public Task<T> ReadInputAsync<T>(string pinName, Func<object?, T> read, CancellationToken cancellationToken = default)
         {
-            Assert.That(pinName, Is.EqualTo("File").IgnoreCase);
+            Assert.That(pinName, Is.EqualTo("Input").IgnoreCase);
             if (!neverReads)
                 return Task.FromResult(read(input));
 

@@ -150,6 +150,7 @@ public unsafe class RiveViewModel : IVLObject, INotifyPropertyChanged, IRiveValu
 
     internal RiveViewModelType Type => riveContext.ViewModels[ViewModelId];
 
+    [Smell(SymbolSmell.Hidden)]
     public override string ToString() => IsDisposed ? $"{typeName} (disposed)" : typeName;
 
     AppHost IVLObject.AppHost => riveContext.NodeContext.AppHost;

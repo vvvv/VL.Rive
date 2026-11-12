@@ -2,6 +2,7 @@
 using System.Collections.Immutable;
 using System.Runtime.InteropServices;
 using VL.Core;
+using VL.Core.Import;
 using VL.Rive.Internal;
 using VL.Rive.Interop;
 
@@ -191,6 +192,7 @@ public sealed class RiveContext : IDisposable
             children.Remove(child);
     }
 
+    [Smell(SymbolSmell.Hidden)]
     public override string ToString() => FilePath is null ? "Rive file" : System.IO.Path.GetFileName(FilePath);
 
     void IDisposable.Dispose() => Dispose();
