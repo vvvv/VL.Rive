@@ -73,7 +73,7 @@ public sealed class RiveArtboardChoiceProvider : IChoiceProvider
 }
 
 /// <summary>
-/// Offers the scenes (state machines and animations) of the artboard that is named by the <c>Artboard Name</c> input
+/// Offers the scenes (state machines and animations) of the artboard that is named by the <c>Artboard</c> input
 /// of the node, in the file that is linked to its <c>Input</c> input.
 /// </summary>
 [Smell(SymbolSmell.Hidden)]
@@ -82,7 +82,7 @@ public sealed class RiveSceneChoiceProvider : IChoiceProvider
 {
     // The pins are found by the name they are shown with, a space between the words
     private const string FilePin = "Input";
-    private const string ArtboardNamePin = "Artboard Name";
+    private const string ArtboardNamePin = "Artboard";
 
     public TimeSpan Timeout { get; init; } = TimeSpan.FromSeconds(2);
 

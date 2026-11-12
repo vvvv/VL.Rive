@@ -77,8 +77,8 @@ public sealed partial class RiveRenderer : RendererBase
     }
 
     /// <param name="input">The file to draw</param>
-    /// <param name="artboardName">The artboard, the default one if empty. The editor offers the ones in the file.</param>
-    /// <param name="sceneName">The state machine or animation, the default one if empty. The editor offers the ones of the artboard.</param>
+    /// <param name="artboard">The artboard, the default one if empty. The editor offers the ones in the file.</param>
+    /// <param name="scene">The state machine or animation, the default one if empty. The editor offers the ones of the artboard.</param>
     /// <param name="fit">How the artboard is fitted into the frame</param>
     /// <param name="alignment">Applies to all Fit modes except: Layout and Fill</param>
     /// <param name="frame">The area to draw into, the whole render target if not set</param>
@@ -90,15 +90,15 @@ public sealed partial class RiveRenderer : RendererBase
     [Smell(SymbolSmell.Internal)]
     public void Update(
         RiveContext? input,
-        [ChoiceProvider(typeof(RiveArtboardChoiceProvider))] string? artboardName,
-        [ChoiceProvider(typeof(RiveSceneChoiceProvider))] string? sceneName,
+        [ChoiceProvider(typeof(RiveArtboardChoiceProvider))] string? artboard,
+        [ChoiceProvider(typeof(RiveSceneChoiceProvider))] string? scene,
         RiveViewModel? viewModel,
         RiveFit fit,
         [Pin(Visibility = Model.PinVisibility.Optional)] RiveAlignment alignment,
         [Pin(Visibility = Model.PinVisibility.Hidden)] Optional<RectangleF> frame,
         [Pin(Visibility = Model.PinVisibility.Hidden)] Optional<RectangleF> content,
         [Pin(Visibility = Model.PinVisibility.Optional)] [DefaultValue(1f)] float scaleFactor,
-        [Pin(Visibility = Model.PinVisibility.Optional)] Optional<float> progress)
+        Optional<float> progress)
     {
         riveFit = fit;
         riveAlignment = alignment;
@@ -120,24 +120,24 @@ public sealed partial class RiveRenderer : RendererBase
         }
 
         // Load artboard
-        var newArtboard = newFile || artboardName != this.artboardName;
+        var newArtboard = newFile || artboard != this.artboardName;
         if (newArtboard)
         {
-            this.artboardName = artboardName;
+            this.artboardName = artboard;
 
             DisposeRiveContext();
 
             var riveFile = riveContext?.RiveFile;
-            if (string.IsNullOrEmpty(artboardName))
+            if (string.IsNullOrEmpty(artboard))
                 riveArtboard = riveFile?.GetArtboardDefault();
             else
             {
-                riveArtboard = riveFile?.GetArtboard(artboardName);
+                riveArtboard = riveFile?.GetArtboard(artboard);
                 if (riveArtboard is null && riveContext != null)
                 {
                     // Shown on the node until the file or the name changes
                     lookupWarning.Disposable = nodeContext.AddPersistentMessage(MessageSeverity.Warning,
-                        $"Rive artboard '{artboardName}' not found in file '{riveContext.FilePath}'.");
+                        $"Rive artboard '{artboard}' not found in file '{riveContext.FilePath}'.");
                 }
             }
 
@@ -176,23 +176,23 @@ public sealed partial class RiveRenderer : RendererBase
         }
 
         // Load scene, after the artboard is bound: a state machine made from a bound artboard shares its data context
-        if (newArtboard || sceneName != this.sceneName)
+        if (newArtboard || scene != this.sceneName)
         {
-            this.sceneName = sceneName;
+            this.sceneName = scene;
 
             ReleaseAndSetNull(ref riveScene);
             if (riveArtboard != null)
                 lookupWarning.Disposable = null;
 
-            if (string.IsNullOrEmpty(sceneName))
+            if (string.IsNullOrEmpty(scene))
                 riveScene = riveArtboard?.GetDefaultScene();
             else
             {
-                riveScene = riveArtboard?.GetScene(sceneName);
+                riveScene = riveArtboard?.GetScene(scene);
                 if (riveScene is null && riveArtboard != null)
                 {
                     lookupWarning.Disposable = nodeContext.AddPersistentMessage(MessageSeverity.Warning,
-                        $"Rive scene '{sceneName}' not found in artboard '{riveArtboard.Name}' of file '{riveContext!.FilePath}'.");
+                        $"Rive scene '{scene}' not found in artboard '{riveArtboard.Name}' of file '{riveContext!.FilePath}'.");
                 }
             }
 
