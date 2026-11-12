@@ -15,8 +15,8 @@ public sealed record RiveFileContent(Spread<RiveArtboardContent> Artboards, Spre
     internal static RiveFileContent From(RiveFile file) => new(
         file.Artboards.Select(a => new RiveArtboardContent(
             a.Name,
-            a.StateMachines.Select(s => new RiveStateMachineContent(s.Name)).ToSpread(),
-            a.Animations.Select(x => new RiveAnimationContent(x.Name)).ToSpread(),
+            a.StateMachines.Select(s => s.Name).ToSpread(),
+            a.Animations.Select(x => x.Name).ToSpread(),
             a.DefaultViewModel)).ToSpread(),
         file.ViewModels.Select(v => new RiveViewModelContent(
             v.Name,
@@ -26,31 +26,17 @@ public sealed record RiveFileContent(Spread<RiveArtboardContent> Artboards, Spre
     public override string ToString() => $"{Artboards.Count} artboards, {ViewModels.Count} view models, {Enums.Count} enums";
 }
 
-/// <summary>An artboard of a Rive file: its state machines, animations and the view model it is made for.</summary>
+/// <summary>An artboard of a Rive file: the names of its state machines and animations, and the view model it is made for.</summary>
 [Smell(SymbolSmell.Advanced)]
 public record struct RiveArtboardContent(
     string Name,
-    Spread<RiveStateMachineContent> StateMachines,
-    Spread<RiveAnimationContent> Animations,
+    Spread<string> StateMachines,
+    Spread<string> Animations,
     string? DefaultViewModel)
 {
     public override string ToString()
         => $"{Name} ({StateMachines.Count} state machines, {Animations.Count} animations"
             + (DefaultViewModel is null ? ")" : $", view model {DefaultViewModel})");
-}
-
-/// <summary>A state machine of an artboard.</summary>
-[Smell(SymbolSmell.Advanced)]
-public record struct RiveStateMachineContent(string Name)
-{
-    public override string ToString() => Name;
-}
-
-/// <summary>An animation of an artboard.</summary>
-[Smell(SymbolSmell.Advanced)]
-public record struct RiveAnimationContent(string Name)
-{
-    public override string ToString() => Name;
 }
 
 /// <summary>A view model of a Rive file and its properties.</summary>
