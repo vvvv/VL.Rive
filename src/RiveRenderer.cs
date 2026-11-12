@@ -65,6 +65,7 @@ public sealed partial class RiveRenderer : RendererBase
     Optional<RectangleF> riveFrame;
     Optional<RectangleF> riveContent;
     float riveScaleFactor;
+    bool riveEnabled = true;
 
     [Fragment]
     [Smell(SymbolSmell.Internal)]
@@ -84,6 +85,7 @@ public sealed partial class RiveRenderer : RendererBase
     /// <param name="frame">The area to draw into, the whole render target if not set</param>
     /// <param name="content">The part of the artboard to show, all of it if not set</param>
     /// <param name="scaleFactor">Only works in Layout Fit mode</param>
+    /// <param name="enabled">Draws the scene. If false nothing is rendered.</param>
     /// <param name="progress">Progress for a linear animation from 0 to 1. While set, the animation does not advance by itself. A state machine has no time to scrub, it keeps advancing.</param>
     /// <param name="viewModel">The view model instance to bind. Another one replaces the first. With none, an instance of the view model of the artboard is bound, it comes out of the renderer.</param>
     [Fragment]
@@ -98,13 +100,15 @@ public sealed partial class RiveRenderer : RendererBase
         [Pin(Visibility = Model.PinVisibility.Hidden)] Optional<RectangleF> frame,
         [Pin(Visibility = Model.PinVisibility.Hidden)] Optional<RectangleF> content,
         [Pin(Visibility = Model.PinVisibility.Optional)] [DefaultValue(1f)] float scaleFactor,
-        Optional<float> progress)
+        Optional<float> progress,
+        [DefaultValue(true)] bool enabled)
     {
         riveFit = fit;
         riveAlignment = alignment;
         riveFrame = frame;
         riveContent = content;
         riveScaleFactor = scaleFactor;
+        riveEnabled = enabled;
 
         // A file that is gone counts as none
         if (input is { IsDisposed: true })
@@ -242,7 +246,7 @@ public sealed partial class RiveRenderer : RendererBase
 
     protected override unsafe void DrawCore(RenderDrawContext context)
     {
-        if (riveContext is null || riveContext.IsDisposed || riveScene is null || riveScene.IsClosed)
+        if (!riveEnabled || riveContext is null || riveContext.IsDisposed || riveScene is null || riveScene.IsClosed)
             return;
 
         var riveRenderContext = riveContext.RenderContext;
