@@ -141,6 +141,16 @@ namespace VL.Rive.Interop
         public static extern void rive_File_GetViewModel([NativeTypeName("rive::File *")] nint file, int index, [NativeTypeName("char **")] sbyte** name_out, int* propertiesCount_out);
 
         [DllImport("rive_interop", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern int rive_File_EnumCount([NativeTypeName("rive::File *")] nint file);
+
+        [DllImport("rive_interop", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern void rive_File_GetEnum([NativeTypeName("rive::File *")] nint file, int index, [NativeTypeName("char **")] sbyte** name_out, int* valueCount_out);
+
+        [DllImport("rive_interop", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        [return: NativeTypeName("char *")]
+        public static extern sbyte* rive_File_GetEnumValue([NativeTypeName("rive::File *")] nint file, int enumIndex, int valueIndex);
+
+        [DllImport("rive_interop", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern void rive_File_GetViewModelProperties([NativeTypeName("rive::File *")] nint file, int index, RivePropertyData* properties_out);
 
         [DllImport("rive_interop", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]

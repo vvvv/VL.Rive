@@ -124,7 +124,7 @@ internal unsafe class RiveFile : RiveObject
                             if (name.Contains('/'))
                                 continue;
 
-                            var property = new RivePropertyInfo(name, type, nativeProperty.viewModelReferenceId);
+                            var property = new RivePropertyInfo(name, type, nativeProperty.viewModelReferenceId, nativeProperty.enumId);
                             builder.Add(property);
                         }
                         finally
@@ -140,6 +140,46 @@ internal unsafe class RiveFile : RiveObject
                 {
                     if (namePtr != null)
                         NativeMemory.Free(namePtr);
+                }
+            }
+        }
+    }
+
+    private ImmutableArray<RiveEnumInfo> enums;
+
+    public ImmutableArray<RiveEnumInfo> Enums
+    {
+        get
+        {
+            if (enums.IsDefault)
+            {
+                var count = rive_File_EnumCount(handle);
+                var builder = ImmutableArray.CreateBuilder<RiveEnumInfo>(count);
+                for (var i = 0; i < count; i++)
+                    builder.Add(GetEnum(i));
+                enums = builder.MoveToImmutable();
+            }
+            return enums;
+
+            unsafe RiveEnumInfo GetEnum(int i)
+            {
+                sbyte* namePtr;
+                int valueCount;
+                rive_File_GetEnum(handle, i, &namePtr, &valueCount);
+                try
+                {
+                    var values = ImmutableArray.CreateBuilder<string>(valueCount);
+                    for (var j = 0; j < valueCount; j++)
+                    {
+                        var valuePtr = rive_File_GetEnumValue(handle, i, j);
+                        try { values.Add(SpanExtensions.AsString(valuePtr)); }
+                        finally { NativeMemory.Free(valuePtr); }
+                    }
+                    return new RiveEnumInfo(SpanExtensions.AsString(namePtr), values.MoveToImmutable());
+                }
+                finally
+                {
+                    NativeMemory.Free(namePtr);
                 }
             }
         }

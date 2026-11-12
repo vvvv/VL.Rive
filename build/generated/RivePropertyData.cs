@@ -8,5 +8,7 @@ namespace VL.Rive.Interop
         public sbyte* name;
 
         public int viewModelReferenceId;
+
+        public int enumId;
     }
 }

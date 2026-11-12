@@ -86,6 +86,7 @@ extern "C"
 		int type;
 		const char* name;
 		int viewModelReferenceId; // Index into ViewModel array in case this is a nested view model property
+		int enumId; // Index into the enums of the file in case this is an enum property, -1 otherwise
 	};
 
 	// C-API for computeAlignment
@@ -151,6 +152,9 @@ extern "C"
 	__declspec(dllexport) int rive_File_ViewModelCount(File* file);
 	__declspec(dllexport) void rive_File_GetViewModel(File* file, int index, char** name_out, int* propertiesCount_out);
 	__declspec(dllexport) void rive_File_GetViewModelProperties(File* file, int index, RivePropertyData* properties_out);
+	__declspec(dllexport) int rive_File_EnumCount(File* file);
+	__declspec(dllexport) void rive_File_GetEnum(File* file, int index, char** name_out, int* valueCount_out);
+	__declspec(dllexport) char* rive_File_GetEnumValue(File* file, int enumIndex, int valueIndex);
 	__declspec(dllexport) ViewModelRuntime* rive_File_ViewModelByIndex(File* file, int index);
 	__declspec(dllexport) ViewModelRuntime* rive_File_ViewModelByName(File* file, const char* name);
 

@@ -8,8 +8,9 @@ namespace VL.Rive;
 /// <summary>What a Rive file holds.</summary>
 /// <param name="Artboards">The artboards, with their state machines and animations</param>
 /// <param name="ViewModels">The view models, with their properties</param>
+/// <param name="Enums">The enums the properties of the view models can have, with their values</param>
 [Smell(SymbolSmell.Advanced)]
-public sealed record RiveFileContent(Spread<RiveArtboardContent> Artboards, Spread<RiveViewModelContent> ViewModels)
+public sealed record RiveFileContent(Spread<RiveArtboardContent> Artboards, Spread<RiveViewModelContent> ViewModels, Spread<RiveEnumContent> Enums)
 {
     internal static RiveFileContent From(RiveFile file) => new(
         file.Artboards.Select(a => new RiveArtboardContent(
@@ -19,9 +20,10 @@ public sealed record RiveFileContent(Spread<RiveArtboardContent> Artboards, Spre
             a.DefaultViewModel)).ToSpread(),
         file.ViewModels.Select(v => new RiveViewModelContent(
             v.Name,
-            v.Properties.Select(p => new RivePropertyContent(p.Name, (RivePropertyKind)(int)p.Type, p.ViewModelReferenceId)).ToSpread())).ToSpread());
+            v.Properties.Select(p => new RivePropertyContent(p.Name, (RivePropertyKind)(int)p.Type, p.ViewModelReferenceId, p.EnumId >= 0 && p.EnumId < file.Enums.Length ? file.Enums[p.EnumId].Name : null)).ToSpread())).ToSpread(),
+        file.Enums.Select(e => new RiveEnumContent(e.Name, e.Values.ToSpread())).ToSpread());
 
-    public override string ToString() => $"{Artboards.Count} artboards, {ViewModels.Count} view models";
+    public override string ToString() => $"{Artboards.Count} artboards, {ViewModels.Count} view models, {Enums.Count} enums";
 }
 
 /// <summary>An artboard of a Rive file: its state machines, animations and the view model it is made for.</summary>
@@ -58,11 +60,18 @@ public record struct RiveViewModelContent(string Name, Spread<RivePropertyConten
     public override string ToString() => $"{Name} ({Properties.Count} properties)";
 }
 
-/// <summary>A property of a view model: its name and kind, and for a view model property the id of the view model it refers to.</summary>
+/// <summary>A property of a view model: its name and kind, for a view model property the id of the view model it refers to, and for an enum property the name of its enum.</summary>
 [Smell(SymbolSmell.Advanced)]
-public record struct RivePropertyContent(string Name, RivePropertyKind Kind, int ViewModelReferenceId = default)
+public record struct RivePropertyContent(string Name, RivePropertyKind Kind, int ViewModelReferenceId = default, string? EnumType = null)
 {
-    public override string ToString() => $"{Name}: {Kind}";
+    public override string ToString() => EnumType is null ? $"{Name}: {Kind}" : $"{Name}: {Kind} ({EnumType})";
+}
+
+/// <summary>An enum of a Rive file and its values.</summary>
+[Smell(SymbolSmell.Advanced)]
+public record struct RiveEnumContent(string Name, Spread<string> Values)
+{
+    public override string ToString() => $"{Name} ({string.Join(", ", Values)})";
 }
 
 /// <summary>The kind of a view model property.</summary>

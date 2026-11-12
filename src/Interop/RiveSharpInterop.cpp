@@ -1,5 +1,6 @@
 #include "RiveSharpInterop.hpp"
 #include "rive/static_scene.hpp"
+#include "rive/viewmodel/viewmodel_property_enum.hpp"
 #include "rive/animation/linear_animation_instance.hpp"
 #include <algorithm>
 #include "rive/generated/viewmodel/viewmodel_property_viewmodel_base.hpp";
@@ -443,12 +444,46 @@ extern "C"
         {
             properties_out[i].type = static_cast<int>(rprops[i].type);
             properties_out[i].name = _strdup(rprops[i].name.c_str());
+            properties_out[i].viewModelReferenceId = 0;
+            properties_out[i].enumId = -1;
             if (rprops[i].type == DataType::viewModel)
             {
                 auto v = props[i]->as<ViewModelPropertyViewModelBase>();
                 properties_out[i].viewModelReferenceId = v->viewModelReferenceId();
             }
+            else if (rprops[i].type == DataType::enumType)
+            {
+                // The enum is shared with the file: its index there is what the managed side knows it by
+                auto dataEnum = props[i]->as<ViewModelPropertyEnum>()->dataEnum();
+                auto& fileEnums = file->enums();
+                for (int j = 0; j < static_cast<int>(fileEnums.size()); ++j)
+                {
+                    if (fileEnums[j] == dataEnum)
+                    {
+                        properties_out[i].enumId = j;
+                        break;
+                    }
+                }
+            }
         }
+    }
+
+    int rive_File_EnumCount(File* file)
+    {
+        return static_cast<int>(file->enums().size());
+    }
+
+    void rive_File_GetEnum(File* file, int index, char** name_out, int* valueCount_out)
+    {
+        auto dataEnum = file->enums()[index];
+        *name_out = _strdup(dataEnum->enumName().c_str());
+        *valueCount_out = static_cast<int>(dataEnum->values().size());
+    }
+
+    char* rive_File_GetEnumValue(File* file, int enumIndex, int valueIndex)
+    {
+        auto dataEnum = file->enums()[enumIndex];
+        return _strdup(dataEnum->value(static_cast<uint32_t>(valueIndex)).c_str());
     }
 
     ViewModelRuntime* rive_File_ViewModelByIndex(File* file, int index)
@@ -808,6 +843,8 @@ extern "C"
         {
             properties_out[i].type = static_cast<int>(props[i].type);
             properties_out[i].name = _strdup(props[i].name.c_str());
+            properties_out[i].viewModelReferenceId = 0;
+            properties_out[i].enumId = -1;
         }
     }
 
