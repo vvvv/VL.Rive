@@ -330,8 +330,10 @@ public sealed partial class RiveRenderer : RendererBase
             switch (format)
             {
                 case PixelFormat.B8G8R8A8_UNorm:
+                case PixelFormat.B8G8R8A8_UNorm_SRgb:
                 case PixelFormat.B8G8R8A8_Typeless:
                 case PixelFormat.R8G8B8A8_UNorm:
+                case PixelFormat.R8G8B8A8_UNorm_SRgb:
                 case PixelFormat.R8G8B8A8_Typeless:
                     return true;
             }
