@@ -11,8 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 namespace VL.Rive;
 
 /// <summary>
-/// Loads a Rive file. The file lives on the GPU device of the app, so it is loaded again when the device changes.
-/// Everything made from the file (artboards, scenes, view model instances) goes away with it.
+/// Loads a Rive file. The file lives on the GPU device of the app, so it is loaded again when the device changes. Everything made from the file (artboards, scenes, view model instances) goes away with it.
 /// </summary>
 [ProcessNode(Name = "RiveFile", Summary = "Loads a Rive file", Tags = "rive,riv,load")]
 [Smell(SymbolSmell.Advanced)]

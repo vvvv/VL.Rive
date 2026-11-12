@@ -48,9 +48,7 @@ internal sealed class RiveViewModelType : IVLTypeInfo
     }
 
     /// <summary>
-    /// The instances of a view model can have no name or the same one. This gives each a name of its own to choose it
-    /// by: the names there are, the second of the same one with a number behind it, and "Instance" (and the numbers behind
-    /// it) for the ones that have none. Kept in the order of the instances.
+    /// The instances of a view model can have no name or the same one. This gives each a name of its own to choose it by: the names there are, the second of the same one with a number behind it, and "Instance" (and the numbers behind it) for the ones that have none. Kept in the order of the instances.
     /// </summary>
     internal static ImmutableArray<string> UniqueInstanceNames(IReadOnlyList<string?> names)
     {
@@ -80,8 +78,7 @@ internal sealed class RiveViewModelType : IVLTypeInfo
     }
 
     /// <summary>
-    /// The names of the instances of this view model that are defined in the file, as in the Rive editor, with a name
-    /// made up for the ones that have none (see <see cref="UniqueInstanceNames"/>). The first one is the default instance.
+    /// The names of the instances of this view model that are defined in the file, as in the Rive editor, with a name made up for the ones that have none (see <see cref="UniqueInstanceNames"/>). The first one is the default instance.
     /// </summary>
     internal ImmutableArray<string> InstanceNames { get; }
 

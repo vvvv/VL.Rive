@@ -4,9 +4,7 @@ using static VL.Rive.Interop.Methods;
 namespace VL.Rive.Interop;
 
 /// <summary>
-/// Records a file's drawing - including what its scripts do on the GPU - and replays it against the render context
-/// once per frame. Needed for files with GPU scripts: a script's render pass cannot nest inside a screen frame
-/// that is already open on the render context. Must outlive everything imported through it.
+/// Records a file's drawing - including what its scripts do on the GPU - and replays it against the render context once per frame. Needed for files with GPU scripts: a script's render pass cannot nest inside a screen frame that is already open on the render context. Must outlive everything imported through it.
 /// </summary>
 internal sealed class RiveDeferredHost : RiveObject
 {

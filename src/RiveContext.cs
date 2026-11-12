@@ -9,11 +9,7 @@ using VL.Rive.Interop;
 namespace VL.Rive;
 
 /// <summary>
-/// A loaded Rive file: what the file says (its view models, and the instances made from them) together with the
-/// render context and the recording host it was imported through. Images, fonts and scripts of a file are created by
-/// the GPU device, which is why a file has a render context of its own: it goes away, with everything made from it
-/// (artboards, scenes, view model instances, render targets), when the file is reloaded or the device changes.
-/// Renderers that show the same file take turns drawing with that one render context.
+/// A loaded Rive file: what the file says (its view models, and the instances made from them) together with the render context and the recording host it was imported through. Images, fonts and scripts of a file are created by the GPU device, which is why a file has a render context of its own: it goes away, with everything made from it (artboards, scenes, view model instances, render targets), when the file is reloaded or the device changes. Renderers that show the same file take turns drawing with that one render context.
 /// </summary>
 public sealed class RiveContext : IDisposable
 {
@@ -24,8 +20,7 @@ public sealed class RiveContext : IDisposable
     private Interop.RiveRenderer? immediateRenderer;
 
     /// <param name="nodeContext">
-    /// The VL node context, needed only where VL asks for type information or the host (<see cref="NodeContext"/>).
-    /// Null in tests, which exercise the Rive side without a VL app host.
+    /// The VL node context, needed only where VL asks for type information or the host (<see cref="NodeContext"/>). Null in tests, which exercise the Rive side without a VL app host.
     /// </param>
     internal RiveContext(NodeContext? nodeContext, RiveFile riveFile) : this(nodeContext, riveFile, null, null, null)
     {
@@ -85,8 +80,7 @@ public sealed class RiveContext : IDisposable
     private readonly Dictionary<nint, WeakReference<RiveViewModel>> viewModels = new();
 
     /// <summary>
-    /// Gives the one view model object for a native instance. Takes over the native reference the caller holds:
-    /// it goes to a new object, or is released when the instance already has one.
+    /// Gives the one view model object for a native instance. Takes over the native reference the caller holds: it goes to a new object, or is released when the instance already has one.
     /// </summary>
     internal RiveViewModel WrapViewModel(nint ownedHandle)
     {
@@ -116,9 +110,7 @@ public sealed class RiveContext : IDisposable
     }
 
     /// <summary>
-    /// Tells the listeners of every view model object of the file what has changed since the last time. Reaches what
-    /// a bound instance only holds, such as the items of its lists: an item has an object once somebody asked for it,
-    /// and only then somebody can listen to it.
+    /// Tells the listeners of every view model object of the file what has changed since the last time. Reaches what a bound instance only holds, such as the items of its lists: an item has an object once somebody asked for it, and only then somebody can listen to it.
     /// </summary>
     internal void AcknowledgeChanges()
     {

@@ -14,8 +14,7 @@ namespace VL.Rive;
 partial class RiveRenderer
 {
     /// <summary>
-    /// Forwards a mouse or touch notification to the scene. <paramref name="getPosition"/> must return the
-    /// position in the pixel space of the renderer's target. Returns true if the notification was handled.
+    /// Forwards a mouse or touch notification to the scene. <paramref name="getPosition"/> must return the position in the pixel space of the renderer's target. Returns true if the notification was handled.
     /// </summary>
     public bool SendNotification(INotification notification, Func<NotificationWithPosition, Vector2> getPosition)
     {

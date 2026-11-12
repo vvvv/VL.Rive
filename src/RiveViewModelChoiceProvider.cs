@@ -24,9 +24,7 @@ public sealed class RiveViewModelChoiceProvider : IChoiceProvider
 }
 
 /// <summary>
-/// Offers the instances that are defined in the file for the view model that is named by the <c>Name</c> input of the
-/// node, in the file that is linked to its <c>Input</c> input. The first one is the default instance, and no name at all
-/// makes an empty instance.
+/// Offers the instances that are defined in the file for the view model that is named by the <c>Name</c> input of the node, in the file that is linked to its <c>Input</c> input. The first one is the default instance, and no name at all makes an empty instance.
 /// </summary>
 [Smell(SymbolSmell.Hidden)]
 [ChoiceProviderRequires(FilePin, NamePin)]
@@ -73,8 +71,7 @@ public sealed class RiveArtboardChoiceProvider : IChoiceProvider
 }
 
 /// <summary>
-/// Offers the scenes (state machines and animations) of the artboard that is named by the <c>Artboard</c> input
-/// of the node, in the file that is linked to its <c>Input</c> input.
+/// Offers the scenes (state machines and animations) of the artboard that is named by the <c>Artboard</c> input of the node, in the file that is linked to its <c>Input</c> input.
 /// </summary>
 [Smell(SymbolSmell.Hidden)]
 [ChoiceProviderRequires(FilePin, ArtboardNamePin)]

@@ -9,10 +9,7 @@ using static VL.Rive.Interop.Methods;
 namespace VL.Rive;
 
 /// <summary>
-/// An instance of a Rive view model. It owns one reference to the native instance, which it releases when disposed
-/// or - for instances nobody disposes, such as those created in a patch - when it is finalized. An instance that is
-/// an item of a <see cref="RiveList"/> or bound to a scene is kept alive natively by the list or the scene for as
-/// long as it is used there, whatever happens to this object.
+/// An instance of a Rive view model. It owns one reference to the native instance, which it releases when disposed or - for instances nobody disposes, such as those created in a patch - when it is finalized. An instance that is an item of a <see cref="RiveList"/> or bound to a scene is kept alive natively by the list or the scene for as long as it is used there, whatever happens to this object.
 /// </summary>
 [Smell(SymbolSmell.Advanced)]
 public unsafe class RiveViewModel : IVLObject, INotifyPropertyChanged, IRiveValue<RiveViewModel>, IDisposable

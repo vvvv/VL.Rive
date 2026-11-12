@@ -7,9 +7,7 @@ using static VL.Rive.Interop.Methods;
 namespace VL.Rive;
 
 /// <summary>
-/// A list property of a view model instance. The items are view model instances; one added here stays alive for as
-/// long as it is in the list, even if the object that was added is disposed or collected. The same item always comes
-/// back as the same object.
+/// A list property of a view model instance. The items are view model instances; one added here stays alive for as long as it is in the list, even if the object that was added is disposed or collected. The same item always comes back as the same object.
 /// </summary>
 public sealed class RiveList : IReadOnlyList<RiveViewModel>, IList<RiveViewModel>, IRiveValue<RiveList>
 {

@@ -7,12 +7,10 @@ using VL.Rive.Internal;
 namespace VL.Rive;
 
 /// <summary>
-/// Creates an instance of one of the view models of a Rive file, and holds on to it: the same instance comes out
-/// every frame until the name or the file changes.
+/// Creates an instance of one of the view models of a Rive file, and holds on to it: the same instance comes out every frame until the name or the file changes.
 /// </summary>
 /// <remarks>
-/// Instances belong to the file they were created from. The instance is released when the node goes away. If it was
-/// added to a list or assigned to a nested property by then, the list or the property keeps it alive.
+/// Instances belong to the file they were created from. The instance is released when the node goes away. If it was added to a list or assigned to a nested property by then, the list or the property keeps it alive.
 /// </remarks>
 [ProcessNode(Name = "ViewModel", Summary = "Creates an instance of a view model of a Rive file", Tags = "rive,data binding,instance")]
 [Smell(SymbolSmell.Advanced)]
