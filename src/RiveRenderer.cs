@@ -28,9 +28,11 @@ namespace VL.Rive;
 /// and passes pointer input on to it.
 /// </summary>
 /// <remarks>
-/// The renderer makes an instance of the artboard of its own, so it has a state and a view model of its own, and
-/// advances the scene once per frame. Renderers of the same file draw one after the other with the render context of
-/// the file.
+/// The renderer makes an instance of the artboard of its own, so it has a state of its own. It binds the view model
+/// instance that comes in, or an instance of the view model of the artboard if there is none.
+/// The scene is advanced once per frame, unless Progress drives an animation by hand or the renderer is not enabled.
+/// With Fit set to Layout the artboard is resized to the frame.
+/// Renderers of the same file draw one after the other with the render context of the file.
 /// </remarks>
 [ProcessNode(HasStateOutput = true, FragmentSelection = FragmentSelection.Explicit)]
 [Smell(SymbolSmell.Advanced)]
