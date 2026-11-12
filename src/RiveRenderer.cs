@@ -85,7 +85,7 @@ public sealed partial class RiveRenderer : RendererBase
     /// <param name="frame">The area to draw into, the whole render target if not set</param>
     /// <param name="content">The part of the artboard to show, all of it if not set</param>
     /// <param name="scaleFactor">Only works in Layout Fit mode</param>
-    /// <param name="enabled">Draws the scene. If false nothing is rendered.</param>
+    /// <param name="enabled">Draws the scene. If false nothing is rendered and the scene is not advanced.</param>
     /// <param name="progress">Progress for a linear animation from 0 to 1. While set, the animation does not advance by itself. A state machine has no time to scrub, it keeps advancing.</param>
     /// <param name="viewModel">The view model instance to bind. Another one replaces the first. With none, an instance of the view model of the artboard is bound, it comes out of the renderer.</param>
     [Fragment]
@@ -205,7 +205,7 @@ public sealed partial class RiveRenderer : RendererBase
                 riveContext!.Track(riveScene);
         }
 
-        if (riveScene is null)
+        if (riveScene is null || !enabled)
             return;
 
         if (progress.HasValue && riveScene.SeekNormalized(progress.Value))
