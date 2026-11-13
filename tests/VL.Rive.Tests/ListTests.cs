@@ -19,7 +19,7 @@ public class ListTests
     public void SetUp()
     {
         factory = new RiveFactory();
-        var file = factory.LoadFile(Path.Combine(AppContext.BaseDirectory, "assets", "data-binding-lists.riv"));
+        var file = factory.LoadFile(Path.Combine(AppContext.BaseDirectory, "assets", "25474-47539-data-binding-lists.riv"));
         context = new RiveContext(nodeContext: null, file);
     }
 

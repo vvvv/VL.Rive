@@ -57,7 +57,7 @@ public class PublicSurfaceTests
     public void AListShowsHowManyItemsItHas()
     {
         using var factory = new RiveFactory();
-        using var context = new RiveContext(nodeContext: null, factory.LoadFile(Path.Combine(AppContext.BaseDirectory, "assets", "data-binding-lists.riv")));
+        using var context = new RiveContext(nodeContext: null, factory.LoadFile(Path.Combine(AppContext.BaseDirectory, "assets", "25474-47539-data-binding-lists.riv")));
         var (type, property) = context.ViewModels
             .SelectMany(t => t.Properties.Where(p => p.RiveProperty.Type == RiveDataType.List).Select(p => (t, p)))
             .First();
