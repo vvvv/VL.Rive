@@ -27,22 +27,22 @@ public sealed class RiveViewModelNode : IDisposable
 
     /// <param name="input">The file the view model is taken from</param>
     /// <param name="name">The name of the view model, the editor offers the ones in the file and shows it as the label of the node</param>
-    /// <param name="instanceName">The instance of the view model that is defined in the file to make a copy of, the editor offers the ones there are (the first is the default one). A blank instance if empty.</param>
+    /// <param name="instance">The instance of the view model that is defined in the file to make a copy of, the editor offers the ones there are (the first is the default one). A blank instance if empty.</param>
     /// <param name="viewModel">The instance, null while there is no file, no name is given or the file has no view model or instance of that name (the node shows a warning then)</param>
     public void Update(
         RiveContext? input,
         [NodeLabel, ChoiceProvider(typeof(RiveViewModelChoiceProvider))] string? name,
-        [ChoiceProvider(typeof(RiveViewModelInstanceChoiceProvider))] string? instanceName,
+        [ChoiceProvider(typeof(RiveViewModelInstanceChoiceProvider))] string? instance,
         out RiveViewModel? viewModel)
     {
-        instanceName = string.IsNullOrEmpty(instanceName) ? null : instanceName;
-        if (!ReferenceEquals(input, this.file) || name != this.name || instanceName != this.instanceName)
+        instance = string.IsNullOrEmpty(instance) ? null : instance;
+        if (!ReferenceEquals(input, this.file) || name != this.name || instance != this.instanceName)
         {
             Release();
 
             this.file = input;
             this.name = name;
-            this.instanceName = instanceName;
+            this.instanceName = instance;
 
             var context = input is { IsDisposed: false } ? input : null;
             if (context != null && !string.IsNullOrEmpty(name))
@@ -54,17 +54,17 @@ public sealed class RiveViewModelNode : IDisposable
                     warning.Disposable = nodeContext.AddPersistentMessage(MessageSeverity.Warning,
                         $"The Rive file '{input!.FilePath}' has no view model named '{name}'.");
                 }
-                else if (instanceName is null)
+                else if (instance is null)
                 {
                     this.viewModel = type.CreateInstance();
                 }
                 else
                 {
-                    this.viewModel = type.CreateInstanceFromName(instanceName);
+                    this.viewModel = type.CreateInstanceFromName(instance);
                     if (this.viewModel is null)
                     {
                         warning.Disposable = nodeContext.AddPersistentMessage(MessageSeverity.Warning,
-                            $"The view model '{name}' of the Rive file '{input!.FilePath}' has no instance named '{instanceName}'.");
+                            $"The view model '{name}' of the Rive file '{input!.FilePath}' has no instance named '{instance}'.");
                     }
                 }
             }
