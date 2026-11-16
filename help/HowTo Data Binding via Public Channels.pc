@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<PublicChannels>
+  <Channel Name="Rive" Type="RiveViewModel [Rive]" />
+  <Channel Name="Rive.COMPASS" Type="RiveViewModel [Rive]" />
+  <Channel Name="Rive.COMPASS.Compass_Text" Type="String [Primitive]" />
+  <Channel Name="Rive.COMPASS.Rotation" Type="Float32 [Primitive]" />
+  <Channel Name="Rive.G_Meter" Type="RiveViewModel [Rive]" />
+  <Channel Name="Rive.G_Meter. G-Number" Type="Float32 [Primitive]" />
+  <Channel Name="Rive.G_Meter.GForce_Direction" Type="Float32 [Primitive]" />
+  <Channel Name="Rive.TIRE PSI" Type="RiveViewModel [Rive]" />
+  <Channel Name="Rive.TIRE PSI.FL Tyre" Type="Float32 [Primitive]" />
+  <Channel Name="Rive.TIRE PSI.FR Tyre" Type="Float32 [Primitive]" />
+  <Channel Name="Rive.TIRE PSI.RL Tyre" Type="Float32 [Primitive]" />
+  <Channel Name="Rive.TIRE PSI.RR Tyre" Type="Float32 [Primitive]" />
+  <Channel Name="Rive.TIRE PSI.Widget_title" Type="String [Primitive]" />
+</PublicChannels>

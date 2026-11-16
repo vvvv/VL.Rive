@@ -1,0 +1,186 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Document xmlns:p="property" xmlns:r="reflection" Id="RMdq2hAUYqAPIF7QSAM1Dm" LanguageVersion="2026.8.0-0328-g2d427d5a66" Version="0.128">
+  <NugetDependency Id="P31TcB21GpsQMoE5avRDIK" Location="VL.CoreLib" />
+  <Patch Id="KwF3lactQFAPXQKeExxGTJ">
+    <Canvas Id="SY42jCjyWwzNXSZcNcrit7" DefaultCategory="Main" BordersChecked="false" CanvasType="FullCategory" />
+    <!--
+
+    ************************ Application ************************
+
+-->
+    <Node Name="Application" Bounds="100,100" Id="G4lsVDAGCW2MyyMueWNTGB">
+      <p:NodeReference>
+        <Choice Kind="ContainerDefinition" Name="Process" />
+        <FullNameCategoryReference ID="Primitive" />
+      </p:NodeReference>
+      <Patch Id="Qr4zBk43K2ALddqEWP5b4t">
+        <Canvas Id="HLRPJWUCmaxNVqKXsb1yjL" CanvasType="Group">
+          <Pad Id="GJgIGD1NzKCNsr3CQ4uDGF" Comment="File" Bounds="112,150,128,15" ShowValueBox="true" isIOBox="true" Value="assets\24641-46042-data-binding-artboards.riv">
+            <p:TypeAnnotation LastCategoryFullName="IO" LastDependency="VL.CoreLib.vl">
+              <Choice Kind="TypeFlag" Name="Path" />
+            </p:TypeAnnotation>
+          </Pad>
+          <Node Bounds="110,180,51,19" Id="G1JbD0M7dM8PUfNmg90gBb">
+            <p:NodeReference LastCategoryFullName="Rive" LastDependency="VL.Rive.vl">
+              <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
+              <Choice Kind="ProcessAppFlag" Name="RiveFile" />
+            </p:NodeReference>
+            <p:HelpFocus p:Assembly="VL.Lang" p:Type="VL.Model.HelpPriority">High</p:HelpFocus>
+            <Pin Id="PfI8DfWRbVSN4zv54iCGmD" Name="Node Context" Kind="InputPin" IsHidden="true" />
+            <Pin Id="KxIg7ELbBNLLFUYx0SygEO" Name="File Path" Kind="InputPin" />
+            <Pin Id="TI0TEuJp7WGOhDs5myGjJk" Name="Reload" Kind="InputPin" />
+            <Pin Id="MGYaeIxMRHmPIvfCHzSrc1" Name="Output" Kind="OutputPin" />
+            <Pin Id="OcfrjsWyr10MoHIaI1aGuK" Name="Content" Kind="OutputPin" />
+          </Node>
+          <Node Bounds="156,219,72,26" Id="M0w88jWCobmPKUP9gf0DiB">
+            <p:NodeReference LastCategoryFullName="Rive.RiveFileContent" LastDependency="VL.Rive.vl">
+              <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
+              <CategoryReference Kind="RecordType" Name="RiveFileContent" NeedsToBeDirectParent="true" />
+              <Choice Kind="OperationCallFlag" Name="Split" />
+            </p:NodeReference>
+            <p:HelpFocus p:Assembly="VL.Lang" p:Type="VL.Model.HelpPriority">High</p:HelpFocus>
+            <Pin Id="HeA3dYQQD5yOF0A49JUDqT" Name="Input" Kind="StateInputPin" />
+            <Pin Id="RmChAUaRIZAM4WblXzYku0" Name="Output" Kind="OutputPin" IsHidden="true" />
+            <Pin Id="M5xIzRjZO97PvVFelEuO9X" Name="Artboards" Kind="OutputPin" />
+            <Pin Id="UENcc3bZF2TMnNL9ssqSez" Name="View Models" Kind="OutputPin" />
+            <Pin Id="VtuaHNfOpQjMtyioR4rcFR" Name="Enums" Kind="OutputPin" />
+          </Node>
+          <Node Bounds="144,309,117,98" Id="MqpvLUpiwupMSdLoWsPfI6">
+            <p:NodeReference LastCategoryFullName="Primitive" LastDependency="Builtin">
+              <Choice Kind="StatefulRegion" Name="Region (Stateful)" Fixed="true" />
+              <CategoryReference Kind="Category" Name="Primitive" />
+              <Choice Kind="ApplicationStatefulRegion" Name="ForEach" />
+            </p:NodeReference>
+            <Pin Id="OYcQlHMFUpSPb2awD8M8rz" Name="Break" Kind="OutputPin" />
+            <Patch Id="IS90J6O8nCqP5DkMkbjySX" ManuallySortedPins="true">
+              <Patch Id="Mqr7To3tDtNNBd9hTAfzES" Name="Create" ManuallySortedPins="true" />
+              <Patch Id="JmAkYlbNYFDPJYdLcLl3cB" Name="Update" ManuallySortedPins="true" />
+              <Patch Id="JoE4Zbp4t1RNEA2ztnoaO3" Name="Dispose" ManuallySortedPins="true" />
+              <Node Bounds="156,339,91,26" Id="Ra2bBrT7UJWOiYK1bYfdGc">
+                <p:NodeReference LastCategoryFullName="Rive.RiveArtboardContent" LastDependency="VL.Rive.vl">
+                  <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
+                  <CategoryReference Kind="RecordType" Name="RiveArtboardContent" NeedsToBeDirectParent="true" />
+                  <Choice Kind="OperationCallFlag" Name="Split" />
+                </p:NodeReference>
+                <p:HelpFocus p:Assembly="VL.Lang" p:Type="VL.Model.HelpPriority">High</p:HelpFocus>
+                <Pin Id="JQLpjCh4EHuOnRZTGx0nwQ" Name="Input" Kind="StateInputPin" />
+                <Pin Id="IwkuEZifRIGNdZie9twLK0" Name="Output" Kind="OutputPin" IsHidden="true" />
+                <Pin Id="OdtnLGO9SvtPCTkGXumizm" Name="Name" Kind="OutputPin" />
+                <Pin Id="F9ihppbvCWQP1MaA1UbPKP" Name="State Machines" Kind="OutputPin" />
+                <Pin Id="JNiOThqlsCBLRWMK0FxOOH" Name="Animations" Kind="OutputPin" />
+                <Pin Id="UFskpwGnS8IMIIXQewi77J" Name="Default View Model" Kind="OutputPin" />
+              </Node>
+            </Patch>
+            <ControlPoint Id="UKWhrXe2lI7L2v83x7nRPC" Bounds="158,315" Alignment="Top" />
+            <ControlPoint Id="MVQb4NsMI1WM5eaz9cfYiW" Bounds="158,401" Alignment="Bottom" />
+            <ControlPoint Id="SuWcplqSf2EOdVH20TPpq2" Bounds="244,401" Alignment="Bottom" />
+          </Node>
+          <Pad Id="Mea6YSW9sN8N46CPHjbEg3" Comment="Artboards" Bounds="158,451,82,95" ShowValueBox="true" isIOBox="true" />
+          <Node Bounds="489,310,122,98" Id="ReKQhstN6NUMKdy8EJJl9n">
+            <p:NodeReference LastCategoryFullName="Primitive" LastDependency="Builtin">
+              <Choice Kind="StatefulRegion" Name="Region (Stateful)" Fixed="true" />
+              <CategoryReference Kind="Category" Name="Primitive" />
+              <Choice Kind="ApplicationStatefulRegion" Name="ForEach" />
+            </p:NodeReference>
+            <Pin Id="EkKKAlp4weUQDmSf1czVty" Name="Break" Kind="OutputPin" />
+            <Patch Id="Hzdhz1Ztkk3MCIHwcQPcxz" ManuallySortedPins="true">
+              <Patch Id="BFzgNXMc7VKL9dWBeiZmb6" Name="Create" ManuallySortedPins="true" />
+              <Patch Id="PO8ilnvQG3RLZyPaZcJNM2" Name="Update" ManuallySortedPins="true" />
+              <Patch Id="QVzzPpBOj94MCBANFRHEjk" Name="Dispose" ManuallySortedPins="true" />
+              <Node Bounds="501,340,98,26" Id="JclYycTP3C4NaL4ZDs2K1i">
+                <p:NodeReference LastCategoryFullName="Rive.RiveViewModelContent" LastDependency="VL.Rive.vl">
+                  <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
+                  <CategoryReference Kind="RecordType" Name="RiveViewModelContent" NeedsToBeDirectParent="true" />
+                  <Choice Kind="OperationCallFlag" Name="Split" />
+                </p:NodeReference>
+                <p:HelpFocus p:Assembly="VL.Lang" p:Type="VL.Model.HelpPriority">High</p:HelpFocus>
+                <Pin Id="RgCNnPeh0h6MC5eft9iLQQ" Name="Input" Kind="StateInputPin" />
+                <Pin Id="HHbvIFGTK7oMiXJEqwlTb7" Name="Output" Kind="OutputPin" IsHidden="true" />
+                <Pin Id="TJ6X3ME3ajZP7mxWHNdOND" Name="Name" Kind="OutputPin" />
+                <Pin Id="QthY6SoY2vINyBaA2qJNl8" Name="Properties" Kind="OutputPin" />
+              </Node>
+            </Patch>
+            <ControlPoint Id="GkgzBq5elbOOVcWs7MlHMi" Bounds="503,316" Alignment="Top" />
+            <ControlPoint Id="BpxOMfwOeZZP66DJ5kMSc1" Bounds="503,402" Alignment="Bottom" />
+          </Node>
+          <Pad Id="IQUMH4SMiqMLRy66s1bCZS" Comment="View Models" Bounds="503,452,89,95" ShowValueBox="true" isIOBox="true" />
+          <Node Bounds="709,314,105,98" Id="TnSnpJcbn6YPzeGQfKsD3I">
+            <p:NodeReference LastCategoryFullName="Primitive" LastDependency="Builtin">
+              <Choice Kind="StatefulRegion" Name="Region (Stateful)" Fixed="true" />
+              <CategoryReference Kind="Category" Name="Primitive" />
+              <Choice Kind="ApplicationStatefulRegion" Name="ForEach" />
+            </p:NodeReference>
+            <Pin Id="DU5bItSauWLLZaQzAtelb7" Name="Break" Kind="OutputPin" />
+            <Patch Id="Cnm91cKxHYGOcHLbcKVBd4" ManuallySortedPins="true">
+              <Patch Id="EKqIEmdTCwnLn52UKOSylH" Name="Create" ManuallySortedPins="true" />
+              <Patch Id="OnACXU2YQRCPhuCVpbMonN" Name="Update" ManuallySortedPins="true" />
+              <Patch Id="Rd6injEXgkpO5iQHuduvBJ" Name="Dispose" ManuallySortedPins="true" />
+              <Node Bounds="721,341,79,26" Id="GGLARwO55xzNWsWREhmvbN">
+                <p:NodeReference LastCategoryFullName="Rive.RiveEnumContent" LastDependency="VL.Rive.vl">
+                  <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
+                  <CategoryReference Kind="RecordType" Name="RiveEnumContent" NeedsToBeDirectParent="true" />
+                  <Choice Kind="OperationCallFlag" Name="Split" />
+                </p:NodeReference>
+                <p:HelpFocus p:Assembly="VL.Lang" p:Type="VL.Model.HelpPriority">High</p:HelpFocus>
+                <Pin Id="TfSvRWQbyFkLdqkB53In2D" Name="Input" Kind="StateInputPin" />
+                <Pin Id="DK1qbZsZxD3O29Tyom3wyq" Name="Output" Kind="OutputPin" IsHidden="true" />
+                <Pin Id="DBvMNg7vW7wMIuPvaHwZHg" Name="Name" Kind="OutputPin" />
+                <Pin Id="RBieOQKtLFnMOFUtjW1tkP" Name="Values" Kind="OutputPin" />
+              </Node>
+            </Patch>
+            <ControlPoint Id="Va41FjC7cuLOmMmnadZzO6" Bounds="723,320" Alignment="Top" />
+            <ControlPoint Id="HwjE5ikmw71P7uObCl1oHv" Bounds="723,406" Alignment="Bottom" />
+            <ControlPoint Id="N3fPt09o2O7OGEKAtlZIfR" Bounds="797,406" Alignment="Bottom" />
+          </Node>
+          <Pad Id="IIIkkDPhDLCPft0C8wLzft" Comment="Enums" Bounds="723,452,84,49" ShowValueBox="true" isIOBox="true" />
+          <Pad Id="TVMG9dgzuOmOTsJc1Ey62w" Comment="Enum Entries" Bounds="866,451,169,70" ShowValueBox="true" isIOBox="true" />
+          <Pad Id="K2tCFmF9ck6LEd55MIT31l" Comment="Default View Model" Bounds="304,451,78,95" ShowValueBox="true" isIOBox="true" />
+          <Pad Id="LtIJQk3p7VgQYELZwIP2rL" Bounds="98,84,285,19" ShowValueBox="true" isIOBox="true" Value="https://rive.app/marketplace/24641-46042-data-binding-artboards/">
+            <p:TypeAnnotation LastCategoryFullName="Primitive" LastDependency="VL.CoreLib.vl">
+              <Choice Kind="TypeFlag" Name="String" />
+            </p:TypeAnnotation>
+            <p:ValueBoxSettings>
+              <p:fontsize p:Type="Int32">9</p:fontsize>
+              <p:stringtype p:Assembly="VL.Core" p:Type="VL.Core.StringType">Link</p:stringtype>
+            </p:ValueBoxSettings>
+          </Pad>
+          <Pad Id="VN7e4AukuwtPR47joGXHnt" Bounds="98,65,242,19" ShowValueBox="true" isIOBox="true" Value="Source of the .riv file used in this demo:">
+            <p:TypeAnnotation LastCategoryFullName="Primitive" LastDependency="VL.CoreLib.vl">
+              <Choice Kind="TypeFlag" Name="String" />
+            </p:TypeAnnotation>
+            <p:ValueBoxSettings>
+              <p:fontsize p:Type="Int32">9</p:fontsize>
+              <p:stringtype p:Assembly="VL.Core" p:Type="VL.Core.StringType">Comment</p:stringtype>
+            </p:ValueBoxSettings>
+          </Pad>
+        </Canvas>
+        <Patch Id="FCQKADm6yBYLpkOkLqF2Fm" Name="Create" />
+        <Patch Id="MYFq9ZIYTQ4PT3Fo4Ezt8H" Name="Update" />
+        <ProcessDefinition Id="NV3Vv5eI7XPPqAjqpY30pt">
+          <Fragment Id="D8bbF2zKiDqM6dd55uk09n" Patch="FCQKADm6yBYLpkOkLqF2Fm" Enabled="true" />
+          <Fragment Id="UStcR8T83WNLJFEScxcuKK" Patch="MYFq9ZIYTQ4PT3Fo4Ezt8H" Enabled="true" />
+        </ProcessDefinition>
+        <Link Id="IXbkjaYpvLxN7220q9duiu" Ids="GJgIGD1NzKCNsr3CQ4uDGF,KxIg7ELbBNLLFUYx0SygEO" />
+        <Link Id="O4zkxxH92HVQDiLZJiFUZF" Ids="OcfrjsWyr10MoHIaI1aGuK,HeA3dYQQD5yOF0A49JUDqT" />
+        <Link Id="IxmQm5k4tbvMjFt8Mx9Wxv" Ids="M5xIzRjZO97PvVFelEuO9X,UKWhrXe2lI7L2v83x7nRPC" />
+        <Link Id="QZutDtnaqejMYgo5xoIVI8" Ids="UKWhrXe2lI7L2v83x7nRPC,JQLpjCh4EHuOnRZTGx0nwQ" />
+        <Link Id="IcDC68CFdDhM0M4EoovWvk" Ids="OdtnLGO9SvtPCTkGXumizm,MVQb4NsMI1WM5eaz9cfYiW" />
+        <Link Id="F6FUUf82WToPFzp2v2XDkw" Ids="MVQb4NsMI1WM5eaz9cfYiW,Mea6YSW9sN8N46CPHjbEg3" />
+        <Link Id="Eo2UMG3rUrzQKEDe1JRT4H" Ids="TJ6X3ME3ajZP7mxWHNdOND,BpxOMfwOeZZP66DJ5kMSc1" />
+        <Link Id="ODHuUvq8Pp2LaEcQ9BJjV7" Ids="UENcc3bZF2TMnNL9ssqSez,GkgzBq5elbOOVcWs7MlHMi" />
+        <Link Id="A2yoI8581d4Ng4rWRmnYBY" Ids="GkgzBq5elbOOVcWs7MlHMi,RgCNnPeh0h6MC5eft9iLQQ" />
+        <Link Id="ULP5f6RMalzQbePzCwYpJj" Ids="BpxOMfwOeZZP66DJ5kMSc1,IQUMH4SMiqMLRy66s1bCZS" />
+        <Link Id="RKyjxUpbnG6LKVj4s40b8Y" Ids="VtuaHNfOpQjMtyioR4rcFR,Va41FjC7cuLOmMmnadZzO6" />
+        <Link Id="T6eEpXqiPp0MCDhnCI8gXj" Ids="Va41FjC7cuLOmMmnadZzO6,TfSvRWQbyFkLdqkB53In2D" />
+        <Link Id="MaeXo4TCdVgPj9l0laP6gV" Ids="DBvMNg7vW7wMIuPvaHwZHg,HwjE5ikmw71P7uObCl1oHv" />
+        <Link Id="Gg8ZAzVFnvGNLkAd4E5bea" Ids="HwjE5ikmw71P7uObCl1oHv,IIIkkDPhDLCPft0C8wLzft" />
+        <Link Id="SgpynschJqDNdz6gtzxc7U" Ids="RBieOQKtLFnMOFUtjW1tkP,N3fPt09o2O7OGEKAtlZIfR" />
+        <Link Id="Q2KWgEVV7E4Ot9txeLbJKe" Ids="N3fPt09o2O7OGEKAtlZIfR,TVMG9dgzuOmOTsJc1Ey62w" />
+        <Link Id="Mi1sFDH0gVJMwn9jls1GE2" Ids="UFskpwGnS8IMIIXQewi77J,SuWcplqSf2EOdVH20TPpq2" />
+        <Link Id="HuTqjRmwLjiPC4JASFPSmq" Ids="SuWcplqSf2EOdVH20TPpq2,K2tCFmF9ck6LEd55MIT31l" />
+      </Patch>
+    </Node>
+  </Patch>
+  <NugetDependency Id="SBQOevSkfVYPvjUXsK23Iy" Location="VL.Stride" />
+  <NugetDependency Id="UoYPOyFhYUIMxPGgOOSocB" Location="VL.Rive" />
+</Document>

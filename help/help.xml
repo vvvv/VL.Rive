@@ -1,7 +1,13 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <Pack>
-
-<!-- For more info see: -->
-<!-- https://thegraybook.vvvv.org/reference/extending/providing-help.html -->
-
+	<UriItem title="Rive Website" link="https://rive.app" mediaType="text" />
+	<UriItem title="Rive Documentation" link="https://rive.app/docs/getting-started/introduction" mediaType="text" />
+	<UriItem title="Rive Marketplace" link="https://rive.app/marketplace" mediaType="text" />
+	<VLDocument link="Explanation Introduction to Rive.vl" tags=""/>
+	<VLDocument link="Explanation Explore a rives content.vl" tags=""/>
+	<VLDocument link="HowTo Data Binding Basics.vl" tags=""/>
+	<VLDocument link="HowTo Data Binding Trigger.vl" tags=""/>
+	<VLDocument link="HowTo Data Binding Lists.vl" tags=""/>
+	<VLDocument link="HowTo Data Binding Images.vl" tags=""/>
+	<VLDocument link="HowTo Data Binding Enums.vl" tags=""/>	
 </Pack>
