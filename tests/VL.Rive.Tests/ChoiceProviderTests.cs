@@ -54,7 +54,7 @@ public class ChoiceProviderTests
     public void EveryViewModelOfTheFileIsAChoice()
     {
         using var factory = new RiveFactory();
-        using var context = new RiveContext(nodeContext: null, factory.LoadFile(Path.Combine(AppContext.BaseDirectory, "assets", "data-binding-demo.riv")));
+        using var context = new RiveContext(nodeContext: null, factory.LoadFile(Path.Combine(AppContext.BaseDirectory, "assets", "25475-47540-data-binding-demo.riv")));
 
         var choices = RiveViewModelChoiceProvider.GetChoices(context)!;
 
@@ -66,7 +66,7 @@ public class ChoiceProviderTests
     public void EveryInstanceDefinedInTheFileIsAChoiceAndTheFirstIsTheDefaultOne()
     {
         using var factory = new RiveFactory();
-        using var context = new RiveContext(nodeContext: null, factory.LoadFile(Path.Combine(AppContext.BaseDirectory, "assets", "data-binding-demo.riv")));
+        using var context = new RiveContext(nodeContext: null, factory.LoadFile(Path.Combine(AppContext.BaseDirectory, "assets", "25475-47540-data-binding-demo.riv")));
         var type = context.ViewModels.First(t => t.InstanceNames.Length > 0);
 
         var choices = RiveViewModelInstanceChoiceProvider.GetChoices(type)!;
@@ -81,7 +81,7 @@ public class ChoiceProviderTests
     public void TheFirstInstanceChoiceIsNoNameAtAllAndMakesAnEmptyInstance()
     {
         using var factory = new RiveFactory();
-        using var context = new RiveContext(nodeContext: null, factory.LoadFile(Path.Combine(AppContext.BaseDirectory, "assets", "data-binding-demo.riv")));
+        using var context = new RiveContext(nodeContext: null, factory.LoadFile(Path.Combine(AppContext.BaseDirectory, "assets", "25475-47540-data-binding-demo.riv")));
 
         // Also a view model without instances offers it, so there is always the way back to an empty instance
         foreach (var type in context.ViewModels)
@@ -104,7 +104,7 @@ public class ChoiceProviderTests
     public void AnArtboardChoiceNamesItsViewModel()
     {
         using var factory = new RiveFactory();
-        using var context = new RiveContext(nodeContext: null, factory.LoadFile(Path.Combine(AppContext.BaseDirectory, "assets", "data-binding-demo.riv")));
+        using var context = new RiveContext(nodeContext: null, factory.LoadFile(Path.Combine(AppContext.BaseDirectory, "assets", "25475-47540-data-binding-demo.riv")));
 
         var choices = RiveArtboardChoiceProvider.GetChoices(context)!;
 
@@ -123,7 +123,7 @@ public class ChoiceProviderTests
     public void EveryArtboardOfTheFileIsAChoice()
     {
         using var factory = new RiveFactory();
-        using var context = new RiveContext(nodeContext: null, factory.LoadFile(Path.Combine(AppContext.BaseDirectory, "assets", "data-binding-demo.riv")));
+        using var context = new RiveContext(nodeContext: null, factory.LoadFile(Path.Combine(AppContext.BaseDirectory, "assets", "25475-47540-data-binding-demo.riv")));
 
         var choices = RiveArtboardChoiceProvider.GetChoices(context)!;
 
@@ -142,7 +142,7 @@ public class ChoiceProviderTests
     public void EveryStateMachineAndAnimationOfTheArtboardIsAChoice()
     {
         using var factory = new RiveFactory();
-        using var context = new RiveContext(nodeContext: null, factory.LoadFile(Path.Combine(AppContext.BaseDirectory, "assets", "data-binding-demo.riv")));
+        using var context = new RiveContext(nodeContext: null, factory.LoadFile(Path.Combine(AppContext.BaseDirectory, "assets", "25475-47540-data-binding-demo.riv")));
         var info = context.RiveFile.Artboards.First();
 
         var choices = RiveSceneChoiceProvider.GetChoices(info)!;

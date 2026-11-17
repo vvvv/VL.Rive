@@ -18,7 +18,7 @@ public class ArtboardBindingTests
     public void SetUp()
     {
         factory = new RiveFactory();
-        var file = factory.LoadFile(Path.Combine(AppContext.BaseDirectory, "assets", "data-binding-demo.riv"));
+        var file = factory.LoadFile(Path.Combine(AppContext.BaseDirectory, "assets", "25475-47540-data-binding-demo.riv"));
         context = new RiveContext(nodeContext: null, file);
     }
 

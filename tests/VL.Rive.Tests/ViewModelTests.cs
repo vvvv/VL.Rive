@@ -23,7 +23,7 @@ public class ViewModelTests
     public void ImportsAndReadsViewModelTypes()
     {
         using var factory = new RiveFactory();
-        using var context = Load(factory, "data-binding-demo.riv");
+        using var context = Load(factory, "25475-47540-data-binding-demo.riv");
 
         Assert.That(context.ViewModels, Is.Not.Empty);
         Assert.That(context.ViewModels.Any(viewModel => viewModel.Properties.Length > 0), Is.True);
@@ -33,7 +33,7 @@ public class ViewModelTests
     public void NumbersRoundTripThroughTheNativeViewModel()
     {
         using var factory = new RiveFactory();
-        using var context = Load(factory, "data-binding-demo.riv");
+        using var context = Load(factory, "25475-47540-data-binding-demo.riv");
 
         var viewModel = context.ViewModels
             .Where(t => t.Properties.Any(p => p.RiveProperty.Type == RiveDataType.Number))
