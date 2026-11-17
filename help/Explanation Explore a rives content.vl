@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Document xmlns:p="property" xmlns:r="reflection" Id="RMdq2hAUYqAPIF7QSAM1Dm" LanguageVersion="2026.8.0-0328-g2d427d5a66" Version="0.128">
+<Document xmlns:p="property" xmlns:r="reflection" Id="RMdq2hAUYqAPIF7QSAM1Dm" LanguageVersion="2026.8.0-0341-g99413cc298" Version="0.128">
   <NugetDependency Id="P31TcB21GpsQMoE5avRDIK" Location="VL.CoreLib" />
   <Patch Id="KwF3lactQFAPXQKeExxGTJ">
     <Canvas Id="SY42jCjyWwzNXSZcNcrit7" DefaultCategory="Main" BordersChecked="false" CanvasType="FullCategory" />
@@ -145,6 +145,33 @@
             </p:ValueBoxSettings>
           </Pad>
           <Pad Id="VN7e4AukuwtPR47joGXHnt" Bounds="98,65,242,19" ShowValueBox="true" isIOBox="true" Value="Source of the .riv file used in this demo:">
+            <p:TypeAnnotation LastCategoryFullName="Primitive" LastDependency="VL.CoreLib.vl">
+              <Choice Kind="TypeFlag" Name="String" />
+            </p:TypeAnnotation>
+            <p:ValueBoxSettings>
+              <p:fontsize p:Type="Int32">9</p:fontsize>
+              <p:stringtype p:Assembly="VL.Core" p:Type="VL.Core.StringType">Comment</p:stringtype>
+            </p:ValueBoxSettings>
+          </Pad>
+          <Pad Id="DC4yww2yn5SPjuUxZb7SD4" Bounds="192,290,66,19" ShowValueBox="true" isIOBox="true" Value="Artboards">
+            <p:TypeAnnotation LastCategoryFullName="Primitive" LastDependency="VL.CoreLib.vl">
+              <Choice Kind="TypeFlag" Name="String" />
+            </p:TypeAnnotation>
+            <p:ValueBoxSettings>
+              <p:fontsize p:Type="Int32">9</p:fontsize>
+              <p:stringtype p:Assembly="VL.Core" p:Type="VL.Core.StringType">Comment</p:stringtype>
+            </p:ValueBoxSettings>
+          </Pad>
+          <Pad Id="KDi3fC6AAnvL370fnltMtN" Bounds="517,290,77,19" ShowValueBox="true" isIOBox="true" Value="ViewModels">
+            <p:TypeAnnotation LastCategoryFullName="Primitive" LastDependency="VL.CoreLib.vl">
+              <Choice Kind="TypeFlag" Name="String" />
+            </p:TypeAnnotation>
+            <p:ValueBoxSettings>
+              <p:fontsize p:Type="Int32">9</p:fontsize>
+              <p:stringtype p:Assembly="VL.Core" p:Type="VL.Core.StringType">Comment</p:stringtype>
+            </p:ValueBoxSettings>
+          </Pad>
+          <Pad Id="OWskguyRMqUN4l9SCB3qhx" Bounds="741,290,47,19" ShowValueBox="true" isIOBox="true" Value="Enums">
             <p:TypeAnnotation LastCategoryFullName="Primitive" LastDependency="VL.CoreLib.vl">
               <Choice Kind="TypeFlag" Name="String" />
             </p:TypeAnnotation>

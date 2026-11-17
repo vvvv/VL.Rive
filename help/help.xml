@@ -1,13 +1,23 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <Pack>
-	<UriItem title="Rive Website" link="https://rive.app" mediaType="text" />
-	<UriItem title="Rive Documentation" link="https://rive.app/docs/getting-started/introduction" mediaType="text" />
-	<UriItem title="Rive Marketplace" link="https://rive.app/marketplace" mediaType="text" />
+	<Topic title="Links">
+		<UriItem title="Reference Rive Website" link="https://rive.app" mediaType="text"/>
+		<UriItem title="Reference Rive Documentation" link="https://rive.app/docs/getting-started/introduction" mediaType="text" />
+		<UriItem title="Reference Rive Marketplace" link="https://rive.app/marketplace" mediaType="text" />
+	</Topic>
+	<Topic title="Basics">
 	<VLDocument link="Explanation Introduction to Rive.vl" tags=""/>
-	<VLDocument link="Explanation Explore a rives content.vl" tags=""/>
-	<VLDocument link="HowTo Data Binding Basics.vl" tags=""/>
-	<VLDocument link="HowTo Data Binding Trigger.vl" tags=""/>
-	<VLDocument link="HowTo Data Binding Lists.vl" tags=""/>
-	<VLDocument link="HowTo Data Binding Images.vl" tags=""/>
-	<VLDocument link="HowTo Data Binding Enums.vl" tags=""/>	
+		<VLDocument link="Explanation Explore a rives content.vl" tags=""/>
+		<VLDocument link="HowTo Drive a linear animation.vl" tags=""/>
+		<VLDocument link="HowTo Instantiate an Artboard multiple times.vl" tags=""/>
+		<VLDocument link="HowTo Interacting with a RiveRenderer in 3d space.vl" tags=""/>
+	</Topic>
+	<Topic title="Data Binding">
+		<VLDocument link="HowTo Data Binding Basics.vl" tags=""/>
+		<VLDocument link="HowTo Data Binding Trigger.vl" tags=""/>
+		<VLDocument link="HowTo Data Binding Lists.vl" tags=""/>
+		<VLDocument link="HowTo Data Binding Images.vl" tags=""/>
+		<VLDocument link="HowTo Data Binding Enums.vl" tags=""/>
+		<VLDocument link="HowTo Data Binding via Public Channels.vl" tags=""/>
+	</Topic>
 </Pack>

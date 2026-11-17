@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Document xmlns:p="property" xmlns:r="reflection" Id="ITJARDnkzmYNTyw1f8gXLi" LanguageVersion="2026.8.0-0325-ga92cfc5db3" Version="0.128">
+<Document xmlns:p="property" xmlns:r="reflection" Id="ITJARDnkzmYNTyw1f8gXLi" LanguageVersion="2026.8.0-0341-g99413cc298" Version="0.128">
   <NugetDependency Id="SwxgZupLuw8P2preLL9Udx" Location="VL.CoreLib" />
   <Patch Id="AhPlHQ6U4EoMODegN3mQT9">
     <Canvas Id="ClzymaM06xjONafBulyJpP" DefaultCategory="Main" CanvasType="FullCategory" />
@@ -15,7 +15,7 @@
       </p:NodeReference>
       <Patch Id="MbWniaZrtjoM9qAgKhqE49">
         <Canvas Id="LFb7HQG0XktPcqvvDtfkQO" CanvasType="Group">
-          <Node Bounds="108,680,165,19" Id="JFqDclHFYDBNDso7t4JCun">
+          <Node Bounds="108,720,165,19" Id="JFqDclHFYDBNDso7t4JCun">
             <p:NodeReference LastCategoryFullName="Stride" LastDependency="VL.Stride.vl">
               <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
               <Choice Kind="ProcessAppFlag" Name="RenderWindow" />
@@ -93,11 +93,10 @@
               <p:pathtype p:Assembly="VL.Core" p:Type="VL.Core.PathType">File</p:pathtype>
             </p:ValueBoxSettings>
           </Pad>
-          <Node Bounds="309,470,165,19" Id="L4hLmzTotlGQP82qGHm05R">
-            <p:NodeReference LastCategoryFullName="Reactive.Channel" LastDependency="VL.CoreLib.vl">
+          <Node Bounds="309,470,54,19" Id="L4hLmzTotlGQP82qGHm05R">
+            <p:NodeReference LastCategoryFullName="Reactive" LastDependency="VL.CoreLib.vl">
               <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
-              <FullNameCategoryReference ID="Reactive.Channel" />
-              <Choice Kind="ProcessNode" Name="PropertyChannel" />
+              <Choice Kind="ProcessAppFlag" Name="Property" />
               <p:TypeArguments>
                 <TypeReference LastCategoryFullName="Primitive" LastDependency="VL.CoreLib.vl">
                   <Choice Kind="TypeFlag" Name="Object" />
@@ -106,7 +105,7 @@
             </p:NodeReference>
             <Pin Id="Hmxu8nGbKarQcSpRr8qz76" Name="Node Context" Kind="InputPin" IsHidden="true" />
             <Pin Id="PGAMLTXTWwXMsPbbVCdOh8" Name="Input" Kind="InputPin" />
-            <Pin Id="HLR0nPtUFyJPcl2ndlR8tQ" Name="Property Name" Kind="InputPin" DefaultValue="Item_Selection.Item_Selection" />
+            <Pin Id="QkgPt4Enl5dMhzg3AOW9uT" Name="Path" Kind="InputPin" DefaultValue="Item_Selection.Item_Selection" ShowValueInPlace="true" />
             <Pin Id="EvIVRWmCD5aNKPg1fN5rw5" Name="Value" Kind="InputPin" />
             <Pin Id="D7VCOrsvavOPDpnmF90TOX" Name="Output" Kind="OutputPin" />
             <Pin Id="KTpBAtgB8SdN6FqIGj6SQ8" Name="Value" Kind="OutputPin" />
@@ -149,7 +148,7 @@
             <Pin Id="PwlPqc5w8DJNrGRw41QC5e" Name="Output" Kind="OutputPin" />
             <Pin Id="As2aWF8QQtJPwGYOjVBL6Q" Name="Content" Kind="OutputPin" />
           </Node>
-          <Node Bounds="309,640,55,26" Id="GgaunwGHKVkOQq7Mdt2pOf">
+          <Node Bounds="309,680,55,26" Id="GgaunwGHKVkOQq7Mdt2pOf">
             <p:NodeReference LastCategoryFullName="Reactive.Channel" LastDependency="VL.CoreLib.vl">
               <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
               <CategoryReference Kind="MutableInterfaceType" Name="Channel" NeedsToBeDirectParent="true" />
@@ -202,7 +201,7 @@
             <Pin Id="HqNRKcv42b9OBm40dlDXPT" Name="Output" Kind="OutputPin" IsHidden="true" />
             <Pin Id="QXnxUQa9VC6OtVm71LfcLu" Name="Enums" Kind="OutputPin" />
           </Node>
-          <Node Bounds="334,580,52,19" Id="LzLdhCoCmbzPwTBQ7obEBe">
+          <Node Bounds="334,620,52,19" Id="LzLdhCoCmbzPwTBQ7obEBe">
             <p:NodeReference LastCategoryFullName="Collections.Spread" LastDependency="VL.CoreLib.vl">
               <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
               <CategoryReference Kind="RecordType" Name="Spread" NeedsToBeDirectParent="true" />
@@ -213,7 +212,7 @@
             <Pin Id="DluGoLTRCMUO3qEXwaHTor" Name="Index" Kind="InputPin" />
             <Pin Id="U6gmDZ5PkYuLGYRIPigrGE" Name="Result" Kind="OutputPin" />
           </Node>
-          <Pad Id="S3j7XxuvlVQP6E6Mav0Vgu" Comment="Index" Bounds="403,560,35,15" ShowValueBox="true" isIOBox="true" Value="0">
+          <Pad Id="S3j7XxuvlVQP6E6Mav0Vgu" Comment="Index" Bounds="403,600,35,15" ShowValueBox="true" isIOBox="true" Value="1">
             <p:TypeAnnotation LastCategoryFullName="Primitive" LastDependency="VL.CoreLib.vl">
               <Choice Kind="TypeFlag" Name="Integer32" />
             </p:TypeAnnotation>
@@ -226,7 +225,7 @@
               <p:buttonmode p:Assembly="VL.UI.Forms" p:Type="VL.HDE.PatchEditor.Editors.ButtonModeEnum">Bang</p:buttonmode>
             </p:ValueBoxSettings>
           </Pad>
-          <Node Bounds="334,510,80,19" Id="KB7R1gxh3wKNxe7hh36JrY">
+          <Node Bounds="334,520,80,19" Id="KB7R1gxh3wKNxe7hh36JrY">
             <p:NodeReference LastCategoryFullName="Collections.Sequence" LastDependency="VL.CoreLib.vl">
               <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
               <Choice Kind="OperationCallFlag" Name="FirstOrDefault" />
@@ -236,9 +235,9 @@
             <Pin Id="OEKFY9bqkvXMVNue8iI25R" Name="Output" Kind="StateOutputPin" />
             <Pin Id="DU7l2RTpBGOPQ32WTjpIgU" Name="Result" Kind="OutputPin" />
           </Node>
-          <Pad Id="Q8DC26gVKzzQHCjpbBGL7E" Comment="" Bounds="348,620,35,15" ShowValueBox="true" isIOBox="true" />
+          <Pad Id="Q8DC26gVKzzQHCjpbBGL7E" Comment="" Bounds="348,660,35,15" ShowValueBox="true" isIOBox="true" />
           <Pad Id="NlBUtK4sTP9OyLMS1TA1kA" Comment="" Bounds="471,520,65,34" ShowValueBox="true" isIOBox="true" />
-          <Node Bounds="401,591,57,19" Id="BVq7pP6Xg1pNRsjTFb3hnG">
+          <Node Bounds="401,631,57,19" Id="BVq7pP6Xg1pNRsjTFb3hnG">
             <p:NodeReference LastCategoryFullName="Control" LastDependency="VL.CoreLib.vl">
               <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
               <Choice Kind="ProcessAppFlag" Name="Changed" />
@@ -249,6 +248,24 @@
             <Pin Id="SKM9pBtGueRO4MWTzm8fbJ" Name="Result" Kind="OutputPin" />
             <Pin Id="VF2C9vkFFTiNbLGYlKSCSc" Name="Unchanged" Kind="OutputPin" />
           </Node>
+          <Pad Id="GQfsYYgDtfpNEFYmTM4Bh2" Bounds="777,438,116,41" ShowValueBox="true" isIOBox="true" Value="&lt; Lists all enums with their entries">
+            <p:TypeAnnotation LastCategoryFullName="Primitive" LastDependency="VL.CoreLib.vl">
+              <Choice Kind="TypeFlag" Name="String" />
+            </p:TypeAnnotation>
+            <p:ValueBoxSettings>
+              <p:fontsize p:Type="Int32">9</p:fontsize>
+              <p:stringtype p:Assembly="VL.Core" p:Type="VL.Core.StringType">Comment</p:stringtype>
+            </p:ValueBoxSettings>
+          </Pad>
+          <Pad Id="PiMjaN8zdyvQAdZOpVlqYV" Bounds="403,680,116,41" ShowValueBox="true" isIOBox="true" Value="&lt; Set a value on the Enum">
+            <p:TypeAnnotation LastCategoryFullName="Primitive" LastDependency="VL.CoreLib.vl">
+              <Choice Kind="TypeFlag" Name="String" />
+            </p:TypeAnnotation>
+            <p:ValueBoxSettings>
+              <p:fontsize p:Type="Int32">9</p:fontsize>
+              <p:stringtype p:Assembly="VL.Core" p:Type="VL.Core.StringType">Comment</p:stringtype>
+            </p:ValueBoxSettings>
+          </Pad>
         </Canvas>
         <Patch Id="GICtUBakYQsOX8Xvon2K3b" Name="Create" />
         <Patch Id="COl7NXW6wlcMWa8tA3Cl2V" Name="Update" />

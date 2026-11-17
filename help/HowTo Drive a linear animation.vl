@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Document xmlns:p="property" xmlns:r="reflection" Id="TTrt8SGAfl5PUcDSp7xocB" LanguageVersion="2026.8.0-0328-g2d427d5a66" Version="0.128">
+<Document xmlns:p="property" xmlns:r="reflection" Id="TTrt8SGAfl5PUcDSp7xocB" LanguageVersion="2026.8.0-0341-g99413cc298" Version="0.128">
   <NugetDependency Id="P31TcB21GpsQMoE5avRDIK" Location="VL.CoreLib" />
   <Patch Id="KwF3lactQFAPXQKeExxGTJ">
     <Canvas Id="SY42jCjyWwzNXSZcNcrit7" DefaultCategory="Main" BordersChecked="false" CanvasType="FullCategory" />
@@ -36,23 +36,30 @@
             <Pin Id="LG5WnSMw9fXO2g5AhuAJvG" Name="Progress" Kind="InputPin" />
             <Pin Id="Tnt5Uy5Dgx2OqYaOj1cspi" Name="Enabled" Kind="InputPin" />
           </Node>
-          <Node Bounds="125,330,51,19" Id="G1JbD0M7dM8PUfNmg90gBb">
+          <Node Bounds="125,290,51,19" Id="G1JbD0M7dM8PUfNmg90gBb">
             <p:NodeReference LastCategoryFullName="Rive" LastDependency="VL.Rive.vl">
               <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
               <Choice Kind="ProcessAppFlag" Name="RiveFile" />
             </p:NodeReference>
             <Pin Id="PfI8DfWRbVSN4zv54iCGmD" Name="Node Context" Kind="InputPin" IsHidden="true" />
             <Pin Id="KxIg7ELbBNLLFUYx0SygEO" Name="File Path" Kind="InputPin" />
-            <Pin Id="TI0TEuJp7WGOhDs5myGjJk" Name="Reload" Kind="InputPin" />
+            <Pin Id="TI0TEuJp7WGOhDs5myGjJk" Name="Reload" Kind="InputPin" DefaultValue="False" />
             <Pin Id="MGYaeIxMRHmPIvfCHzSrc1" Name="Output" Kind="OutputPin" />
             <Pin Id="OcfrjsWyr10MoHIaI1aGuK" Name="Content" Kind="OutputPin" />
           </Node>
-          <Pad Id="CU8ct0A2pbPOU8SDk9W1iO" Comment="Progress" Bounds="227,370,35,15" ShowValueBox="true" isIOBox="true" Value="0.52">
+          <Pad Id="CU8ct0A2pbPOU8SDk9W1iO" Comment="Progress" Bounds="227,370,91,29" ShowValueBox="true" isIOBox="true">
             <p:TypeAnnotation LastCategoryFullName="Primitive" LastDependency="VL.CoreLib.vl">
               <Choice Kind="TypeFlag" Name="Float32" />
             </p:TypeAnnotation>
+            <p:ValueBoxSettings>
+              <p:fontsize p:Type="Int32">14</p:fontsize>
+              <p:maximum p:Type="Single">1</p:maximum>
+              <p:minimum p:Type="Single">0</p:minimum>
+              <p:showslider p:Type="Boolean">true</p:showslider>
+              <p:sliderdirection p:Assembly="VL.UI.Forms" p:Type="VL.HDE.PatchEditor.Editors.SliderDirectionEnum">Horizontal</p:sliderdirection>
+            </p:ValueBoxSettings>
           </Pad>
-          <Pad Id="RtAQw15SuNKNJvUMuV2ZNp" Bounds="127,311,194,15" ShowValueBox="true" isIOBox="true" Value="assets\24643-46044-data-binding-solos.riv">
+          <Pad Id="RtAQw15SuNKNJvUMuV2ZNp" Bounds="127,271,194,15" ShowValueBox="true" isIOBox="true" Value="assets\24643-46044-data_binding_solos.riv">
             <p:TypeAnnotation LastCategoryFullName="IO" LastDependency="VL.CoreLib.vl">
               <Choice Kind="ImmutableTypeFlag" Name="Path" />
             </p:TypeAnnotation>
@@ -66,7 +73,7 @@
               <Choice Kind="ProcessAppFlag" Name="RenderWindow" />
             </p:NodeReference>
             <Pin Id="O5SId7Bhgs7P4bOeudXR2I" Name="Node Context" Kind="InputPin" IsHidden="true" />
-            <Pin Id="UCILkxxoHITLXD4NH2oXe2" Name="Bounds" Kind="InputPin" DefaultValue="1000, 40, 786, 432" IsHidden="true" />
+            <Pin Id="UCILkxxoHITLXD4NH2oXe2" Name="Bounds" Kind="InputPin" DefaultValue="1284, 74, 786, 432" IsHidden="true" />
             <Pin Id="VHcavELdiHKMnIRYHP0i2o" Name="Is Borderless" Kind="InputPin" IsHidden="true" />
             <Pin Id="ReKYMIkragyLllcEvqDtkf" Name="Bound to Document" Kind="InputPin" IsHidden="true" />
             <Pin Id="EMUYFqmyow2NDNMG7BmAJI" Name="Dialog If Document Changed" Kind="InputPin" IsHidden="true" />
@@ -137,6 +144,21 @@
               <p:stringtype p:Assembly="VL.Core" p:Type="VL.Core.StringType">Comment</p:stringtype>
             </p:ValueBoxSettings>
           </Pad>
+          <Node Bounds="225,320,45,19" Id="UsS0xRgPtxKOZh46G5tGEz">
+            <p:NodeReference LastCategoryFullName="Animation" LastDependency="VL.CoreLib.vl">
+              <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
+              <Choice Kind="ProcessAppFlag" Name="LFO" />
+            </p:NodeReference>
+            <Pin Id="Qy5G9jpej2qN7n9rOaorRt" Name="Node Context" Kind="InputPin" IsHidden="true" />
+            <Pin Id="LEJYhyhCqbTPdJAdrSeAEk" Name="Clock" Kind="InputPin" IsHidden="true" />
+            <Pin Id="LNPQIG6pvECLvwftcb9RNr" Name="New Clock" Kind="InputPin" IsHidden="true" />
+            <Pin Id="EPMgS3ooxXRLBTo7Atz91o" Name="Period" Kind="InputPin" DefaultValue="4" />
+            <Pin Id="NKILWmX2XDwNG6dFAKGU6g" Name="Pause" Kind="InputPin" />
+            <Pin Id="KrLW9ml5EqKNHrQbWCkT7U" Name="Reset" Kind="ApplyPin" />
+            <Pin Id="V8lHEqbGORqP4tNoc98TWH" Name="Phase" Kind="OutputPin" />
+            <Pin Id="MldO2acU75yLFCbKYRd1cg" Name="On New Cycle" Kind="OutputPin" />
+            <Pin Id="QtmlFHcRJxyOFRmg4uVSJ4" Name="Cycles" Kind="OutputPin" />
+          </Node>
         </Canvas>
         <Patch Id="FCQKADm6yBYLpkOkLqF2Fm" Name="Create" />
         <Patch Id="MYFq9ZIYTQ4PT3Fo4Ezt8H" Name="Update" />
@@ -148,6 +170,7 @@
         <Link Id="K5GtTJGhHG9NF8Bb6bf4kc" Ids="CU8ct0A2pbPOU8SDk9W1iO,LG5WnSMw9fXO2g5AhuAJvG" />
         <Link Id="EAQPKicn42EOwF4UyDEVKZ" Ids="RtAQw15SuNKNJvUMuV2ZNp,KxIg7ELbBNLLFUYx0SygEO" />
         <Link Id="Jks4oqIPErDPy9pvo23AM9" Ids="UNH0rA1jtPANANuaB0mkSo,PRM8ncswG0SMiS1SLgD5ro" />
+        <Link Id="My9YwhSoyTkNNh6JYUGUAl" Ids="V8lHEqbGORqP4tNoc98TWH,CU8ct0A2pbPOU8SDk9W1iO" />
       </Patch>
     </Node>
   </Patch>

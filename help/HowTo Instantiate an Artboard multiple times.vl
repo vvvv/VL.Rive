@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Document xmlns:p="property" xmlns:r="reflection" Id="Tan7SNhmeW8MryfwC65Zqv" LanguageVersion="2026.8.0-0328-g2d427d5a66" Version="0.128">
+<Document xmlns:p="property" xmlns:r="reflection" Id="Tan7SNhmeW8MryfwC65Zqv" LanguageVersion="2026.8.0-0341-g99413cc298" Version="0.128">
   <NugetDependency Id="P31TcB21GpsQMoE5avRDIK" Location="VL.CoreLib" />
   <Patch Id="KwF3lactQFAPXQKeExxGTJ">
     <Canvas Id="SY42jCjyWwzNXSZcNcrit7" DefaultCategory="Main" BordersChecked="false" CanvasType="FullCategory" />
@@ -151,11 +151,10 @@
                 <Pin Id="MWIPiO1w3q2QHLEJypBR5T" Name="Scaling" Kind="InputPin" DefaultValue="0.57" />
                 <Pin Id="Q8HIjPIQORRNza5AVWoiho" Name="Output" Kind="OutputPin" />
               </Node>
-              <Node Bounds="224,480,91,19" Id="N7FQYIxv4sjOQAfsEoHzeA">
-                <p:NodeReference LastCategoryFullName="Reactive.Channel" LastDependency="VL.CoreLib.vl">
+              <Node Bounds="224,480,65,19" Id="N7FQYIxv4sjOQAfsEoHzeA">
+                <p:NodeReference LastCategoryFullName="Reactive" LastDependency="VL.CoreLib.vl">
                   <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
-                  <FullNameCategoryReference ID="Reactive.Channel" />
-                  <Choice Kind="ProcessAppFlag" Name="PropertyChannel" />
+                  <Choice Kind="ProcessAppFlag" Name="Property" />
                   <p:TypeArguments>
                     <TypeReference LastCategoryFullName="Primitive" LastDependency="VL.CoreLib.vl">
                       <Choice Kind="TypeFlag" Name="Float32" />
@@ -164,8 +163,8 @@
                 </p:NodeReference>
                 <Pin Id="I4jCi1qFj3UQHDOPxQNXWs" Name="Node Context" Kind="InputPin" IsHidden="true" />
                 <Pin Id="SXJ4johCJu5PkdYlYCCccL" Name="Input" Kind="InputPin" />
-                <Pin Id="UDan1fNRcHCOrJAVUCM4VV" Name="Property Name" Kind="InputPin" DefaultValue="numSkin" />
-                <Pin Id="CWCUAQur2s5MbPaCOcTOnh" Name="Value" Kind="InputPin" DefaultValue="4" />
+                <Pin Id="DCCqLLe5L4PONP82kBLLBZ" Name="Path" Kind="InputPin" DefaultValue="numSkin" ShowValueInPlace="true" />
+                <Pin Id="CWCUAQur2s5MbPaCOcTOnh" Name="Value" Kind="InputPin" />
                 <Pin Id="VrmwkLUtUjELrRiCU0Cwgt" Name="Output" Kind="OutputPin" />
                 <Pin Id="J9Jokmq06ZKOujH8tYSea7" Name="Value" Kind="OutputPin" />
               </Node>
