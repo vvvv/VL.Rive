@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Document xmlns:p="property" xmlns:r="reflection" Id="Tan7SNhmeW8MryfwC65Zqv" LanguageVersion="2026.8.0-0341-g99413cc298" Version="0.128">
+<Document xmlns:p="property" xmlns:r="reflection" Id="Tan7SNhmeW8MryfwC65Zqv" LanguageVersion="2026.8.0-0349-g53350c3d93" Version="0.128">
   <NugetDependency Id="P31TcB21GpsQMoE5avRDIK" Location="VL.CoreLib" />
   <Patch Id="KwF3lactQFAPXQKeExxGTJ">
     <Canvas Id="SY42jCjyWwzNXSZcNcrit7" DefaultCategory="Main" BordersChecked="false" CanvasType="FullCategory" />
@@ -101,7 +101,6 @@
                 <Pin Id="L7WMyhdnnLRL2PxEEJsLdv" Name="Clear Color" Kind="InputPin" IsHidden="true" />
                 <Pin Id="SolaR7DqvcLL83yneR4rhA" Name="Quad Size Mode" Kind="InputPin" />
                 <Pin Id="Nh7PikOHXkFOUdiSTZy6Gz" Name="Quad Anchor" Kind="InputPin" />
-                <Pin Id="TKCfJczp2V4NsZYMq3Pt7u" Name="Ray" Kind="InputPin" />
                 <Pin Id="PsqCHiaatJYOS0xalvAQrN" Name="Enabled" Kind="InputPin" />
                 <Pin Id="A1Y0Vr4MwCSOvGvQJg3R6I" Name="Actual Resolution" Kind="OutputPin" />
                 <Pin Id="CxKpHnj4tDJMHwVmfSc5vN" Name="Is Hit" Kind="OutputPin" />
@@ -163,7 +162,9 @@
                 </p:NodeReference>
                 <Pin Id="I4jCi1qFj3UQHDOPxQNXWs" Name="Node Context" Kind="InputPin" IsHidden="true" />
                 <Pin Id="SXJ4johCJu5PkdYlYCCccL" Name="Input" Kind="InputPin" />
-                <Pin Id="DCCqLLe5L4PONP82kBLLBZ" Name="Path" Kind="InputPin" DefaultValue="numSkin" ShowValueInPlace="true" />
+                <Pin Id="DCCqLLe5L4PONP82kBLLBZ" Name="Path" Kind="InputPin" DefaultValue="numSkin">
+                  <p:ShowValueInPlace p:Type="Boolean">true</p:ShowValueInPlace>
+                </Pin>
                 <Pin Id="CWCUAQur2s5MbPaCOcTOnh" Name="Value" Kind="InputPin" />
                 <Pin Id="VrmwkLUtUjELrRiCU0Cwgt" Name="Output" Kind="OutputPin" />
                 <Pin Id="J9Jokmq06ZKOujH8tYSea7" Name="Value" Kind="OutputPin" />
@@ -231,7 +232,7 @@
             <Pin Id="Qi8IbnhDDmpPyWypYFsMyx" Name="Zoom" Kind="OutputPin" />
             <Pin Id="PvzThhRfsUILDRRfrWJsqM" Name="Idle" Kind="OutputPin" />
           </Node>
-          <Pad Id="PNddAWX6319OhcA9sTLG1m" Bounds="153,200,194,15" ShowValueBox="true" isIOBox="true" Value="..\..\..\..\..\Downloads\data_binding_solos.riv">
+          <Pad Id="PNddAWX6319OhcA9sTLG1m" Bounds="153,200,194,15" ShowValueBox="true" isIOBox="true" Value="assets\24643-46044-data_binding_solos.riv">
             <p:TypeAnnotation LastCategoryFullName="IO" LastDependency="VL.CoreLib.vl">
               <Choice Kind="ImmutableTypeFlag" Name="Path" />
             </p:TypeAnnotation>
