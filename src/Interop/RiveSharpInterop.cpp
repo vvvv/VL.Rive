@@ -376,7 +376,10 @@ extern "C"
 
     void rive_File_Destroy(File* file)
     {
-        delete file;
+        if (file != nullptr)
+        {
+            rcp<File> adopted(file); // Adopt the reference rive_File_Import handed out; letting the rcp go out of scope drops it
+        }
     }
 
     int rive_File_ArtboardCount(File* file)
@@ -428,7 +431,12 @@ extern "C"
     void rive_File_GetViewModel(File* file, int index, char** name_out, int* propertiesCount_out)
     {
         auto viewModel = file->viewModelByIndex(index);
-        viewModel->properties();
+        if (viewModel == nullptr)
+        {
+            *name_out = _strdup("");
+            *propertiesCount_out = 0;
+            return;
+        }
         *name_out = _strdup(viewModel->name().c_str());
         *propertiesCount_out = viewModel->propertyCount();
     }
@@ -437,10 +445,14 @@ extern "C"
     {
         auto viewModel = file->viewModel(index);
         auto viewModelRuntime = file->viewModelByIndex(index);
+        if (viewModel == nullptr || viewModelRuntime == nullptr)
+            return;
         // Fill properties
         auto rprops = viewModelRuntime->properties();
         auto props = viewModel->properties();
-        for (int i = 0; i < props.size(); ++i)
+        // The caller sized the output by propertyCount(): never write past it, and never read past the runtime's list
+        const size_t count = std::min(props.size(), rprops.size());
+        for (size_t i = 0; i < count; ++i)
         {
             properties_out[i].type = static_cast<int>(rprops[i].type);
             properties_out[i].name = _strdup(rprops[i].name.c_str());
@@ -475,14 +487,26 @@ extern "C"
 
     void rive_File_GetEnum(File* file, int index, char** name_out, int* valueCount_out)
     {
-        auto dataEnum = file->enums()[index];
+        auto& fileEnums = file->enums();
+        if (index < 0 || static_cast<size_t>(index) >= fileEnums.size())
+        {
+            *name_out = _strdup("");
+            *valueCount_out = 0;
+            return;
+        }
+        auto dataEnum = fileEnums[index];
         *name_out = _strdup(dataEnum->enumName().c_str());
         *valueCount_out = static_cast<int>(dataEnum->values().size());
     }
 
     char* rive_File_GetEnumValue(File* file, int enumIndex, int valueIndex)
     {
-        auto dataEnum = file->enums()[enumIndex];
+        auto& fileEnums = file->enums();
+        if (enumIndex < 0 || static_cast<size_t>(enumIndex) >= fileEnums.size())
+            return _strdup("");
+        auto dataEnum = fileEnums[enumIndex];
+        if (valueIndex < 0 || static_cast<size_t>(valueIndex) >= dataEnum->values().size())
+            return _strdup("");
         return _strdup(dataEnum->value(static_cast<uint32_t>(valueIndex)).c_str());
     }
 

@@ -219,7 +219,7 @@ public sealed partial class RiveRenderer : RendererBase
             else if (!progress.HasValue)
                 seekWarning.Disposable = null;
 
-            riveScene.AdvanceAndApply((float)frameClock.TimeDifference);
+            riveScene.AdvanceFixed((float)frameClock.TimeDifference);
         }
 
         // Tells whoever listens what the scene changed in this frame: the bound instance, but also the items of its
