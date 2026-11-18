@@ -42,7 +42,7 @@ public class PublicSurfaceTests
     public void AViewModelInstanceShowsTheNameOfItsViewModelAlsoOnceItIsDisposed()
     {
         using var factory = new RiveFactory();
-        using var context = new RiveContext(nodeContext: null, factory.LoadFile(Path.Combine(AppContext.BaseDirectory, "assets", "data-binding-demo.riv")));
+        using var context = new RiveContext(nodeContext: null, factory.LoadFile(Path.Combine(AppContext.BaseDirectory, "assets", "25475-47540-data-binding-demo.riv")));
         var type = context.ViewModels.First();
         var instance = type.CreateInstance();
 
