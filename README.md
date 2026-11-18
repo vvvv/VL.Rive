@@ -1,15 +1,25 @@
 # VL.Rive
 
-Support for [Rive](https://rive.app/) files in VL including bi-directional [Data Binding](https://rive.app/docs/editor/data-binding/overview).
+Support for [Rive](https://rive.app/) files.
+
+Of the [Rive runtime features](https://rive.app/docs/feature-support) here are the most valuable ones supported:
+
+✅ GPU Canvas  
+✅ Scripting  
+✅ Data Binding incl. Lists and Images  
+✅ Text Follow Path  
+✅ Vector Feathering  
+✅ N-Slicing  
+✅ Layouts  
 
 For use with vvvv, the visual live-programming environment for .NET: http://vvvv.org
 
 ## Getting started
-- Install as [described here](https://thegraybook.vvvv.org/reference/hde/managing-nugets.html) via commandline:
-
-    `nuget install VL.Rive -pre`
-
-- Usage examples and more information are included in the pack and can be found via the [Help Browser](https://thegraybook.vvvv.org/reference/hde/findinghelp.html)
+- [Get vvvv gamma](https://vvvv.org/download/) >= 8.0 (preview)
+- Open the [Help Browser](https://thegraybook.vvvv.org/reference/hde/findinghelp.html) (F1)
+- Select the "Learn" tab and search for "rive"
+- At the very bottom find the "Rive" entry and click the download button
+- Explore the now available help patches...
 
 ## Contributing
 - Report issues on [the vvvv forum](https://forum.vvvv.org/c/vvvv-gamma/28)
