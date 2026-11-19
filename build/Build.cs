@@ -77,7 +77,8 @@ class Build : FalloutBuild
     AbsolutePath Python3Exe => Python3Directory / "python3.exe";
     AbsolutePath RiveBuildDirectory => RootDirectory / "submodules" / "rive-runtime" / "build";
     // ARM64 gets its own folder: objects and static libs of the two architectures must not mix
-    static string PremakeOutputName(bool arm64) => arm64 ? "debug-arm64" : "debug";
+    string PremakeOutputName(bool arm64) => arm64 ? $"{ConfigurationName}-arm64" : ConfigurationName;
+    string ConfigurationName => ((string)Configuration).ToLowerInvariant();
     AbsolutePath PremakeOutputDirectory(bool arm64) => BuildDirectory / "out" / PremakeOutputName(arm64);
     AbsolutePath RiveNativeSolution(bool arm64) => PremakeOutputDirectory(arm64) / "rive.slnx";
     AbsolutePath RiveManagedProject => RootDirectory / "src" / "VL.Rive.csproj";
@@ -214,7 +215,7 @@ class Build : FalloutBuild
         var environmentVariables = env.Cast<System.Collections.DictionaryEntry>()
             .ToDictionary(entry => (string)entry.Key, entry => (string)entry.Value);
 
-        var premakeArgs = $"vs2026 --with_rive_text --with_rive_layout --with_rive_scripting --with_rive_canvas --out=out/{PremakeOutputName(arm64)}";
+        var premakeArgs = $"vs2026 --with_rive_text --with_rive_layout --with_rive_scripting --with_rive_canvas --config={ConfigurationName} --out=out/{PremakeOutputName(arm64)}";
         var cmd = $@"/c """"{vcvarsPath}"" x64 && ""{Premake5Exe}"" {premakeArgs}""";
 
         ProcessTasks.StartProcess("cmd.exe", cmd, workingDirectory: BuildDirectory, environmentVariables: environmentVariables)
@@ -279,7 +280,8 @@ class Build : FalloutBuild
         .Executes(() =>
         {
             DotNetTasks.DotNetBuild(s => s
-                .SetProjectFile(RiveManagedProject));
+                .SetProjectFile(RiveManagedProject)
+                .SetConfiguration(Configuration));
         });
 
     // Headless tests of the Rive interop and view model layer: no vvvv, no GPU
@@ -288,7 +290,8 @@ class Build : FalloutBuild
         .Executes(() =>
         {
             DotNetTasks.DotNetTest(s => s
-                .SetProjectFile(RootDirectory / "tests" / "VL.Rive.Tests" / "VL.Rive.Tests.csproj"));
+                .SetProjectFile(RootDirectory / "tests" / "VL.Rive.Tests" / "VL.Rive.Tests.csproj")
+                .SetConfiguration(Configuration));
         });
 
     Target Pack => _ => _
@@ -296,7 +299,8 @@ class Build : FalloutBuild
         .Executes(() =>
         {
             DotNetTasks.DotNetPack(s => s
-                .SetProject(RiveManagedProject));
+                .SetProject(RiveManagedProject)
+                .SetConfiguration(Configuration));
         });
 
     Target PushToGithub => _ => _
