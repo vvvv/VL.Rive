@@ -276,6 +276,14 @@ namespace VL.Rive.Interop
         public static extern RiveHitResult rive_Scene_PointerExit([NativeTypeName("rive::Scene *")] nint scene, float x, float y, int pointerId);
 
         [DllImport("rive_interop", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        [return: NativeTypeName("bool")]
+        public static extern byte rive_Scene_KeyInput([NativeTypeName("rive::Scene *")] nint scene, [NativeTypeName("rive::Key")] Key key, [NativeTypeName("rive::KeyModifiers")] KeyModifiers modifiers, [NativeTypeName("bool")] byte isPressed, [NativeTypeName("bool")] byte isRepeat);
+
+        [DllImport("rive_interop", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        [return: NativeTypeName("bool")]
+        public static extern byte rive_Scene_TextInput([NativeTypeName("rive::Scene *")] nint scene, [NativeTypeName("const char *")] sbyte* utf8Text);
+
+        [DllImport("rive_interop", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         [return: NativeTypeName("size_t")]
         public static extern nuint rive_Scene_InputCount([NativeTypeName("rive::Scene *")] nint scene);
 

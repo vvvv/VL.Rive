@@ -2,6 +2,7 @@
 #include "rive/static_scene.hpp"
 #include "rive/viewmodel/viewmodel_property_enum.hpp"
 #include "rive/animation/linear_animation_instance.hpp"
+#include "rive/animation/state_machine_instance.hpp"
 #include <algorithm>
 #include <string_view>
 #include "rive/generated/viewmodel/viewmodel_property_viewmodel_base.hpp";
@@ -791,6 +792,24 @@ extern "C"
     RiveHitResult rive_Scene_PointerExit(Scene* scene, float x, float y, int pointerId)
     {
         return static_cast<RiveHitResult>(scene->pointerExit(Vec2D(x, y), pointerId));
+    }
+
+    // RTTI is disabled, so no dynamic_cast: only a state machine reports a negative duration (see SeekNormalized).
+    static StateMachineInstance* asStateMachine(Scene* scene)
+    {
+        return scene->durationSeconds() < 0.0f ? static_cast<StateMachineInstance*>(scene) : nullptr;
+    }
+
+    bool rive_Scene_KeyInput(Scene* scene, Key key, KeyModifiers modifiers, bool isPressed, bool isRepeat)
+    {
+        auto sm = asStateMachine(scene);
+        return sm && sm->keyInput(key, modifiers, isPressed, isRepeat);
+    }
+
+    bool rive_Scene_TextInput(Scene* scene, const char* utf8Text)
+    {
+        auto sm = asStateMachine(scene);
+        return sm && sm->textInput(std::string(utf8Text));
     }
 
     size_t rive_Scene_InputCount(Scene* scene)

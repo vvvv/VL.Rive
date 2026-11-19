@@ -1,4 +1,4 @@
-﻿using Stride.Input;
+using Stride.Input;
 using Stride.Rendering;
 using System;
 using System.Collections.Generic;
@@ -8,6 +8,7 @@ using System.Reactive.Disposables;
 using System.Text;
 using System.Threading.Tasks;
 using VL.Lib.IO.Notifications;
+using VL.Rive.Interop;
 
 namespace VL.Rive;
 
@@ -40,6 +41,21 @@ partial class RiveRenderer
                             return true;
                     }
                     return false;
+                }
+            case KeyPressNotification press:
+                // Control characters (Backspace, Enter, Ctrl+letter) are handled as keys
+                return !char.IsControl(press.KeyChar) && riveScene.TextInput(press.KeyChar.ToString());
+            case KeyCodeNotification keyCode:
+                {
+                    var isDown = keyCode is KeyDownNotification;
+                    if (!isDown && keyCode is not KeyUpNotification)
+                        return false;
+                    var modifiers = KeyModifiers.none;
+                    if (keyCode.ShiftKey) modifiers |= KeyModifiers.shift;
+                    if (keyCode.CtrlKey) modifiers |= KeyModifiers.ctrl;
+                    if (keyCode.AltKey) modifiers |= KeyModifiers.alt;
+                    return RiveKeyMapping.TryMap(keyCode.KeyData & VL.Lib.IO.Keys.KeyCode, out var key)
+                        && riveScene.KeyInput(key, modifiers, isDown, isRepeat: false);
                 }
             case TouchNotification touch:
                 {
@@ -74,15 +90,65 @@ partial class RiveRenderer
         if (inputManager is null)
             return Disposable.Empty;
 
-        var pointerListener = NewPointerListener(inputSource);
-        inputManager.AddListener(pointerListener);
-
-        var subscription = Disposable.Create(() =>
+        var listeners = new IInputEventListener[]
         {
-            inputManager.RemoveListener(pointerListener);
-        });
+            NewPointerListener(inputSource),
+            NewKeyListener(inputSource, inputManager),
+            NewTextInputListener(inputSource),
+        };
+        foreach (var listener in listeners)
+            inputManager.AddListener(listener);
 
-        return subscription;
+        return Disposable.Create(() =>
+        {
+            foreach (var listener in listeners)
+                inputManager.RemoveListener(listener);
+        });
+    }
+
+    private IInputEventListener NewKeyListener(IInputSource inputSource, InputManager inputManager)
+    {
+        return new AnonymousEventListener<KeyEvent>(e =>
+        {
+            if (e.Device.Source != inputSource)
+                return;
+
+            if (riveScene is null || riveScene.IsClosed)
+                return;
+
+            if (!RiveKeyMapping.TryMap(e.Key, out var key))
+                return;
+
+            var modifiers = KeyModifiers.none;
+            if (inputManager.IsKeyDown(Keys.LeftShift) || inputManager.IsKeyDown(Keys.RightShift))
+                modifiers |= KeyModifiers.shift;
+            if (inputManager.IsKeyDown(Keys.LeftCtrl) || inputManager.IsKeyDown(Keys.RightCtrl))
+                modifiers |= KeyModifiers.ctrl;
+            if (inputManager.IsKeyDown(Keys.LeftAlt) || inputManager.IsKeyDown(Keys.RightAlt))
+                modifiers |= KeyModifiers.alt;
+            if (inputManager.IsKeyDown(Keys.LeftWin) || inputManager.IsKeyDown(Keys.RightWin))
+                modifiers |= KeyModifiers.meta;
+
+            riveScene.KeyInput(key, modifiers, e.IsDown, isRepeat: e.RepeatCount > 0);
+        });
+    }
+
+    private IInputEventListener NewTextInputListener(IInputSource inputSource)
+    {
+        return new AnonymousEventListener<TextInputEvent>(e =>
+        {
+            if (e.Device.Source != inputSource)
+                return;
+
+            if (riveScene is null || riveScene.IsClosed)
+                return;
+
+            // Text only: Backspace, Enter, Tab and Ctrl+letter arrive as control characters and are handled as keys
+            if (e.Type != TextInputEventType.Input || string.IsNullOrEmpty(e.Text) || e.Text.All(char.IsControl))
+                return;
+
+            riveScene.TextInput(e.Text);
+        });
     }
 
     private IInputEventListener NewPointerListener(IInputSource inputSource)

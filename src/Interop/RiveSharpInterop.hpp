@@ -6,6 +6,7 @@
 #include "rive/animation/linear_animation_instance.hpp"
 #include "rive/animation/linear_animation.hpp"
 #include "rive/animation/state_machine_instance.hpp"
+#include "rive/input/focusable.hpp"
 #include "rive/artboard.hpp"
 #include "rive/renderer.hpp"
 #include "rive/renderer/render_context.hpp"
@@ -227,6 +228,10 @@ __declspec(dllexport) bool rive_Scene_SeekNormalized(Scene* scene, float positio
 	__declspec(dllexport) RiveHitResult rive_Scene_PointerMove(Scene* scene, float x, float y, float timeStamp, int pointerId);
 	__declspec(dllexport) RiveHitResult rive_Scene_PointerUp(Scene* scene, float x, float y, int pointerId);
 	__declspec(dllexport) RiveHitResult rive_Scene_PointerExit(Scene* scene, float x, float y, int pointerId);
+	// Keyboard input (rive::Key are GLFW key codes). Only a state machine takes it: for any other scene both return false.
+	__declspec(dllexport) bool rive_Scene_KeyInput(Scene* scene, Key key, KeyModifiers modifiers, bool isPressed, bool isRepeat);
+	// Committed text (UTF-8): a typed character, an IME commit or a paste. Inserted by a focused text input.
+	__declspec(dllexport) bool rive_Scene_TextInput(Scene* scene, const char* utf8Text);
 	__declspec(dllexport) size_t rive_Scene_InputCount(Scene* scene);
 	__declspec(dllexport) SMIInput* rive_Scene_Input(Scene* scene, size_t index);
 	__declspec(dllexport) SMIBool* rive_Scene_GetBool(Scene* scene, const char* name);

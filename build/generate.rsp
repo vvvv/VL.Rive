@@ -61,3 +61,11 @@ SMINumber*=nint
 SMIString*=nint
 SMIBool*=nint
 SMITrigger*=nint
+--traverse
+../src/Interop/RiveSharpInterop.hpp
+../submodules/rive-runtime/include/rive/input/focusable.hpp
+--exclude
+Focusable
+ScriptedDrawable
+operator|
+operator&
