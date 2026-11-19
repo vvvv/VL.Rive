@@ -213,6 +213,11 @@ internal unsafe class RiveFile : RiveObject
         return rive_File_ViewModelByIndex(handle, index);
     }
 
+    /// <summary>
+    /// Lets the file's scripts clean up after a frame, on the thread that runs them and while none of them is running: AnimaScript's garbage collector scavenges here, and without it a collection inside a script call can outlast the watchdog.
+    /// </summary>
+    public void FrameBoundary() => rive_File_FrameBoundary(handle);
+
     protected override bool ReleaseHandle()
     {
         rive_File_Destroy(handle);

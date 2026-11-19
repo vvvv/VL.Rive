@@ -1,8 +1,11 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using System.Collections.Immutable;
+using System.Reactive.Linq;
 using System.Runtime.InteropServices;
 using VL.Core;
 using VL.Core.Import;
+using VL.Lib.Animation;
 using VL.Rive.Internal;
 using VL.Rive.Interop;
 
@@ -18,6 +21,7 @@ public sealed class RiveContext : IDisposable
     private readonly RiveRenderContextD3D11? renderContext;
     private RiveDeferredHost? deferredHost;
     private Interop.RiveRenderer? immediateRenderer;
+    private readonly IDisposable? frameTick;
 
     /// <param name="nodeContext">
     /// The VL node context, needed only where VL asks for type information or the host (<see cref="NodeContext"/>). Null in tests, which exercise the Rive side without a VL app host.
@@ -34,6 +38,12 @@ public sealed class RiveContext : IDisposable
         this.renderContext = renderContext;
         this.deferredHost = deferredHost;
         ViewModels = CreateViewModels();
+
+        // The file's scripts clean up once per frame, before anything advances: after what the last frame drew, as rive's
+        // own host does. The context does it, and not a renderer, because several renderers can share the file and
+        // any of them can be disabled.
+        if (nodeContext is not null)
+            frameTick = nodeContext.AppHost.Services.GetRequiredService<IFrameClock>().GetTicks().Subscribe(_ => RiveFile.FrameBoundary());
 
         ImmutableArray<RiveViewModelType> CreateViewModels()
         {
@@ -194,6 +204,9 @@ public sealed class RiveContext : IDisposable
         if (IsDisposed)
             return;
         IsDisposed = true;
+
+        // Before the file goes: the tick uses its handle
+        frameTick?.Dispose();
 
         // Newest first: what was made from something goes before it
         List<IDisposable> toDispose;

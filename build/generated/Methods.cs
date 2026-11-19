@@ -106,6 +106,9 @@ namespace VL.Rive.Interop
         public static extern nint rive_File_Import([NativeTypeName("uint8_t *")] byte* data, int dataLength, [NativeTypeName("rive::Factory *")] nint factory, RiveImportResult* result);
 
         [DllImport("rive_interop", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern void rive_File_FrameBoundary([NativeTypeName("rive::File *")] nint file);
+
+        [DllImport("rive_interop", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern void rive_File_Destroy([NativeTypeName("rive::File *")] nint file);
 
         [DllImport("rive_interop", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
@@ -141,6 +144,9 @@ namespace VL.Rive.Interop
         public static extern void rive_File_GetViewModel([NativeTypeName("rive::File *")] nint file, int index, [NativeTypeName("char **")] sbyte** name_out, int* propertiesCount_out);
 
         [DllImport("rive_interop", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern void rive_File_GetViewModelProperties([NativeTypeName("rive::File *")] nint file, int index, RivePropertyData* properties_out);
+
+        [DllImport("rive_interop", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern int rive_File_EnumCount([NativeTypeName("rive::File *")] nint file);
 
         [DllImport("rive_interop", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
@@ -149,9 +155,6 @@ namespace VL.Rive.Interop
         [DllImport("rive_interop", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         [return: NativeTypeName("char *")]
         public static extern sbyte* rive_File_GetEnumValue([NativeTypeName("rive::File *")] nint file, int enumIndex, int valueIndex);
-
-        [DllImport("rive_interop", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void rive_File_GetViewModelProperties([NativeTypeName("rive::File *")] nint file, int index, RivePropertyData* properties_out);
 
         [DllImport("rive_interop", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         [return: NativeTypeName("rive::ViewModelRuntime *")]
@@ -176,12 +179,6 @@ namespace VL.Rive.Interop
 
         [DllImport("rive_interop", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern void rive_Artboard_Animations([NativeTypeName("rive::Artboard *")] nint artboard, [NativeTypeName("Animation **")] nint* animations_out);
-
-        [DllImport("rive_interop", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void rive_Artboard_SetSize([NativeTypeName("rive::Artboard *")] nint artboard, float width, float height);
-
-        [DllImport("rive_interop", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void rive_Artboard_ResetSize([NativeTypeName("rive::Artboard *")] nint artboard);
 
         [DllImport("rive_interop", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern RiveAABB rive_Artboard_Bounds([NativeTypeName("rive::Artboard *")] nint artboard);
@@ -231,6 +228,12 @@ namespace VL.Rive.Interop
 
         [DllImport("rive_interop", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern float rive_Scene_Height([NativeTypeName("rive::Scene *")] nint scene);
+
+        [DllImport("rive_interop", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern void rive_Artboard_SetSize([NativeTypeName("rive::Artboard *")] nint artboard, float width, float height);
+
+        [DllImport("rive_interop", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        public static extern void rive_Artboard_ResetSize([NativeTypeName("rive::Artboard *")] nint artboard);
 
         [DllImport("rive_interop", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern RiveAABB rive_Scene_Bounds([NativeTypeName("rive::Scene *")] nint scene);

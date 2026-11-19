@@ -3,12 +3,16 @@
 #include "rive/viewmodel/viewmodel_property_enum.hpp"
 #include "rive/animation/linear_animation_instance.hpp"
 #include <algorithm>
+#include <string_view>
 #include "rive/generated/viewmodel/viewmodel_property_viewmodel_base.hpp";
 #include "utils/no_op_factory.hpp"
 #include "rive/logging_scripting_context.hpp"
 #include "rive/lua/scripting_vm.hpp"
 #include "rive/lua/rive_lua_libs.hpp"
 #include "rive/renderer/cmd/deferred_host.hpp"
+#ifdef WITH_RIVE_SCRIPTING_WASM
+#include "rive/wasm/wasm_scripting_vm.hpp"
+#endif
 
 using namespace rive;
 using namespace rive::gpu;
@@ -21,6 +25,22 @@ static_assert(offsetof(RenderContext::FrameDescriptor, triangulationThresholds) 
 static_assert(offsetof(RenderContext::FrameDescriptor, wireframe) == 64, "FrameDescriptor layout changed");
 
 static void (*g_scriptLogCallback)(int level, const char* message, size_t length) = nullptr;
+
+#ifdef WITH_RIVE_SCRIPTING_WASM
+// Lets the file's AnimaScript VMs clean up (see rive_File_FrameBoundary) and logs what their leak watch reports,
+// a line each. The notice that per frame collection is on is not a warning.
+static void frameBoundary(File* file)
+{
+    const char* report = file->frameBoundary();
+    for (std::string_view rest = report != nullptr ? report : ""; !rest.empty();)
+    {
+        std::string_view line = rest.substr(0, rest.find('\n'));
+        rest.remove_prefix(std::min(rest.size(), line.size() + 1));
+        if (line != WasmScriptingVM::kFrameGcNotice && g_scriptLogCallback != nullptr)
+            g_scriptLogCallback(static_cast<int>(ScriptingLogLevel::warn), line.data(), line.size());
+    }
+}
+#endif
 
 
 #if defined(RIVE_CANVAS) && defined(RIVE_ORE)
@@ -346,6 +366,30 @@ extern "C"
     {
         ImportResult importResult = ImportResult::success;
 
+#ifdef WITH_RIVE_SCRIPTING_WASM
+        // File::import makes the AnimaScript VMs itself, and they print to stdout. The boot hook runs for every VM
+        // made on this thread, before its module starts, so the module's top level output is routed too.
+        if (g_scriptLogCallback != nullptr)
+        {
+            WasmScriptingVM::setBootHook(
+                [](WasmScriptingVM& vm, Span<const uint8_t>)
+                {
+                    vm.onPrint(
+                        [](const char* message, size_t length)
+                        {
+                            if (g_scriptLogCallback != nullptr)
+                                g_scriptLogCallback(static_cast<int>(ScriptingLogLevel::info), message, length);
+                        });
+                    vm.onError(
+                        [](const std::string& line)
+                        {
+                            if (g_scriptLogCallback != nullptr)
+                                g_scriptLogCallback(static_cast<int>(ScriptingLogLevel::error), line.c_str(), line.size());
+                        });
+                });
+        }
+#endif
+
         // Without a context of our own, script console output goes to stdout and errors to nowhere:
         // give the file a scripting VM that reports to the host's log callback.
         rcp<ScriptingVM> scriptingVM;
@@ -371,7 +415,23 @@ extern "C"
         {
             *result = static_cast<RiveImportResult>(importResult);
         }
+#ifdef WITH_RIVE_SCRIPTING_WASM
+        // Once during load, so the promotion of what the scripts' init allocated lands in load time and not in the first frame
+        if (file)
+            frameBoundary(file.get());
+#endif
         return file ? file.release() : nullptr;
+    }
+
+    // Call once per frame, after advancing: AnimaScript's garbage collector scavenges here and dead host handles
+    // are released. Without it garbage piles up until a collection inside a script call exceeds the watchdog,
+    // which stops the script for good. What the leak watch reports goes to the log callback as warnings.
+    void rive_File_FrameBoundary(File* file)
+    {
+#ifdef WITH_RIVE_SCRIPTING_WASM
+        if (file != nullptr)
+            frameBoundary(file);
+#endif
     }
 
     void rive_File_Destroy(File* file)

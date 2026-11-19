@@ -33,6 +33,15 @@ for _, name in ipairs({ "rive", "rive_pls_renderer" }) do
     filter({})
 end
 
+-- wasm_scripting_vm.hpp has a field (m_netOwnerId) that is only used when scriptnet is built: -Werror would fail
+-- every file that includes the header
+if wamr then
+  for _, name in ipairs({ "rive", "rive_interop" }) do
+    project(name)
+      buildoptions({ "-Wno-unused-private-field" })
+  end
+end
+
 -- libwebp adds x86-only SSE flags for every windows clang build
 project("libwebp")
   filter({ "system:windows", "platforms:ARM64" })
@@ -62,6 +71,14 @@ do
 
   -- Luau VM, needed because rive is built with --with_rive_scripting (script assets in .riv files)
   links({ 'luau_vm' })
+
+  -- AnimaScript VM (WAMR), present when rive is built with --scripting_vm=wasm|both
+  if wamr then
+    dependson("wamr")
+    links({ 'wamr' })
+    -- wamr's Windows platform layer reaches past the CRT
+    links({ 'ntdll', 'userenv', 'ws2_32', 'bcrypt' })
+  end
 
   links({ 'zlib', 'libpng' })
   links({ 'libjpeg' })
