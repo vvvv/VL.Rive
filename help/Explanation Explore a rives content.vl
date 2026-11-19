@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Document xmlns:p="property" xmlns:r="reflection" Id="RMdq2hAUYqAPIF7QSAM1Dm" LanguageVersion="2026.8.0-0341-g99413cc298" Version="0.128">
+<Document xmlns:p="property" xmlns:r="reflection" Id="RMdq2hAUYqAPIF7QSAM1Dm" LanguageVersion="2026.8.0-0362-gabf8be82c6" Version="0.128">
   <NugetDependency Id="P31TcB21GpsQMoE5avRDIK" Location="VL.CoreLib" />
   <Patch Id="KwF3lactQFAPXQKeExxGTJ">
     <Canvas Id="SY42jCjyWwzNXSZcNcrit7" DefaultCategory="Main" BordersChecked="false" CanvasType="FullCategory" />
@@ -208,6 +208,5 @@
       </Patch>
     </Node>
   </Patch>
-  <NugetDependency Id="SBQOevSkfVYPvjUXsK23Iy" Location="VL.Stride" />
   <NugetDependency Id="UoYPOyFhYUIMxPGgOOSocB" Location="VL.Rive" />
 </Document>

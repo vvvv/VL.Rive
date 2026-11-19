@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Document xmlns:p="property" xmlns:r="reflection" Id="Nth8CFNZnXsMdw6DOponQ2" LanguageVersion="2026.8.0-0349-g53350c3d93" Version="0.128">
+<Document xmlns:p="property" xmlns:r="reflection" Id="Nth8CFNZnXsMdw6DOponQ2" LanguageVersion="2026.8.0-0362-gabf8be82c6" Version="0.128">
   <NugetDependency Id="P31TcB21GpsQMoE5avRDIK" Location="VL.CoreLib" />
   <Patch Id="KwF3lactQFAPXQKeExxGTJ">
     <Canvas Id="SY42jCjyWwzNXSZcNcrit7" DefaultCategory="Main" BordersChecked="false" CanvasType="FullCategory" />
@@ -49,7 +49,7 @@
               <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
               <Choice Kind="ProcessAppFlag" Name="SceneWindow" />
             </p:NodeReference>
-            <Pin Id="TFVHMoUXk8vLJOYyOHru66" Name="Bounds" Kind="InputPin" DefaultValue="1283, 793, 378, 314" IsHidden="true" />
+            <Pin Id="TFVHMoUXk8vLJOYyOHru66" Name="Bounds" Kind="InputPin" DefaultValue="1282.6666, 792.6667, 378, 314" IsHidden="true" />
             <Pin Id="GUzmRIZRWPMLhYd7rSDnSI" Name="Bound to Document" Kind="InputPin" IsHidden="true" />
             <Pin Id="NVqMMPddGyHN8bqLn6PQOW" Name="Dialog If Document Changed" Kind="InputPin" IsHidden="true" />
             <Pin Id="OmjC0supQYkLMu2WQmrhFs" Name="Save Bounds" Kind="InputPin" IsHidden="true" />
@@ -147,7 +147,7 @@
               <Choice Kind="ProcessAppFlag" Name="RenderWindow" />
             </p:NodeReference>
             <Pin Id="FWK49etKakqNNBknQRZyXy" Name="Node Context" Kind="InputPin" IsHidden="true" />
-            <Pin Id="MNc8mGa1nMQOy1DLNSpSxa" Name="Bounds" Kind="InputPin" DefaultValue="1279, 53, 496, 338" IsHidden="true" />
+            <Pin Id="MNc8mGa1nMQOy1DLNSpSxa" Name="Bounds" Kind="InputPin" DefaultValue="1278.6666, 52.666668, 496, 338" IsHidden="true" />
             <Pin Id="OXL2NVyK7QEQAYTKi0fAsl" Name="Is Borderless" Kind="InputPin" IsHidden="true" />
             <Pin Id="NBGNSJdMtRiM2dlUnA3QC8" Name="Bound to Document" Kind="InputPin" IsHidden="true" />
             <Pin Id="BCVk3xV7IUwObzxOlR7Oxn" Name="Dialog If Document Changed" Kind="InputPin" IsHidden="true" />
@@ -188,7 +188,7 @@
               <Choice Kind="ProcessAppFlag" Name="TextureWindow" />
             </p:NodeReference>
             <Pin Id="O2UoTppD0zINF2peSBkPhE" Name="Node Context" Kind="InputPin" IsHidden="true" />
-            <Pin Id="VeAizHTHLFINRUs2y2NRpA" Name="Bounds" Kind="InputPin" DefaultValue="1281, 428, 378, 328" IsHidden="true" />
+            <Pin Id="VeAizHTHLFINRUs2y2NRpA" Name="Bounds" Kind="InputPin" DefaultValue="1280.6666, 428, 378, 328" IsHidden="true" />
             <Pin Id="LIrForRKqoLMnyla8pekBD" Name="Bound to Document" Kind="InputPin" IsHidden="true" />
             <Pin Id="KM0Mz6uGlvlPyWzH0Z1wYF" Name="Dialog If Document Changed" Kind="InputPin" IsHidden="true" />
             <Pin Id="InR539aSaExL0ikL1sJ376" Name="Save Bounds" Kind="InputPin" IsHidden="true" />
@@ -364,7 +364,7 @@
             <Pin Id="PGTjPVG4WwJNRCV4V2SYnV" Name="Enabled" Kind="InputPin" />
             <Pin Id="KkiP76rhzorNx4tM2BPyH0" Name="Output" Kind="OutputPin" />
           </Node>
-          <Node Bounds="755,530,76,19" Id="H4ZLNw0qEvkQWnP2jza6f3">
+          <Node Bounds="895,410,76,19" Id="H4ZLNw0qEvkQWnP2jza6f3">
             <p:NodeReference LastCategoryFullName="3D.Transform" LastDependency="VL.CoreLib.vl">
               <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
               <CategoryReference Kind="Category" Name="Transform" NeedsToBeDirectParent="true">
@@ -373,7 +373,7 @@
               <Choice Kind="OperationCallFlag" Name="UniformScale" />
             </p:NodeReference>
             <Pin Id="TQLJAAamLRVNfSzt0fZpxk" Name="Input" Kind="InputPin" />
-            <Pin Id="PqY2rDnApDTNbH1I4bozcJ" Name="Scaling" Kind="InputPin" DefaultValue="2.04" />
+            <Pin Id="PqY2rDnApDTNbH1I4bozcJ" Name="Scaling" Kind="InputPin" DefaultValue="2" />
             <Pin Id="S8wRZoHJkYBQOZ4oeujZaT" Name="Output" Kind="OutputPin" />
           </Node>
           <Pad Id="GQCoXte1gKAMZwsnMiTLFE" Comment="Quad Anchor" Bounds="977,440,93,15" ShowValueBox="true" isIOBox="true" Value="BottomCenter">
@@ -398,8 +398,8 @@
         <Link Id="DGuMiJ8YPTVPJ30nDxA6Vr" Ids="VAf6cu71oaQNqOQvkFtezE,E7shzW8Y5HyPCfg40o2Af1" />
         <Link Id="MniHw2XM2GlOW7mXPododA" Ids="GoFVEeKn1aDNwgQAvz0vkN,DuzZW20OvnGLdhaN2xuhKP" />
         <Link Id="N09JMVeuP4lOydJaNzPRUT" Ids="KkiP76rhzorNx4tM2BPyH0,LuQ7jbYTGq8QOfM8XaU6NI" />
-        <Link Id="F2JmxTyYoBlOfXddmCObty" Ids="S8wRZoHJkYBQOZ4oeujZaT,FK8t6VyZGnIQTas74jOsrq" />
         <Link Id="LdiWIKKnkGcNBJmKPnjA2C" Ids="GQCoXte1gKAMZwsnMiTLFE,AW1XspceU9IPPvaKxmJw9d" />
+        <Link Id="ITmouJ2DyLnOHP9NOrTe3D" Ids="S8wRZoHJkYBQOZ4oeujZaT,DTOZxMbvL8hN70J0jfMRlb" />
       </Patch>
     </Node>
   </Patch>

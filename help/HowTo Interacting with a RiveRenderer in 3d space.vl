@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Document xmlns:p="property" xmlns:r="reflection" Id="IUcyMPgYoBPOOreSYGQM9a" LanguageVersion="2026.8.0-0349-g53350c3d93" Version="0.128">
+<Document xmlns:p="property" xmlns:r="reflection" Id="IUcyMPgYoBPOOreSYGQM9a" LanguageVersion="2026.8.0-0362-gabf8be82c6" Version="0.128">
   <NugetDependency Id="IXpvYU0bJ4lOHBFloTLTjW" Location="VL.CoreLib" />
   <Patch Id="NFjsKs2YB4bM7oG09u4OFJ">
     <Canvas Id="TrXH3OWIXRsNQKxRH5EEpq" DefaultCategory="Main" BordersChecked="false" CanvasType="FullCategory" />
@@ -37,7 +37,7 @@
               <Choice Kind="NodeFlag" Name="Node" Fixed="true" />
               <Choice Kind="ProcessAppFlag" Name="SceneWindow" />
             </p:NodeReference>
-            <Pin Id="EX1vEOZIc0xO3Asfr3PxHP" Name="Bounds" Kind="InputPin" DefaultValue="1293, 152, 637, 499" IsHidden="true" />
+            <Pin Id="EX1vEOZIc0xO3Asfr3PxHP" Name="Bounds" Kind="InputPin" DefaultValue="1292.6666, 152, 636.6667, 498.66666" IsHidden="true" />
             <Pin Id="MGKnEYXwslzLnYHjA0eDS2" Name="Bound to Document" Kind="InputPin" IsHidden="true" />
             <Pin Id="AqXf4a1jcmyOZDFUqp2s27" Name="Dialog If Document Changed" Kind="InputPin" IsHidden="true" />
             <Pin Id="SwKTuxYuvPBOj8sfJuvw00" Name="Save Bounds" Kind="InputPin" IsHidden="true" />
@@ -208,5 +208,4 @@
   </Patch>
   <NugetDependency Id="Ow9dLQPD4FZOGKerXvX3m7" Location="VL.Rive" />
   <NugetDependency Id="NSRxtzHaFRTMxb04yd5tZc" Location="VL.Stride" />
-  <NugetDependency Id="AfI2pwQu6KoPsrmOfplrUM" Location="VL.HelpAssets" />
 </Document>
