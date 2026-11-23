@@ -10,7 +10,7 @@
     <!-- vvvv reads the code docs (node and pin summaries) from the xml file next to the dll -->
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <NoWarn>$(NoWarn);CS1591;CS1573</NoWarn>
-    <Version>1.0.0-pre4</Version>
+    <Version>1.0.0-pre5</Version>
 
     <!-- Breaks build on github: https://github.com/stride3d/stride/issues/2232, luckily we don't need it -->
     <StrideAssemblyProcessor>false</StrideAssemblyProcessor>
@@ -49,6 +49,11 @@
       <Pack>true</Pack>
       <PackagePath>%(RecursiveDir)%(Filename)%(Extension)</PackagePath>
       <!--<Visible>false</Visible>-->
+    </None>
+    <None Include="..\help\help.xml">
+      <LinkBase>help</LinkBase>
+      <Pack>true</Pack>
+      <PackagePath>help\%(Filename)%(Extension)</PackagePath>
     </None>
     <None Include="..\help\assets\*.riv">
       <LinkBase>help\assets</LinkBase>
