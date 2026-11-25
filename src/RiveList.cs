@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Runtime.CompilerServices;
 using VL.Core;
 using VL.Core.Import;
 using VL.Rive.Internal;
@@ -96,6 +97,26 @@ public sealed class RiveList : IReadOnlyList<RiveViewModel>, IList<RiveViewModel
 
         // The list takes its own reference to the instance
         rive_ViewModelInstanceListRuntime_AddInstance(handle, item.Handle);
+    }
+
+    public void AddRange(IEnumerable<RiveViewModel> items)
+    {
+        ArgumentNullException.ThrowIfNull(items);
+        owner.ThrowIfDisposed();
+
+        if (ReferenceEquals(items, this))
+            AddOwnItems();
+        else
+            foreach (var item in items)
+                Add(item);
+    }
+
+    // Enumerating a list that grows meanwhile doesn't end: go by index up to the count it had
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    private void AddOwnItems()
+    {
+        for (int i = 0, count = Count; i < count; i++)
+            Add(this[i]);
     }
 
     public void Insert(int index, RiveViewModel item)

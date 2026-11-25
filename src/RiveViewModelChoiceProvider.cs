@@ -96,8 +96,10 @@ public sealed class RiveSceneChoiceProvider : IChoiceProvider
         if (info is null)
             return null;
 
-        return info.Value.StateMachines.Select(s => s.Name).Concat(info.Value.Animations.Select(a => a.Name))
-            .Distinct().Select(name => new ChoiceEntry(name)).ToList();
+        // The type of a scene is the hint behind its name. A name that is both a state machine and an animation is the state machine.
+        return info.Value.StateMachines.Select(s => RiveChoices.Entry(s.Name, "State Machine"))
+            .Concat(info.Value.Animations.Select(a => RiveChoices.Entry(a.Name, "Animation")))
+            .DistinctBy(entry => entry.Value).ToList();
     }
 }
 
