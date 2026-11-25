@@ -23,7 +23,7 @@ using static Fallout.Common.IO.PathConstruction;
 using static System.Net.WebRequestMethods;
 
 [GitHubActions(
-    "main",
+    "github.com",
     GitHubActionsImage.WindowsLatest,
     //OnPushBranches = ["main"],
     On = [GitHubActionsTrigger.WorkflowDispatch],

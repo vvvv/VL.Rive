@@ -9,12 +9,12 @@
 #
 #     - To trigger manual generation invoke:
 #
-#         fallout --generate-configuration GitHubActions_main --host GitHubActions
+#         fallout --generate-configuration GitHubActions_github.com --host GitHubActions
 #
 # </auto-generated>
 # ------------------------------------------------------------------------------
 
-name: main
+name: github.com
 
 on: [workflow_dispatch]
 
